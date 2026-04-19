@@ -3,202 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bear Trap — Admin</title>
+<title>Bear Trap — Panel de gestión</title>
 <meta name="robots" content="noindex,nofollow">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070708;--s:#0f0f11;--c:#141418;--b:#1e1e24;--t:#f0f0f0;--m:#666;--g:#ffc400;--or:#ff8c00;--gr:#00ff87;--pk:#ff2d78;--cy:#00c8ff}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t);font-family:"DM Mono",monospace;min-height:100vh}
-input,select,textarea{font-family:inherit}
-#ls{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
-.lb{background:var(--s);border:1px solid var(--b);border-radius:4px;padding:44px;width:360px}
-.lb-logo{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.08em;margin-bottom:2px;background:linear-gradient(135deg,#ffdd00,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.lb-sub{color:var(--m);font-size:11px;letter-spacing:.12em;margin-bottom:32px;text-transform:uppercase}
-.lf label{display:block;font-size:10px;letter-spacing:.12em;color:var(--m);text-transform:uppercase;margin-bottom:6px}
-.lf input{width:100%;padding:11px 12px;background:var(--c);border:1px solid var(--b);border-radius:2px;color:var(--t);font-size:13px;outline:none;transition:border .2s}
-.lf input:focus{border-color:var(--g)}
-#lerr{color:var(--pk);font-size:11px;margin:10px 0 4px;min-height:16px}
-.lbtn{width:100%;padding:13px;margin-top:8px;background:linear-gradient(135deg,var(--g),var(--or));border:none;border-radius:2px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.1em;cursor:pointer;transition:opacity .2s}
+:root{--bg:#080809;--surface:#101012;--card:#16161a;--border:#222226;--text:#eee;--muted:#555;--gold:#ffc107;--orange:#ff8c00;--green:#00e676;--pink:#ff2d78;--cyan:#00c8ff}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh}
+
+/* LOGIN */
+#login{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:44px;width:360px;text-align:center}
+.login-bear{margin-bottom:16px}
+.login-title{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.06em;margin-bottom:4px;
+  background:linear-gradient(135deg,#ff8c00,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-sub{font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:28px}
+.lf label{display:block;font-size:10px;letter-spacing:.12em;color:var(--muted);text-align:left;margin-bottom:6px;text-transform:uppercase}
+.lf input{width:100%;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:4px;
+  color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border .2s}
+.lf input:focus{border-color:var(--gold)}
+#lerr{color:var(--pink);font-size:11px;margin:10px 0 2px;min-height:16px}
+.lbtn{width:100%;padding:13px;margin-top:8px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:4px;
+  color:#000;font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s}
 .lbtn:hover{opacity:.88}
-#as{display:none}
-.stripe{height:3px;background:linear-gradient(90deg,#ff3b00,#ffcc00,#00e87a,#00c8ff,#b24bff,#ff2d78);background-size:200% 100%;animation:str 3s linear infinite}
-@keyframes str{0%{background-position:0}100%{background-position:200%}}
-.bar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:54px;background:var(--s);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:100}
-.bar-l{display:flex;align-items:center;gap:10px}
-.bar-logo{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.06em;background:linear-gradient(135deg,#ffdd00,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.bar-badge{padding:2px 8px;border-radius:10px;background:rgba(255,196,0,.1);border:1px solid rgba(255,196,0,.2);color:var(--g);font-size:10px;letter-spacing:.1em}
-.bar-r{display:flex;gap:8px}
-.bsm{padding:6px 14px;border-radius:2px;font-size:11px;letter-spacing:.08em;cursor:pointer;transition:all .2s;text-decoration:none;border:1px solid var(--b);background:transparent}
-.bview{color:var(--cy);border-color:rgba(0,200,255,.2)}.bview:hover{background:rgba(0,200,255,.08)}
-.bout{color:var(--m)}.bout:hover{border-color:var(--pk);color:var(--pk)}
-.ac{max-width:1280px;margin:0 auto;padding:20px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.stat{background:var(--s);border:1px solid var(--b);border-radius:3px;padding:18px}
-.stat-v{font-family:"Bebas Neue",sans-serif;font-size:38px;color:var(--g)}
-.stat-l{font-size:10px;letter-spacing:.12em;color:var(--m);text-transform:uppercase;margin-top:2px}
-#sb{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:2px;margin-bottom:16px;font-size:11px;letter-spacing:.08em}
-#sb.ok{background:rgba(0,255,135,.06);border:1px solid rgba(0,255,135,.2);color:var(--gr)}
-#sb.er{background:rgba(255,45,120,.06);border:1px solid rgba(255,45,120,.2);color:var(--pk)}
-#sb.ld{background:rgba(255,196,0,.06);border:1px solid rgba(255,196,0,.2);color:var(--g)}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.d-ok{background:var(--gr)}.d-er{background:var(--pk)}.d-ld{background:var(--g);animation:pulse 1s ease-in-out infinite}
+
+/* ADMIN */
+#admin{display:none}
+.stripe{height:3px;background:linear-gradient(90deg,#ff3b30,#ff8c00,#34c759,#30d5c8,#af52de,#ff2d55);background-size:200%;animation:s 3s linear infinite}
+@keyframes s{to{background-position:200%}}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;
+  background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.tlogo{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.1em;
+  background:linear-gradient(135deg,#ff8c00,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tbadge{padding:2px 8px;border-radius:10px;background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.2);
+  color:var(--gold);font-size:10px;letter-spacing:.1em;margin-left:8px;font-family:"DM Mono",monospace}
+.tbr{display:flex;gap:8px;align-items:center}
+.bsm{padding:6px 16px;border-radius:3px;font-size:11px;font-family:"DM Sans",sans-serif;font-weight:600;
+  letter-spacing:.08em;cursor:pointer;transition:all .2s;text-decoration:none;border:1px solid var(--border)}
+.bview{background:rgba(0,200,255,.08);color:var(--cyan);border-color:rgba(0,200,255,.2)}
+.bview:hover{background:rgba(0,200,255,.15)}
+.blogout{background:transparent;color:var(--muted);cursor:pointer}
+.blogout:hover{border-color:var(--pink);color:var(--pink)}
+
+.ac{max-width:1400px;margin:0 auto;padding:20px}
+
+/* STATUS */
+#sb{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:4px;margin-bottom:18px;font-size:11px;letter-spacing:.08em;font-family:"DM Mono",monospace}
+#sb.ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);color:var(--green)}
+#sb.err{background:rgba(255,45,120,.06);border:1px solid rgba(255,45,120,.2);color:var(--pink)}
+#sb.loading{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.2);color:var(--gold)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dok{background:var(--green)}.derr{background:var(--pink)}.dload{background:var(--gold);animation:pulse 1.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px}
+.sv{font-family:"Bebas Neue",sans-serif;font-size:38px;color:var(--gold)}
+.sl{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+/* TOOLBAR */
 .tb{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.srch{flex:1;min-width:180px;padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:2px;color:var(--t);font-size:12px;outline:none}
-.srch:focus{border-color:var(--g)}
-.sel{padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:2px;color:var(--t);font-size:12px;cursor:pointer}
-.badd{padding:9px 20px;background:linear-gradient(135deg,var(--g),var(--or));border:none;border-radius:2px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.sbar{flex:1;min-width:180px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;color:var(--text);font-family:inherit;font-size:12px;outline:none}
+.sbar:focus{border-color:var(--gold)}
+.fsel{padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:3px;
+  color:var(--text);font-family:inherit;font-size:12px;cursor:pointer}
+.badd{padding:9px 22px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:3px;
+  color:#000;font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
 .badd:hover{opacity:.88}
-.tw{overflow-x:auto}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:9px 12px;text-align:left;color:var(--m);font-size:10px;letter-spacing:.1em;border-bottom:1px solid var(--b);font-weight:400;text-transform:uppercase}
+th{padding:9px 12px;text-align:left;color:var(--muted);font-size:10px;letter-spacing:.1em;
+  border-bottom:1px solid var(--border);font-weight:500;text-transform:uppercase;white-space:nowrap}
 td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
 tr:hover td{background:rgba(255,255,255,.015)}
-.ti{width:46px;height:54px;object-fit:cover;border-radius:2px;background:#1a1a1a;display:block}
-.tp{width:46px;height:54px;border-radius:2px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:18px}
-.sw{position:relative;display:inline-block;width:36px;height:20px;cursor:pointer}
+.timg{width:44px;height:52px;object-fit:cover;border-radius:3px;display:block;background:#1a1a1e}
+.tph{width:44px;height:52px;background:linear-gradient(135deg,#1a1a20,#222230);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;opacity:.5}
+
+/* SWITCH */
+.sw{position:relative;width:34px;height:18px;display:inline-block;cursor:pointer}
 .sw input{display:none}
-.st{position:absolute;inset:0;background:var(--b);border-radius:10px;transition:.2s}
-.sw input:checked+.st{background:var(--gr)}
-.sh{position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
-.sw input:checked~.sh{left:18px}
-.ab{padding:5px 10px;border-radius:2px;font-size:10px;font-family:inherit;letter-spacing:.08em;cursor:pointer;transition:all .2s;border:1px solid var(--b);background:transparent;color:var(--m)}
-.ab:hover{border-color:var(--g);color:var(--g)}.ab.del:hover{border-color:var(--pk);color:var(--pk)}
-.bsold{padding:2px 8px;border-radius:2px;background:linear-gradient(135deg,var(--pk),#b24bff);color:#fff;font-size:10px;letter-spacing:.08em}
-#nr{display:none;padding:60px;text-align:center;color:var(--m);font-size:12px;letter-spacing:.1em}
-.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:center;justify-content:center;padding:20px}
-.mo.open{display:flex}
-.mb{background:var(--s);border:1px solid var(--b);border-radius:4px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
-.mh{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
-.mt{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em}
-.mx{background:none;border:none;color:var(--m);font-size:22px;cursor:pointer}
+.sw-track{position:absolute;inset:0;border-radius:9px;background:var(--border);transition:.2s}
+.sw input:checked+.sw-track{background:var(--green)}
+.sw-thumb{position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked~.sw-thumb{left:18px}
+
+.abtn{padding:5px 10px;border-radius:3px;font-size:10px;font-family:inherit;letter-spacing:.06em;cursor:pointer;
+  border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap}
+.abtn:hover{border-color:var(--gold);color:var(--gold)}
+.adel:hover{border-color:var(--pink);color:var(--pink)}
+.sold-badge{padding:2px 8px;border-radius:3px;background:linear-gradient(135deg,var(--pink),#9b27af);
+  color:#fff;font-size:10px;letter-spacing:.06em;font-weight:600;margin-left:6px}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:2000;align-items:center;justify-content:center;padding:16px}
+.mbg.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:6px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.mhd{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.06em}
+.mcls{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
 .mbody{padding:20px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg.one{grid-template-columns:1fr}
 .ff{display:flex;flex-direction:column;gap:5px}
-.ff label{font-size:10px;letter-spacing:.1em;color:var(--m);text-transform:uppercase}
-.ff input,.ff select{padding:9px 10px;background:var(--c);border:1px solid var(--b);border-radius:2px;color:var(--t);font-size:12px;outline:none;transition:border .2s}
-.ff input:focus,.ff select:focus{border-color:var(--g)}
-.tgrid{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.tc{display:none}
-.tl{padding:5px 10px;border:1px solid var(--b);border-radius:2px;font-size:11px;cursor:pointer;transition:all .2s;color:var(--m)}
-.tc:checked+.tl{border-color:var(--g);color:var(--g);background:rgba(255,196,0,.06)}
-.pimg{width:80px;height:96px;object-fit:cover;border-radius:2px;border:1px solid var(--b)}
-.bsave{width:100%;padding:13px;background:linear-gradient(135deg,var(--g),var(--or));border:none;border-radius:2px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.08em;cursor:pointer;margin-top:14px;transition:opacity .2s}
-.bsave:hover{opacity:.88}
-.box{background:var(--s);border:1px solid var(--b);border-radius:3px;padding:20px;margin-top:18px}
-.box-t{font-size:10px;letter-spacing:.15em;color:var(--m);text-transform:uppercase;margin-bottom:14px}
-.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.cf label{display:block;font-size:10px;letter-spacing:.1em;color:var(--m);margin-bottom:5px}
-.cf input{width:100%;padding:9px 10px;background:var(--c);border:1px solid var(--b);border-radius:2px;color:var(--t);font-size:12px;outline:none;transition:border .2s}
-.cf input:focus{border-color:var(--g)}
-.bconf{padding:9px 20px;background:linear-gradient(135deg,var(--g),var(--or));border:none;border-radius:2px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:.08em;cursor:pointer}
-.bexp{padding:9px 18px;background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.2);border-radius:2px;color:var(--cy);font-size:11px;cursor:pointer;transition:all .2s}
+.ff label{font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.ff input,.ff select,.ff textarea{
+  padding:9px 10px;background:var(--card);border:1px solid var(--border);border-radius:3px;
+  color:var(--text);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
+.ff input:focus,.ff select:focus{border-color:var(--gold)}
+.tallas-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.tc{display:none}.tl{padding:5px 10px;border:1px solid var(--border);border-radius:3px;font-size:11px;cursor:pointer;transition:all .2s}
+.tc:checked+.tl{border-color:var(--gold);color:var(--gold);background:rgba(255,193,7,.06)}
+.prev-img{width:72px;height:88px;object-fit:cover;border-radius:3px;border:1px solid var(--border);margin-top:8px}
+.msave{width:100%;padding:12px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:4px;
+  color:#000;font-family:"Bebas Neue",sans-serif;font-size:19px;letter-spacing:.08em;cursor:pointer;margin-top:14px;transition:opacity .2s}
+.msave:hover{opacity:.88}
+
+/* CONFIG */
+.cfg{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;margin-top:20px}
+.cfg-hdr{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cf label{display:block;font-size:10px;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;text-transform:uppercase}
+.cf input{width:100%;padding:9px 10px;background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
+.cf input:focus{border-color:var(--gold)}
+.bsave-cfg{padding:10px 22px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:3px;
+  color:#000;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s}
+.bsave-cfg:hover{opacity:.88}
+
+/* BACKUP */
+.bkp{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;margin-top:16px}
+.bkp-hdr{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.bexp{padding:9px 18px;background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.2);border-radius:3px;color:var(--cyan);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
 .bexp:hover{background:rgba(0,200,255,.16)}
-.bimp{padding:9px 18px;background:rgba(255,196,0,.06);border:1px solid var(--b);border-radius:2px;color:var(--g);font-size:11px;cursor:pointer;transition:all .2s}
-.bimp:hover{background:rgba(255,196,0,.14)}
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--s);border:1px solid var(--b);color:var(--g);padding:12px 24px;border-radius:3px;font-size:11px;letter-spacing:.1em;transition:transform .3s;z-index:9999;white-space:nowrap}
+.bimp{padding:9px 18px;background:rgba(255,193,7,.06);border:1px solid var(--border);border-radius:3px;color:var(--gold);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
+.bimp:hover{background:rgba(255,193,7,.14)}
+#empty{display:none;padding:50px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:.1em}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:1px solid var(--border);
+  color:var(--gold);padding:11px 22px;border-radius:3px;font-size:11px;letter-spacing:.1em;transition:transform .3s;z-index:9999;white-space:nowrap;font-family:"DM Mono",monospace}
 #toast.show{transform:translateX(-50%) translateY(0)}
-@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.cg{grid-template-columns:1fr}.tb{flex-direction:column;align-items:stretch}}
+@media(max-width:768px){.sg{grid-template-columns:1fr 1fr}.fg{grid-template-columns:1fr}.cgrid{grid-template-columns:1fr}.tb{flex-direction:column;align-items:stretch}}
 </style>
 </head>
 <body>
-<div id="ls">
-  <div class="lb">
-    <div class="lb-logo">🐻 BEAR TRAP</div>
-    <div class="lb-sub">Panel de administración</div>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="login-bear">
+      <svg width="52" height="52" viewBox="0 0 40 40" fill="none">
+        <circle cx="11" cy="10" r="8" fill="url(#lb)"/>
+        <circle cx="29" cy="10" r="8" fill="url(#lb)"/>
+        <rect x="5" y="14" width="30" height="22" rx="10" fill="url(#lb)"/>
+        <circle cx="14" cy="22" r="3" fill="#1a1a1a"/>
+        <circle cx="26" cy="22" r="3" fill="#1a1a1a"/>
+        <circle cx="14.8" cy="21" r="1.2" fill="white" opacity=".7"/>
+        <circle cx="26.8" cy="21" r="1.2" fill="white" opacity=".7"/>
+        <circle cx="20" cy="28.5" r="2.5" fill="#1a1a1a"/>
+        <defs><linearGradient id="lb" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ff6b35"/><stop offset="50%" stop-color="#ffd600"/>
+          <stop offset="100%" stop-color="#00ff87"/>
+        </linearGradient></defs>
+      </svg>
+    </div>
+    <div class="login-title">🐻 BEAR TRAP</div>
+    <div class="login-sub">PANEL DE GESTIÓN</div>
     <div class="lf">
       <label>Clave de acceso</label>
-      <input type="password" id="pwd" placeholder="••••••••" autocomplete="off" autocorrect="off" spellcheck="false">
+      <input type="password" id="pwd" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
     <div id="lerr"></div>
     <button class="lbtn" onclick="doLogin()">ENTRAR</button>
   </div>
 </div>
 
-<div id="as">
+<!-- ADMIN -->
+<div id="admin">
   <div class="stripe"></div>
-  <div class="bar">
-    <div class="bar-l"><span class="bar-logo">🐻 BEAR TRAP</span><span class="bar-badge">PANEL</span></div>
-    <div class="bar-r">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="tlogo">🐻 BEAR TRAP</span>
+      <span class="tbadge">ADMIN</span>
+    </div>
+    <div class="tbr">
       <a href="/" class="bsm bview" target="_blank">→ VER SITIO</a>
-      <button class="bsm bout" onclick="doLogout()">SALIR</button>
+      <button class="bsm blogout" onclick="doLogout()">SALIR</button>
     </div>
   </div>
+
   <div class="ac">
-    <div class="stats">
-      <div class="stat"><div class="stat-v" id="st">0</div><div class="stat-l">Prendas</div></div>
-      <div class="stat"><div class="stat-v" id="sv">0</div><div class="stat-l">Visibles</div></div>
-      <div class="stat"><div class="stat-v" id="ss" style="color:var(--pk)">0</div><div class="stat-l">Vendidas</div></div>
-      <div class="stat"><div class="stat-v" id="sa">$0</div><div class="stat-l">Precio Prom.</div></div>
+    <div class="sg">
+      <div class="sc"><div class="sv" id="st">0</div><div class="sl">Total prendas</div></div>
+      <div class="sc"><div class="sv" id="sv">0</div><div class="sl">Visibles</div></div>
+      <div class="sc"><div class="sv" id="ss" style="color:var(--pink)">0</div><div class="sl">Vendidas</div></div>
+      <div class="sc"><div class="sv" id="sp">$0</div><div class="sl">Precio promedio</div></div>
     </div>
-    <div id="sb" class="ld"><div class="dot d-ld" id="dot"></div><span id="sbt">Conectando...</span></div>
+
+    <div id="sb" class="loading">
+      <div class="dot dload" id="sd"></div>
+      <span id="stxt">Conectando a Firebase...</span>
+    </div>
+
     <div class="tb">
-      <input class="srch" type="text" id="q" placeholder="🔍 Buscar prenda..." oninput="renderT()">
-      <select class="sel" id="fcat" onchange="renderT()">
-        <option>Todas</option><option>Blusas</option><option>Suéteres</option><option>Chamarras</option>
-        <option>Pantalones</option><option>Faldas</option><option>Vestidos</option><option>Shorts</option><option>Conjuntos</option>
+      <input class="sbar" type="text" placeholder="🔍 Buscar..." id="search" oninput="render()">
+      <select class="fsel" id="fcat" onchange="render()">
+        <option>Todas las categorías</option>
+        <option>Ropa Americana</option><option>Street Syndicate</option><option>Personalizaciones</option>
       </select>
-      <select class="sel" id="fvis" onchange="renderT()">
-        <option value="">Todas</option><option value="1">Visibles</option><option value="0">Ocultas</option>
+      <select class="fsel" id="fvis" onchange="render()">
+        <option value="">Todas</option><option value="true">Visibles</option><option value="false">Ocultas</option>
       </select>
-      <button class="badd" onclick="openM()">+ AGREGAR</button>
+      <button class="badd" onclick="openModal()">+ AGREGAR</button>
     </div>
-    <div class="tw">
+
+    <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Foto</th><th>#</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Tallas</th><th>Visible</th><th>Vendida</th><th>Acciones</th></tr></thead>
+        <thead><tr>
+          <th>FOTO</th><th>#</th><th>PRENDA</th><th>CATEGORÍA</th>
+          <th>PRECIO</th><th>TALLAS</th><th>VISIBLE</th><th>VENDIDA</th><th>ACCIONES</th>
+        </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div id="nr">Sin resultados</div>
-    <div class="box">
-      <div class="box-t">⚙ Configuración del sitio</div>
-      <div class="cg">
-        <div class="cf"><label>Instagram (@usuario)</label><input id="ci" placeholder="@beartrap_mx"></div>
-        <div class="cf"><label>WhatsApp (con código país)</label><input id="cw" placeholder="5215512345678"></div>
-        <div class="cf"><label>Eslogan</label><input id="cs" placeholder="Ropa que atrapa."></div>
-        <div class="cf"><label>Nueva clave de acceso</label><input type="password" id="cp" placeholder="Vacío = no cambiar" autocomplete="new-password"></div>
+    <div id="empty">Sin resultados</div>
+
+    <!-- CONFIG -->
+    <div class="cfg">
+      <div class="cfg-hdr">⚙ CONFIGURACIÓN DEL SITIO</div>
+      <div class="cgrid">
+        <div class="cf"><label>Instagram</label><input id="c-ig" placeholder="@beartrap_mx"></div>
+        <div class="cf"><label>WhatsApp (con código)</label><input id="c-wa" placeholder="5215512345678"></div>
+        <div class="cf"><label>Eslogan</label><input id="c-sl" placeholder="Ropa que atrapa."></div>
+        <div class="cf"><label>Nueva clave (opcional)</label><input type="password" id="c-pwd" autocomplete="new-password" placeholder="Dejar vacío = no cambiar"></div>
       </div>
-      <button class="bconf" onclick="saveConf()">🐻 GUARDAR CONFIGURACIÓN</button>
+      <button class="bsave-cfg" onclick="saveConfig()">GUARDAR CONFIGURACIÓN</button>
     </div>
-    <div class="box">
-      <div class="box-t">💾 Respaldo de inventario</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="bexp" onclick="exportJ()">↓ Exportar JSON</button>
-        <button class="bimp" onclick="document.getElementById('impf').click()">↑ Importar JSON</button>
-        <input type="file" id="impf" accept=".json" style="display:none" onchange="importJ(this)">
+
+    <!-- BACKUP -->
+    <div class="bkp">
+      <div class="bkp-hdr">💾 RESPALDO DE INVENTARIO</div>
+      <div style="display:flex;gap:8px">
+        <button class="bexp" onclick="exportJSON()">↓ Exportar JSON</button>
+        <button class="bimp" onclick="document.getElementById('imp').click()">↑ Importar JSON</button>
+        <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(this)">
       </div>
     </div>
   </div>
 </div>
 
-<div class="mo" id="modal">
-  <div class="mb">
-    <div class="mh"><div class="mt" id="mtitle">AGREGAR PRENDA</div><button class="mx" onclick="closeM()">✕</button></div>
+<!-- MODAL -->
+<div class="mbg" id="modal">
+  <div class="modal">
+    <div class="mhd">
+      <div class="mtitle" id="mtitle">AGREGAR PRENDA</div>
+      <button class="mcls" onclick="closeModal()">✕</button>
+    </div>
     <div class="mbody">
-      <div class="g2" style="margin-bottom:12px">
-        <div class="ff"><label>Nombre</label><input id="fn" placeholder="Ej: Blusa floral"></div>
+      <div class="fg">
+        <div class="ff"><label>Nombre</label><input id="f-n" placeholder="Blusa floral vintage"></div>
         <div class="ff"><label>Categoría</label>
-          <select id="fc"><option>Blusas</option><option>Suéteres</option><option>Chamarras</option><option>Pantalones</option><option>Faldas</option><option>Vestidos</option><option>Shorts</option><option>Conjuntos</option></select>
+          <select id="f-c"><option>Ropa Americana</option><option>Street Syndicate</option><option>Personalizaciones</option></select>
         </div>
-        <div class="ff"><label>Precio MXN</label><input type="number" id="fp" placeholder="150"></div>
-        <div class="ff"><label>Color (opcional)</label><input id="fco" placeholder="Negro, Rosa..."></div>
+        <div class="ff"><label>Precio (MXN)</label><input type="number" id="f-p" placeholder="150"></div>
+        <div class="ff"><label>Color (opcional)</label><input id="f-col" placeholder="Negro, Rosa..."></div>
       </div>
       <div class="ff" style="margin-bottom:12px">
         <label>Tallas</label>
-        <div class="tgrid">
-          <input type="checkbox" id="txs" class="tc" value="XS"><label for="txs" class="tl">XS</label>
-          <input type="checkbox" id="tss" class="tc" value="S"><label for="tss" class="tl">S</label>
-          <input type="checkbox" id="tms" class="tc" value="M"><label for="tms" class="tl">M</label>
-          <input type="checkbox" id="tls" class="tc" value="L"><label for="tls" class="tl">L</label>
-          <input type="checkbox" id="txls" class="tc" value="XL"><label for="txls" class="tl">XL</label>
-          <input type="checkbox" id="txxl" class="tc" value="XXL"><label for="txxl" class="tl">XXL</label>
-          <input type="checkbox" id="tu" class="tc" value="Única"><label for="tu" class="tl">Única</label>
+        <div class="tallas-row">
+          <input type="checkbox" id="t-xs" class="tc" value="XS"><label for="t-xs" class="tl">XS</label>
+          <input type="checkbox" id="t-s" class="tc" value="S"><label for="t-s" class="tl">S</label>
+          <input type="checkbox" id="t-m" class="tc" value="M"><label for="t-m" class="tl">M</label>
+          <input type="checkbox" id="t-l" class="tc" value="L"><label for="t-l" class="tl">L</label>
+          <input type="checkbox" id="t-xl" class="tc" value="XL"><label for="t-xl" class="tl">XL</label>
+          <input type="checkbox" id="t-xxl" class="tc" value="XXL"><label for="t-xxl" class="tl">XXL</label>
+          <input type="checkbox" id="t-u" class="tc" value="Única"><label for="t-u" class="tl">Única</label>
         </div>
       </div>
-      <div class="ff" style="margin-bottom:8px"><label>Foto de la prenda</label><input type="file" id="fph" accept="image/*" onchange="prevFoto(this)"></div>
-      <div id="fpw" style="display:none;margin-bottom:12px"><img id="fpi" class="pimg" src="" alt=""></div>
-      <button class="bsave" onclick="saveItem()">GUARDAR PRENDA</button>
+      <div class="ff fg one" style="margin-bottom:8px">
+        <label>Foto de la prenda</label>
+        <input type="file" id="f-foto" accept="image/*" onchange="prevFoto(this)">
+      </div>
+      <img id="f-prev" class="prev-img" src="" style="display:none">
+      <button class="msave" onclick="saveItem()">GUARDAR PRENDA</button>
     </div>
   </div>
 </div>
@@ -206,71 +295,176 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div id="toast"></div>
 
 <script>
-const FB="https://bear-trap-bazar-default-rtdb.firebaseio.com";
-const DEFAULT_HASH="ebc5e3a0873ab378661bcd01f28f5da920b6a6775d0453eb47c94405c22e3a34";
-const TALLAS=["XS","S","M","L","XL","XXL","Única"];
-const TIDS={XS:"txs",S:"tss",M:"tms",L:"tls",XL:"txls",XXL:"txxl","Única":"tu"};
-let items=[],editIdx=null,cfg={ig:"@beartrap_mx",wa:"5215512345678",slogan:"Ropa que atrapa."},session=false,lockUntil=0,attempts=0,sTimer;
-async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");}
+const FB = "https://bear-trap-bazar-default-rtdb.firebaseio.com";
+const H0 = "ebc5e3a0873ab378661bcd01f28f5da920b6a6775d0453eb47c94405c22e3a34";
+const TALLAS = ["XS","S","M","L","XL","XXL","Única"];
+const TIDS = {"XS":"t-xs","S":"t-s","M":"t-m","L":"t-l","XL":"t-xl","XXL":"t-xxl","Única":"t-u"};
+
+let items = [], cfg = {ig:"@beartrap_mx",wa:"5215512345678",slogan:"Ropa que atrapa."};
+let editIdx = null, session=false, lock=0, tries=0, timer;
+
+// AUTH
+async function h(s){const e=new TextEncoder(),b=await crypto.subtle.digest("SHA-256",e.encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}
 async function doLogin(){
-  const now=Date.now();
-  if(now<lockUntil){document.getElementById("lerr").textContent=`Bloqueado ${Math.ceil((lockUntil-now)/1000)}s`;return;}
-  const val=document.getElementById("pwd").value;if(!val)return;
-  const h=await sha(val);const stored=localStorage.getItem("bt_pwh")||DEFAULT_HASH;
-  if(h===stored){attempts=0;document.getElementById("ls").style.display="none";document.getElementById("as").style.display="block";session=true;startTimer();initAdmin();}
-  else{attempts++;if(attempts>=5){lockUntil=Date.now()+120000;attempts=0;document.getElementById("lerr").textContent="Bloqueado 2 minutos";}else document.getElementById("lerr").textContent=`Clave incorrecta (${attempts}/5)`;document.getElementById("pwd").value="";}
+  if(Date.now()<lock){document.getElementById("lerr").textContent=`Bloqueado ${Math.ceil((lock-Date.now())/1000)}s`;return}
+  const v=document.getElementById("pwd").value;if(!v)return;
+  const hv=await h(v),hs=localStorage.getItem("bt_pwh")||H0;
+  if(hv===hs){tries=0;document.getElementById("login").style.display="none";document.getElementById("admin").style.display="block";session=true;resetTimer();initAdmin();}
+  else{tries++;if(tries>=5){lock=Date.now()+120000;tries=0;document.getElementById("lerr").textContent="Bloqueado 2 min";}else document.getElementById("lerr").textContent=`Incorrecto (${tries}/5)`;document.getElementById("pwd").value="";}
 }
-function doLogout(){session=false;clearTimeout(sTimer);document.getElementById("as").style.display="none";document.getElementById("ls").style.display="flex";document.getElementById("pwd").value="";document.getElementById("lerr").textContent="";}
-function startTimer(){clearTimeout(sTimer);sTimer=setTimeout(doLogout,30*60*1000);}
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!session)doLogin();if(session){clearTimeout(sTimer);startTimer();}});
-function setStatus(type,text){const sb=document.getElementById("sb");sb.className=type;document.getElementById("dot").className="dot d-"+type;document.getElementById("sbt").textContent=text;}
-async function fbGet(p){const r=await fetch(`${FB}/${p}.json`,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}
-async function fbPut(p,d){const r=await fetch(`${FB}/${p}.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}
+function doLogout(){session=false;clearTimeout(timer);document.getElementById("admin").style.display="none";document.getElementById("login").style.display="flex";document.getElementById("pwd").value="";document.getElementById("lerr").textContent="";}
+function resetTimer(){clearTimeout(timer);timer=setTimeout(doLogout,30*60*1000)}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!session)doLogin();if(session)resetTimer();});
+
+// STATUS
+function setStatus(type,text){const b=document.getElementById("sb"),d=document.getElementById("sd"),t=document.getElementById("stxt");b.className=type;d.className="dot d"+type;t.textContent=text;}
+
+// FIREBASE
+async function fbGet(p){const r=await fetch(`${FB}/${p}.json`,{cache:"no-store"});if(!r.ok)throw Error(r.status);return r.json();}
+async function fbSet(p,d){const r=await fetch(`${FB}/${p}.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});if(!r.ok)throw Error(r.status);}
+
+// INIT
 async function initAdmin(){
-  setStatus("ld","Conectando a Firebase...");
-  try{const raw=await fbGet("items");if(raw&&typeof raw==="object"){items=Array.isArray(raw)?raw.filter(Boolean):Object.values(raw).filter(Boolean);}else items=[];const rc=await fbGet("config");if(rc){cfg={...cfg,...rc};applyConf();}setStatus("ok",`Firebase conectado ✓  ·  ${items.length} prendas`);updateStats();renderT();}
-  catch(e){setStatus("er","Sin Firebase — "+e.message);const ls=localStorage.getItem("bt_items");if(ls){items=JSON.parse(ls);setStatus("er",`Sin Firebase · ${items.length} locales`);}updateStats();renderT();}
+  setStatus("loading","Conectando a Firebase...");
+  try{
+    const raw=await fbGet("items");
+    if(raw)items=(Array.isArray(raw)?raw:Object.values(raw)).filter(Boolean);
+    const c=await fbGet("config");
+    if(c){cfg={...cfg,...c};applyConfig();}
+    setStatus("ok",`Firebase conectado ✓  •  ${items.length} prendas`);
+  }catch(e){
+    setStatus("err","Sin Firebase — cargando local");
+    const s=localStorage.getItem("bt_items");
+    if(s)items=JSON.parse(s);
+  }
+  updateStats();render();
 }
-function applyConf(){document.getElementById("ci").value=cfg.ig||"";document.getElementById("cw").value=cfg.wa||"";document.getElementById("cs").value=cfg.slogan||"";}
-function updateStats(){document.getElementById("st").textContent=items.length;document.getElementById("sv").textContent=items.filter(i=>i.visible!==false).length;document.getElementById("ss").textContent=items.filter(i=>i.vendida).length;const avg=items.length?Math.round(items.reduce((a,i)=>a+(+i.precio||0),0)/items.length):0;document.getElementById("sa").textContent="$"+avg;}
-function renderT(){
-  const q=document.getElementById("q").value.toLowerCase();const cat=document.getElementById("fcat").value;const vis=document.getElementById("fvis").value;
-  const filt=items.filter(i=>{if(q&&!i.nombre.toLowerCase().includes(q))return false;if(cat!=="Todas"&&i.categoria!==cat)return false;if(vis==="1"&&i.visible===false)return false;if(vis==="0"&&i.visible!==false)return false;return true;});
-  document.getElementById("nr").style.display=filt.length?"none":"block";
-  document.getElementById("tbody").innerHTML=filt.map(item=>{const idx=items.indexOf(item);const img=item.foto?`<img class="ti" src="${item.foto}" loading="lazy" onerror="this.style.display='none'">`:`<div class="tp">🐻</div>`;return`<tr><td>${img}</td><td style="color:var(--m)">${idx+1}</td><td><strong>${item.nombre}</strong>${item.vendida?` <span class="bsold">VENDIDA</span>`:""}</td><td style="color:var(--m)">${item.categoria||""}</td><td style="color:var(--g)">$${item.precio}</td><td style="color:var(--m);font-size:11px">${(item.tallas||[]).join(", ")}</td><td><label class="sw"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${idx},this.checked)"><div class="st"></div><div class="sh"></div></label></td><td><label class="sw"><input type="checkbox" ${item.vendida?"checked":""} onchange="toggleS(${idx},this.checked)"><div class="st"></div><div class="sh"></div></label></td><td style="display:flex;gap:6px"><button class="ab" onclick="openM(${idx})">✏ Editar</button><button class="ab del" onclick="delItem(${idx})">🗑</button></td></tr>`;}).join("");
+
+function applyConfig(){document.getElementById("c-ig").value=cfg.ig||"";document.getElementById("c-wa").value=cfg.wa||"";document.getElementById("c-sl").value=cfg.slogan||"";}
+function updateStats(){
+  document.getElementById("st").textContent=items.length;
+  document.getElementById("sv").textContent=items.filter(i=>i.visible!==false).length;
+  document.getElementById("ss").textContent=items.filter(i=>i.vendida).length;
+  const avg=items.length?Math.round(items.reduce((a,i)=>a+(+i.precio||0),0)/items.length):0;
+  document.getElementById("sp").textContent="$"+avg;
 }
+
+// TABLE
+function render(){
+  const q=document.getElementById("search").value.toLowerCase();
+  const cat=document.getElementById("fcat").value;
+  const vis=document.getElementById("fvis").value;
+  let f=items.filter(i=>{
+    if(q&&!i.nombre.toLowerCase().includes(q))return false;
+    if(cat!=="Todas las categorías"&&i.categoria!==cat)return false;
+    if(vis!==""&&String(i.visible!==false)!==vis)return false;
+    return true;
+  });
+  document.getElementById("empty").style.display=f.length?"none":"block";
+  document.getElementById("tbody").innerHTML=f.map(item=>{
+    const ri=items.indexOf(item);
+    const img=item.foto?`<img class="timg" src="${item.foto}" loading="lazy" onerror="this.style.display='none'">`:`<div class="tph">🐻</div>`;
+    const tallas=(item.tallas||[]).join(", ");
+    return`<tr>
+      <td>${img}</td>
+      <td style="color:var(--muted)">${ri+1}</td>
+      <td><strong>${item.nombre}</strong>${item.vendida?`<span class="sold-badge">VENDIDA</span>`:""}</td>
+      <td style="color:var(--muted)">${item.categoria||""}</td>
+      <td style="color:var(--gold);font-family:Bebas Neue,sans-serif;font-size:18px">$${item.precio}</td>
+      <td style="color:var(--muted);font-size:11px">${tallas}</td>
+      <td><label class="sw"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${ri},this.checked)"><div class="sw-track"></div><div class="sw-thumb"></div></label></td>
+      <td><label class="sw"><input type="checkbox" ${item.vendida?"checked":""} onchange="toggleS(${ri},this.checked)"><div class="sw-track"></div><div class="sw-thumb"></div></label></td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="abtn" onclick="openModal(${ri})">✏ Editar</button>
+        <button class="abtn adel" onclick="del(${ri})">🗑</button>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
 async function toggleV(i,v){items[i].visible=v;await save();updateStats();toast("Visibilidad actualizada");}
-async function toggleS(i,v){items[i].vendida=v;await save();updateStats();toast(v?"Marcada vendida":"Disponible");}
-async function delItem(i){if(!confirm(`¿Borrar "${items[i].nombre}"?`))return;items.splice(i,1);await save();updateStats();renderT();toast("Eliminada");}
-function openM(idx){
-  editIdx=(idx!==undefined)?idx:null;
+async function toggleS(i,v){items[i].vendida=v;await save();updateStats();toast(v?"Marcada como vendida":"Disponible");}
+async function del(i){if(!confirm(`¿Borrar "${items[i].nombre}"?`))return;items.splice(i,1);await save();updateStats();render();toast("Eliminada");}
+
+// MODAL
+function openModal(idx){
+  editIdx=idx!==undefined?idx:null;
   document.getElementById("mtitle").textContent=editIdx!==null?"EDITAR PRENDA":"AGREGAR PRENDA";
   TALLAS.forEach(t=>{const el=document.getElementById(TIDS[t]);if(el)el.checked=false;});
-  ["fn","fc","fp","fco"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("fc").value="Blusas";document.getElementById("fpw").style.display="none";document.getElementById("fph").value="";
-  if(editIdx!==null){const it=items[editIdx];document.getElementById("fn").value=it.nombre||"";document.getElementById("fc").value=it.categoria||"Blusas";document.getElementById("fp").value=it.precio||"";document.getElementById("fco").value=it.color||"";(it.tallas||[]).forEach(t=>{const el=document.getElementById(TIDS[t]);if(el)el.checked=true;});if(it.foto){document.getElementById("fpi").src=it.foto;document.getElementById("fpw").style.display="block";}}
+  ["f-n","f-col"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f-p").value="";
+  document.getElementById("f-c").value="Ropa Americana";
+  document.getElementById("f-prev").style.display="none";
+  if(editIdx!==null){
+    const it=items[editIdx];
+    document.getElementById("f-n").value=it.nombre||"";
+    document.getElementById("f-c").value=it.categoria||"Ropa Americana";
+    document.getElementById("f-p").value=it.precio||"";
+    document.getElementById("f-col").value=it.color||"";
+    (it.tallas||[]).forEach(t=>{const el=document.getElementById(TIDS[t]);if(el)el.checked=true;});
+    if(it.foto){document.getElementById("f-prev").src=it.foto;document.getElementById("f-prev").style.display="block";}
+  }
   document.getElementById("modal").classList.add("open");
 }
-function closeM(){document.getElementById("modal").classList.remove("open");editIdx=null;}
-function prevFoto(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{document.getElementById("fpi").src=e.target.result;document.getElementById("fpw").style.display="block";};r.readAsDataURL(f);}
+function closeModal(){document.getElementById("modal").classList.remove("open");editIdx=null;}
+function prevFoto(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{document.getElementById("f-prev").src=e.target.result;document.getElementById("f-prev").style.display="block";};r.readAsDataURL(f);}
+
 async function saveItem(){
-  const nombre=document.getElementById("fn").value.trim();if(!nombre){alert("Escribe el nombre");return;}
+  const nombre=document.getElementById("f-n").value.trim();
+  if(!nombre){alert("Escribe el nombre");return;}
   const tallas=TALLAS.filter(t=>{const el=document.getElementById(TIDS[t]);return el&&el.checked;});
-  const fi=document.getElementById("fph");let foto=editIdx!==null?(items[editIdx].foto||""):"";
-  if(fi.files[0])foto=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(fi.files[0]);});
-  const item={id:editIdx!==null?(items[editIdx].id||`i${Date.now()}`):`i${Date.now()}`,nombre,categoria:document.getElementById("fc").value,precio:parseInt(document.getElementById("fp").value)||0,color:document.getElementById("fco").value.trim(),tallas,foto,visible:true,vendida:editIdx!==null?(items[editIdx].vendida||false):false,orden:editIdx!==null?(items[editIdx].orden||0):items.length+1};
+  const fi=document.getElementById("f-foto");
+  let foto=editIdx!==null?(items[editIdx].foto||""):"";
+  if(fi.files[0])foto=await new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result);rd.readAsDataURL(fi.files[0]);});
+  const item={
+    id:editIdx!==null?(items[editIdx].id||`item_${Date.now()}`):(`item_${Date.now()}`),
+    nombre,categoria:document.getElementById("f-c").value,
+    precio:parseInt(document.getElementById("f-p").value)||0,
+    color:document.getElementById("f-col").value.trim(),
+    tallas,foto,
+    visible:editIdx!==null?(items[editIdx].visible!==false):true,
+    vendida:editIdx!==null?(items[editIdx].vendida||false):false,
+    orden:editIdx!==null?(items[editIdx].orden||0):items.length+1
+  };
   if(editIdx!==null)items[editIdx]=item;else items.push(item);
-  await save();updateStats();renderT();closeM();toast(editIdx!==null?"Prenda actualizada ✓":"Prenda agregada ✓");
+  await save();updateStats();render();closeModal();
+  toast(editIdx!==null?"Prenda actualizada ✓":"Prenda agregada ✓");
 }
-async function save(){localStorage.setItem("bt_items",JSON.stringify(items));try{await fbPut("items",items);}catch(e){setStatus("er","Sin Firebase — guardado local");}}
-async function saveConf(){
-  const np=document.getElementById("cp").value.trim();cfg.ig=document.getElementById("ci").value.trim();cfg.wa=document.getElementById("cw").value.trim();cfg.slogan=document.getElementById("cs").value.trim();
-  if(np){const h=await sha(np);localStorage.setItem("bt_pwh",h);document.getElementById("cp").value="";toast("Clave actualizada ✓");}
-  try{await fbPut("config",cfg);}catch(e){}localStorage.setItem("bt_cfg",JSON.stringify(cfg));toast("Configuración guardada ✓");
+
+// SAVE
+async function save(){
+  localStorage.setItem("bt_items",JSON.stringify(items));
+  try{await fbSet("items",items);}
+  catch(e){setStatus("err","Error guardando en Firebase");}
 }
-function exportJ(){const b=new Blob([JSON.stringify({items,config:cfg},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`beartrap-${new Date().toISOString().slice(0,10)}.json`;a.click();toast("Exportado ✓");}
-function importJ(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=async e=>{try{const d=JSON.parse(e.target.result);if(d.items){items=d.items;if(d.config){cfg={...cfg,...d.config};applyConf();}await save();updateStats();renderT();toast(`Importado ✓  ${items.length} prendas`);}}catch(err){alert("Archivo inválido");}};r.readAsText(f);}
-function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
+
+// CONFIG
+async function saveConfig(){
+  const np=document.getElementById("c-pwd").value.trim();
+  cfg.ig=document.getElementById("c-ig").value.trim();
+  cfg.wa=document.getElementById("c-wa").value.trim();
+  cfg.slogan=document.getElementById("c-sl").value.trim();
+  if(np){const hsh=await h(np);localStorage.setItem("bt_pwh",hsh);document.getElementById("c-pwd").value="";toast("Clave actualizada ✓");}
+  try{await fbSet("config",cfg);}catch(e){}
+  localStorage.setItem("bt_cfg",JSON.stringify(cfg));
+  toast("Configuración guardada ✓");
+}
+
+// BACKUP
+function exportJSON(){
+  const b=new Blob([JSON.stringify({items,config:cfg},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);
+  a.download=`beartrap-${new Date().toISOString().slice(0,10)}.json`;a.click();
+  toast("Exportado ✓");
+}
+function importJSON(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=async e=>{try{const d=JSON.parse(e.target.result);if(d.items){items=d.items;if(d.config){cfg={...cfg,...d.config};applyConfig();}await save();updateStats();render();toast("Importado ✓ "+items.length+" prendas");}else alert("Archivo inválido");}catch{alert("Error al leer el archivo");}};
+  r.readAsText(f);
+}
+
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);}
 </script>
 </body>
 </html>
