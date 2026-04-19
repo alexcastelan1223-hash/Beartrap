@@ -4,416 +4,702 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bear Trap — Ropa que atrapa.</title>
-<meta name="description" content="Bear Trap — Piezas únicas de ropa americana. Catálogo oficial.">
+<meta name="description" content="Bear Trap — Ropa americana, piezas únicas en México.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0a0a;--surface:#141414;--card:#1a1a1a;--border:#2a2a2a;
-  --text:#f0f0f0;--muted:#888;
-  --gold:#ffd600;--cyan:#00c8ff;--pink:#ff2d78;--purple:#b24bff;
-  --grad:linear-gradient(135deg,#ff6b35,#ffd600,#00ff87,#00c8ff,#b24bff);
+  --bg:#070708;
+  --card:#111113;
+  --border:#1e1e22;
+  --text:#f5f5f5;
+  --muted:#777;
+  --orange:#ff8c00;
+  --yellow:#ffc400;
+  --green:#25d366;
+  --wa-dark:#128c7e;
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:"DM Mono",monospace;cursor:none;overflow-x:hidden}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"DM Mono",monospace;
+  cursor:none;
+  overflow-x:hidden;
+}
 
 /* ── CURSOR ── */
-#cursor{
-  position:fixed;top:0;left:0;width:20px;height:20px;
-  border-radius:50%;pointer-events:none;z-index:99999;
-  background:conic-gradient(#ff6b35,#ffd600,#00ff87,#00c8ff,#b24bff,#ff2d78,#ff6b35);
+#cur{
+  position:fixed;
+  width:22px;height:22px;
+  border-radius:50%;
+  border:2px solid rgba(255,140,0,.8);
+  pointer-events:none;
+  z-index:99999;
   transform:translate(-50%,-50%);
-  transition:transform .1s ease,width .2s,height .2s;
-  mix-blend-mode:difference;
+  transition:transform .08s ease, width .15s, height .15s, border-color .15s;
+  mix-blend-mode:normal;
 }
-#cursor.big{width:40px;height:40px}
-
-/* ── STRIPE ── */
-.stripe{height:4px;background:var(--grad);background-size:200% 100%;animation:stripe 3s linear infinite}
-@keyframes stripe{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+#cur.hover{width:38px;height:38px;border-color:var(--yellow);background:rgba(255,196,0,.08)}
 
 /* ── NAV ── */
 nav{
-  position:sticky;top:0;z-index:999;
-  background:rgba(10,10,10,.92);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:900;
+  background:rgba(7,7,8,.93);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.06);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;height:56px;
+  padding:0 28px;height:58px;
 }
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-bear{width:32px;height:32px}
-.nav-logo-text{font-family:"Unbounded",sans-serif;font-size:14px;font-weight:900;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-size:200% 100%;animation:stripe 3s linear infinite}
-.nav-links{display:flex;align-items:center;gap:12px}
-.nav-ig{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.08em;text-decoration:none;transition:all .2s;background:linear-gradient(135deg,#ff2d78,#b24bff);color:#fff}
-.nav-wa{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.08em;text-decoration:none;transition:all .2s;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff}
-.nav-ig:hover,.nav-wa:hover{transform:scale(1.05);opacity:.9}
-.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);opacity:.3;cursor:pointer;transition:opacity .2s}
-.nav-dot:hover{opacity:.8}
+.nav-logo-box{
+  border:1px solid rgba(255,140,0,.35);
+  border-radius:3px;
+  padding:5px 10px;
+  display:flex;align-items:center;gap:8px;
+  text-decoration:none;
+}
+.nav-logo-text{
+  display:flex;flex-direction:column;line-height:1;
+  font-family:"Unbounded",sans-serif;font-size:11px;font-weight:700;color:#fff;
+  letter-spacing:.06em;
+}
+.nav-logo-text span{font-size:8px;letter-spacing:.15em;color:var(--orange);margin-top:1px}
+.nav-bear-icon{width:28px;height:28px}
+
+.nav-links{
+  display:flex;align-items:center;gap:32px;
+  position:absolute;left:50%;transform:translateX(-50%);
+}
+.nav-link{
+  font-family:"DM Mono",monospace;font-size:11px;font-weight:500;
+  letter-spacing:.12em;color:#aaa;text-decoration:none;text-transform:uppercase;
+  padding-bottom:4px;border-bottom:2px solid transparent;transition:all .2s;
+}
+.nav-link.active{color:#fff;border-bottom-color:var(--orange)}
+.nav-link:hover{color:#fff}
+
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-social{
+  display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.1em;
+  text-decoration:none;color:#aaa;transition:color .2s;text-transform:uppercase;
+}
+.nav-social:hover{color:#fff}
+.nav-social svg{width:14px;height:14px;fill:currentColor}
+.nav-sep{width:1px;height:16px;background:var(--border)}
+.nav-admin{
+  width:7px;height:7px;border-radius:50%;
+  background:transparent;border:1px solid #333;
+  cursor:pointer;transition:border-color .2s;
+}
+.nav-admin:hover{border-color:#666}
 
 /* ── HERO ── */
 .hero{
-  min-height:92vh;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;text-align:center;padding:60px 24px;
-  position:relative;overflow:hidden;
+  position:relative;
+  min-height:calc(100vh - 58px);
+  display:flex;align-items:center;
+  overflow:hidden;
 }
+/* Background glows */
 .hero::before{
   content:"";position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(255,107,53,.08),transparent 70%),
-             radial-gradient(ellipse 60% 40% at 80% 60%,rgba(0,200,255,.06),transparent 60%);
+  background:
+    radial-gradient(ellipse 55% 70% at 10% 80%, rgba(180,80,0,.55) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 25% 100%, rgba(100,40,0,.4) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(60,20,100,.6) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 90% 60%, rgba(0,80,120,.5) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 30% at 70% 80%, rgba(0,60,80,.3) 0%, transparent 50%);
+  z-index:0;
 }
-.hero-badge{
-  display:inline-block;padding:4px 16px;border-radius:20px;
-  border:1px solid rgba(255,214,0,.3);color:var(--gold);
-  font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:24px;
+
+.hero-left{
+  position:relative;z-index:1;
+  padding:80px 0 80px 60px;
+  flex:0 0 55%;
 }
-.hero-title{
+.hero-right{
+  position:relative;z-index:1;
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding-right:40px;
+}
+
+/* Title */
+.hero-bear-text{
   font-family:"Bebas Neue",sans-serif;
-  font-size:clamp(80px,14vw,180px);line-height:.9;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-size:300% 100%;animation:stripe 4s linear infinite;
-  margin-bottom:16px;
-}
-.hero-sub{color:var(--muted);font-size:13px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:40px}
-.hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
-.btn-hero-primary{
-  padding:14px 36px;border-radius:2px;border:none;cursor:none;
-  font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.1em;
-  background:var(--gold);color:#000;transition:all .2s;text-decoration:none;
-}
-.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,214,0,.3)}
-.btn-hero-secondary{
-  padding:14px 36px;border-radius:2px;
-  border:1px solid rgba(37,211,102,.4);color:#25d366;
-  font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.1em;
-  background:transparent;transition:all .2s;text-decoration:none;cursor:none;
-}
-.btn-hero-secondary:hover{background:rgba(37,211,102,.1);transform:translateY(-2px)}
-
-/* ── BEAR SVG HERO ── */
-.hero-bear{margin-bottom:32px;animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-
-/* ── SECTIONS ── */
-.section{padding:80px 24px;max-width:1400px;margin:0 auto}
-.section-title{
-  font-family:"Bebas Neue",sans-serif;font-size:clamp(36px,5vw,60px);
-  letter-spacing:.04em;margin-bottom:8px;
-}
-.section-line{
-  height:2px;width:60px;margin-bottom:40px;
-  background:var(--grad);background-size:200% 100%;animation:stripe 3s linear infinite;
+  font-size:clamp(100px,12vw,160px);
+  line-height:.88;
+  background:linear-gradient(160deg,#ffdd00 0%,#ff9000 40%,#ff5500 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  display:block;
+  margin-bottom:0;
 }
 
-/* ── FILTERS ── */
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
-.filter-btn{
-  padding:6px 16px;border-radius:20px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);font-size:11px;letter-spacing:.08em;
-  cursor:none;transition:all .2s;font-family:"DM Mono",monospace;
+.hero-slogan{
+  margin-top:18px;
+  font-size:17px;
+  font-style:italic;
+  color:#ccc;
+  font-family:sans-serif;
+  font-weight:400;
 }
-.filter-btn.active,.filter-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,214,0,.06)}
+.hero-slogan strong{color:var(--orange);font-style:italic}
 
-/* ── GRID ── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+/* Rainbow stripe */
+.rainbow-stripe{
+  display:flex;gap:4px;margin-top:20px;margin-bottom:28px;
+}
+.rs{height:5px;border-radius:3px}
 
-/* ── CARD ── */
+/* Buttons */
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-catalog{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  color:#000;font-weight:700;
+  font-family:"DM Mono",monospace;font-size:13px;letter-spacing:.06em;
+  border-radius:3px;text-decoration:none;border:none;cursor:none;
+  transition:all .2s;
+}
+.btn-catalog:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,140,0,.35)}
+.btn-whatsapp{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;
+  background:transparent;
+  color:#ddd;font-family:"DM Mono",monospace;font-size:13px;letter-spacing:.06em;
+  border:1px solid rgba(255,255,255,.25);border-radius:3px;
+  text-decoration:none;cursor:none;transition:all .2s;
+}
+.btn-whatsapp:hover{border-color:var(--green);color:var(--green)}
+.btn-whatsapp svg{width:16px;height:16px;fill:currentColor}
+
+/* ── 3D BEAR SVG ── */
+.bear-container{
+  position:relative;
+  width:360px;height:360px;
+  animation:float 5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* Bear glow */
+.bear-glow{
+  position:absolute;
+  width:280px;height:280px;
+  border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(120,60,180,.4) 0%,rgba(0,120,180,.3) 40%,transparent 70%);
+  filter:blur(20px);
+}
+
+/* Sparkles */
+.spark{position:absolute;pointer-events:none}
+.spark-star{font-size:20px;animation:sparkle 3s ease-in-out infinite}
+.spark-dot{border-radius:50%;animation:sparkle 3s ease-in-out infinite}
+@keyframes sparkle{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.15)}}
+
+/* ── CATALOG ── */
+.section{padding:80px 0;max-width:1400px;margin:0 auto;padding-left:32px;padding-right:32px}
+.section-header{margin-bottom:40px}
+.section-label{font-size:10px;letter-spacing:.2em;color:var(--orange);text-transform:uppercase;margin-bottom:8px}
+.section-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(32px,4vw,52px);letter-spacing:.04em;color:#fff}
+.section-line{height:2px;width:50px;background:linear-gradient(90deg,var(--orange),var(--yellow));margin-top:10px}
+
+/* Filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.filt{
+  padding:6px 18px;border-radius:20px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.08em;
+  cursor:none;transition:all .2s;
+}
+.filt.on,.filt:hover{border-color:var(--orange);color:var(--orange);background:rgba(255,140,0,.07)}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+
+/* Card */
 .card{
-  background:var(--card);border:1px solid var(--border);border-radius:4px;
-  overflow:hidden;transition:all .25s;cursor:none;position:relative;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;
+  transition:all .22s;cursor:none;position:relative;
 }
-.card:hover{border-color:rgba(255,214,0,.3);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.4)}
-.card-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#222}
-.card-img-placeholder{width:100%;aspect-ratio:3/4;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);display:flex;align-items:center;justify-content:center;font-size:40px}
+.card:hover{border-color:rgba(255,140,0,.3);transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.5)}
+.card-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#1a1a1a}
+.card-ph{
+  width:100%;aspect-ratio:3/4;
+  background:linear-gradient(145deg,#161618,#1e1e22);
+  display:flex;align-items:center;justify-content:center;font-size:48px;
+}
 .card-body{padding:12px}
-.card-cat{font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
-.card-name{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.04em;line-height:1.1;margin-bottom:8px}
-.card-price{font-size:20px;font-weight:700;color:var(--gold);margin-bottom:10px}
-.card-tallas{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
-.talla{padding:2px 8px;border:1px solid var(--border);border-radius:2px;font-size:10px;color:var(--muted)}
-.btn-wa{
-  width:100%;padding:9px;border-radius:2px;border:none;
-  background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;
-  font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:.08em;
-  cursor:none;transition:opacity .2s;
+.card-cat{font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+.card-name{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.03em;line-height:1.1;margin-bottom:8px}
+.card-price{font-size:22px;font-weight:700;color:var(--yellow);margin-bottom:9px}
+.card-sizes{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.sz{padding:2px 7px;border:1px solid var(--border);border-radius:2px;font-size:9px;color:var(--muted)}
+.btn-consult{
+  width:100%;padding:9px;border:none;border-radius:2px;
+  background:linear-gradient(135deg,var(--green),var(--wa-dark));
+  color:#fff;font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:.08em;
+  cursor:none;transition:opacity .18s;
 }
-.btn-wa:hover{opacity:.88}
-.badge-sold{
+.btn-consult:hover{opacity:.86}
+.sold-badge{
   position:absolute;top:10px;right:10px;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  color:#fff;font-family:"Bebas Neue",sans-serif;font-size:14px;
-  letter-spacing:.1em;padding:3px 10px;border-radius:2px;
+  background:linear-gradient(135deg,#ff2d78,#b24bff);
+  color:#fff;font-family:"Bebas Neue",sans-serif;font-size:13px;letter-spacing:.1em;
+  padding:3px 10px;border-radius:2px;
 }
 
-/* ── LOADING ── */
+/* Loading */
 #loading{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:80px;gap:16px;color:var(--muted);font-size:12px;letter-spacing:.1em;
+  gap:14px;padding:100px 0;color:var(--muted);font-size:12px;letter-spacing:.1em;
 }
-.spin{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--gold);animation:spin 1s linear infinite}
+.spin{
+  width:30px;height:30px;border-radius:50%;
+  border:2px solid var(--border);border-top-color:var(--orange);
+  animation:spin 1s linear infinite;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── EMPTY ── */
-#empty{display:none;padding:80px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:.1em}
+#empty{display:none;text-align:center;padding:80px;color:var(--muted);font-size:12px;letter-spacing:.1em}
 
 /* ── FLOAT BUTTONS ── */
-.float-btns{position:fixed;bottom:24px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:100}
-.float-btn{
-  width:48px;height:48px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-size:22px;text-decoration:none;
-  transition:transform .2s;box-shadow:0 4px 16px rgba(0,0,0,.4);
+.floats{position:fixed;bottom:22px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:500}
+.float-pill{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 18px;border-radius:30px;
+  font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-decoration:none;transition:transform .2s;
+  box-shadow:0 4px 18px rgba(0,0,0,.45);
 }
-.float-btn:hover{transform:scale(1.12)}
-.float-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
-.float-wa{background:linear-gradient(135deg,#25d366,#128c7e)}
+.float-pill:hover{transform:scale(1.06)}
+.fp-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.fp-wa{background:linear-gradient(135deg,var(--green),var(--wa-dark));color:#fff}
+.float-pill svg{width:16px;height:16px;fill:currentColor}
 
 /* ── FOOTER ── */
-footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;color:var(--muted);font-size:11px;letter-spacing:.1em}
+footer{
+  border-top:1px solid var(--border);
+  padding:28px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-logo{
+  font-family:"Unbounded",sans-serif;font-size:12px;font-weight:700;
+  background:linear-gradient(135deg,#ffdd00,#ff9000,#ff5500);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.footer-info{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:#fff}
 
-/* ── RESPONSIVE ── */
-@media(max-width:600px){
+@media(max-width:768px){
+  .hero-left{padding:60px 24px}
+  .hero{flex-direction:column}
+  .hero-right{padding:0 24px 60px}
+  .bear-container{width:260px;height:260px}
+  .nav-links{display:none}
   .grid{grid-template-columns:repeat(2,1fr);gap:10px}
-  nav{padding:0 16px}
-  .nav-ig,.nav-wa{padding:5px 10px;font-size:10px}
+  .section{padding:60px 20px}
 }
 </style>
 </head>
 <body>
 
 <!-- CURSOR -->
-<div id="cursor"></div>
-
-<!-- STRIPE -->
-<div class="stripe"></div>
+<div id="cur"></div>
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="/">
-    <svg class="nav-logo-bear" viewBox="0 0 40 40" fill="none">
-      <rect x="6" y="10" width="28" height="24" rx="8" fill="url(#bg)"/>
-      <circle cx="13" cy="8" r="5" fill="url(#bg)"/>
-      <circle cx="27" cy="8" r="5" fill="url(#bg)"/>
-      <circle cx="15" cy="20" r="2.5" fill="#1a1a1a"/>
-      <circle cx="25" cy="20" r="2.5" fill="#1a1a1a"/>
-      <ellipse cx="20" cy="26" rx="4" ry="2.5" fill="#1a1a1a" opacity=".5"/>
-      <circle cx="20" cy="25" r="2" fill="#1a1a1a"/>
-      <defs><linearGradient id="bg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ff6b35"/>
-        <stop offset="50%" stop-color="#ffd600"/>
-        <stop offset="100%" stop-color="#00ff87"/>
-      </linearGradient></defs>
+  <a class="nav-logo-box" href="/" id="nav-home">
+    <!-- Logo SVG - exact Bear Trap logo -->
+    <svg class="nav-bear-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ff6b35"/>
+          <stop offset="40%" stop-color="#ffcc00"/>
+          <stop offset="80%" stop-color="#00e87a"/>
+          <stop offset="100%" stop-color="#00c8ff"/>
+        </linearGradient>
+      </defs>
+      <!-- ears -->
+      <circle cx="12" cy="10" r="6" fill="url(#lg1)"/>
+      <circle cx="28" cy="10" r="6" fill="url(#lg1)"/>
+      <!-- head -->
+      <rect x="5" y="10" width="30" height="24" rx="9" fill="url(#lg1)"/>
+      <!-- eyes -->
+      <circle cx="15" cy="21" r="3" fill="#111"/>
+      <circle cx="25" cy="21" r="3" fill="#111"/>
+      <circle cx="16" cy="20" r="1" fill="#fff" opacity=".6"/>
+      <circle cx="26" cy="20" r="1" fill="#fff" opacity=".6"/>
+      <!-- nose -->
+      <ellipse cx="20" cy="27" rx="3.5" ry="2.5" fill="#111" opacity=".7"/>
+      <circle cx="20" cy="27" r="2" fill="#1a1a1a"/>
+      <!-- triangles bottom -->
+      <polygon points="6,34 10,27 14,34" fill="#ff2d78" opacity=".9"/>
+      <polygon points="14,34 18,27 22,34" fill="#ffd600" opacity=".9"/>
+      <polygon points="22,34 26,27 30,34" fill="#00ff87" opacity=".9"/>
+      <polygon points="30,34 34,27 38,34" fill="#00c8ff" opacity=".9"/>
     </svg>
-    <span class="nav-logo-text">BEAR TRAP</span>
+    <div class="nav-logo-text">
+      BEAR<br>TRAP
+      <span></span>
+    </div>
   </a>
+
   <div class="nav-links">
-    <a id="nav-ig" href="#" class="nav-ig" target="_blank">IG</a>
-    <a id="nav-wa" href="#" class="nav-wa" target="_blank">WhatsApp</a>
-    <div class="nav-dot" onclick="location.href='/gestion/'" title="Admin"></div>
+    <a class="nav-link active" href="#ropa-americana" onclick="filterCat('Todas',this)">ROPA AMERICANA</a>
+    <a class="nav-link" href="#street" onclick="filterCat('Conjuntos',this)">STREET SYNDICATE</a>
+    <a class="nav-link" href="#personalizaciones" onclick="filterCat('Personalizaciones',this)">PERSONALIZACIONES</a>
+  </div>
+
+  <div class="nav-right">
+    <a class="nav-social" id="nav-ig" href="#" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      INSTAGRAM
+    </a>
+    <div class="nav-sep"></div>
+    <a class="nav-social" id="nav-wa" href="#" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WHATSAPP
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-admin" onclick="location.href='/gestion/'" title=""></div>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-bear">
-    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-      <rect x="20" y="30" width="80" height="72" rx="22" fill="url(#hbg)"/>
-      <circle cx="37" cy="25" r="16" fill="url(#hbg)"/>
-      <circle cx="83" cy="25" r="16" fill="url(#hbg)"/>
-      <circle cx="46" cy="60" r="7" fill="rgba(0,0,0,.7)"/>
-      <circle cx="74" cy="60" r="7" fill="rgba(0,0,0,.7)"/>
-      <circle cx="47.5" cy="58.5" r="2.5" fill="#fff" opacity=".6"/>
-      <circle cx="75.5" cy="58.5" r="2.5" fill="#fff" opacity=".6"/>
-      <ellipse cx="60" cy="78" rx="10" ry="6" fill="rgba(0,0,0,.4)"/>
-      <circle cx="60" cy="76" r="6" fill="rgba(0,0,0,.7)"/>
-      <!-- triangles -->
-      <polygon points="24,102 34,86 44,102" fill="#ff2d78" opacity=".9"/>
-      <polygon points="38,102 48,86 58,102" fill="#ffd600" opacity=".9"/>
-      <polygon points="52,102 62,86 72,102" fill="#00ff87" opacity=".9"/>
-      <polygon points="66,102 76,86 86,102" fill="#00c8ff" opacity=".9"/>
-      <polygon points="80,102 90,86 100,102" fill="#b24bff" opacity=".9"/>
-      <defs><linearGradient id="hbg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ff6b35"/>
-        <stop offset="35%" stop-color="#ffd600"/>
-        <stop offset="70%" stop-color="#00ff87"/>
-        <stop offset="100%" stop-color="#00c8ff"/>
-      </linearGradient></defs>
-    </svg>
+<section class="hero" id="ropa-americana">
+  <div class="hero::before"></div>
+
+  <!-- LEFT -->
+  <div class="hero-left">
+    <div class="hero-bear-text">BEAR</div>
+    <div class="hero-bear-text">TRAP</div>
+
+    <div class="hero-slogan">Ropa que <strong>atrapa.</strong></div>
+
+    <!-- Rainbow stripe -->
+    <div class="rainbow-stripe">
+      <div class="rs" style="width:70px;background:linear-gradient(90deg,#ff3b00,#ff7300)"></div>
+      <div class="rs" style="width:50px;background:linear-gradient(90deg,#ff7300,#ffcc00)"></div>
+      <div class="rs" style="width:60px;background:linear-gradient(90deg,#00e87a,#00c8ff)"></div>
+      <div class="rs" style="width:55px;background:linear-gradient(90deg,#00c8ff,#0080ff)"></div>
+      <div class="rs" style="width:50px;background:linear-gradient(90deg,#cc00ff,#ff2d78)"></div>
+      <div class="rs" style="width:45px;background:linear-gradient(90deg,#ff2d78,#ff3b00)"></div>
+    </div>
+
+    <div class="hero-btns">
+      <a href="#catalogo" class="btn-catalog">→ VER CATÁLOGO</a>
+      <a id="hero-wa" href="#" class="btn-whatsapp" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WHATSAPP
+      </a>
+    </div>
   </div>
-  <div class="hero-badge">Piezas Únicas</div>
-  <div class="hero-title">BEAR TRAP</div>
-  <div class="hero-sub">Ropa que atrapa.</div>
-  <div class="hero-btns">
-    <a href="#catalogo" class="btn-hero-primary">Ver Catálogo</a>
-    <a id="hero-wa" href="#" class="btn-hero-secondary" target="_blank">WhatsApp</a>
+
+  <!-- RIGHT — 3D BEAR -->
+  <div class="hero-right">
+    <div class="bear-container">
+      <div class="bear-glow"></div>
+
+      <!-- Sparkles -->
+      <div class="spark" style="top:8%;left:22%;animation-delay:.3s">
+        <span class="spark-star" style="color:#ff2d78;font-size:22px">★</span>
+      </div>
+      <div class="spark" style="top:6%;right:14%;animation-delay:.8s">
+        <span class="spark-star" style="color:#ffd600;font-size:26px">★</span>
+      </div>
+      <div class="spark" style="top:38%;right:5%;animation-delay:.5s">
+        <span class="spark-star" style="color:#f0f0f0;font-size:14px">✦</span>
+      </div>
+      <div class="spark" style="top:52%;left:6%;animation-delay:1.1s">
+        <span class="spark-star" style="color:#f0f0f0;font-size:12px">✦</span>
+      </div>
+      <div class="spark" style="bottom:25%;left:10%;animation-delay:.2s">
+        <div class="spark-dot" style="width:10px;height:10px;background:#00e87a"></div>
+      </div>
+      <div class="spark" style="top:50%;right:10%;animation-delay:.7s">
+        <div class="spark-dot" style="width:12px;height:12px;background:#00c8ff"></div>
+      </div>
+      <div class="spark" style="bottom:15%;right:15%;animation-delay:1.3s">
+        <div class="spark-dot" style="width:14px;height:14px;background:#7c3aed"></div>
+      </div>
+
+      <!-- 3D Bear SVG -->
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="position:relative;z-index:1">
+        <defs>
+          <!-- Main fur gradient - warm brown with depth -->
+          <radialGradient id="furMain" cx="45%" cy="35%" r="55%">
+            <stop offset="0%" stop-color="#8B5E3C"/>
+            <stop offset="40%" stop-color="#6B3F24"/>
+            <stop offset="100%" stop-color="#3D200E"/>
+          </radialGradient>
+          <!-- Lighter center highlight -->
+          <radialGradient id="furLight" cx="50%" cy="40%" r="40%">
+            <stop offset="0%" stop-color="#A06B40" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#6B3F24" stop-opacity="0"/>
+          </radialGradient>
+          <!-- Ear gradient -->
+          <radialGradient id="earGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7B5030"/>
+            <stop offset="100%" stop-color="#3D200E"/>
+          </radialGradient>
+          <!-- Muzzle gradient -->
+          <radialGradient id="muzzleGrad" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#D4997A"/>
+            <stop offset="60%" stop-color="#C08060"/>
+            <stop offset="100%" stop-color="#A06040"/>
+          </radialGradient>
+          <!-- Eye whites -->
+          <radialGradient id="eyeWhite" cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#1a1a1a"/>
+            <stop offset="70%" stop-color="#0d0d0d"/>
+            <stop offset="100%" stop-color="#050505"/>
+          </radialGradient>
+          <!-- Shadow bottom -->
+          <radialGradient id="shadowGrad" cx="50%" cy="100%" r="50%">
+            <stop offset="0%" stop-color="#1a0800" stop-opacity=".7"/>
+            <stop offset="100%" stop-color="#1a0800" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- EARS -->
+        <ellipse cx="90" cy="82" rx="42" ry="40" fill="url(#earGrad)"/>
+        <ellipse cx="210" cy="82" rx="42" ry="40" fill="url(#earGrad)"/>
+        <!-- Inner ear -->
+        <ellipse cx="90" cy="84" rx="24" ry="22" fill="#1a0800" opacity=".4"/>
+        <ellipse cx="210" cy="84" rx="24" ry="22" fill="#1a0800" opacity=".4"/>
+
+        <!-- HEAD BASE -->
+        <circle cx="150" cy="170" r="118" fill="url(#furMain)"/>
+        <!-- Lighter overlay for 3D effect -->
+        <circle cx="150" cy="170" r="118" fill="url(#furLight)"/>
+        <!-- Bottom shadow -->
+        <circle cx="150" cy="170" r="118" fill="url(#shadowGrad)"/>
+
+        <!-- MUZZLE -->
+        <ellipse cx="150" cy="213" rx="52" ry="38" fill="url(#muzzleGrad)"/>
+        <!-- Muzzle divider line -->
+        <line x1="150" y1="213" x2="150" y2="226" stroke="#8B5030" stroke-width="1.5" opacity=".5"/>
+
+        <!-- EYES — large, cute, 3D -->
+        <!-- Left eye -->
+        <circle cx="112" cy="158" r="24" fill="url(#eyeWhite)"/>
+        <!-- Left eye shine -->
+        <circle cx="112" cy="158" r="24" fill="#111"/>
+        <circle cx="104" cy="150" r="9" fill="#fff" opacity=".15"/>
+        <circle cx="120" cy="150" r="5" fill="#fff" opacity=".08"/>
+        <!-- Big white highlight left -->
+        <circle cx="104" cy="150" r="7" fill="#fff" opacity=".75"/>
+        <circle cx="120" cy="153" r="3.5" fill="#fff" opacity=".45"/>
+
+        <!-- Right eye -->
+        <circle cx="188" cy="158" r="24" fill="#111"/>
+        <!-- Big white highlight right -->
+        <circle cx="180" cy="150" r="7" fill="#fff" opacity=".75"/>
+        <circle cx="196" cy="153" r="3.5" fill="#fff" opacity=".45"/>
+
+        <!-- NOSE -->
+        <ellipse cx="150" cy="206" rx="13" ry="9" fill="#1a0800"/>
+        <ellipse cx="150" cy="206" rx="13" ry="9" fill="#2a0e00" opacity=".6"/>
+        <!-- Nose highlight -->
+        <ellipse cx="146" cy="203" rx="4" ry="2.5" fill="#fff" opacity=".2"/>
+
+        <!-- SMILE -->
+        <path d="M138 220 Q150 232 162 220" stroke="#8B5030" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>
+
+        <!-- Overall rim light - left side -->
+        <circle cx="150" cy="170" r="118" fill="none" stroke="rgba(180,100,40,.2)" stroke-width="3"/>
+      </svg>
+    </div>
   </div>
 </section>
 
 <!-- CATALOG -->
 <section class="section" id="catalogo">
-  <div class="section-title">CATÁLOGO</div>
-  <div class="section-line"></div>
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-cat="Todas" onclick="setFilter(this,'Todas')">Todas</button>
-    <button class="filter-btn" data-cat="Blusas" onclick="setFilter(this,'Blusas')">Blusas</button>
-    <button class="filter-btn" data-cat="Suéteres" onclick="setFilter(this,'Suéteres')">Suéteres</button>
-    <button class="filter-btn" data-cat="Chamarras" onclick="setFilter(this,'Chamarras')">Chamarras</button>
-    <button class="filter-btn" data-cat="Pantalones" onclick="setFilter(this,'Pantalones')">Pantalones</button>
-    <button class="filter-btn" data-cat="Faldas" onclick="setFilter(this,'Faldas')">Faldas</button>
-    <button class="filter-btn" data-cat="Vestidos" onclick="setFilter(this,'Vestidos')">Vestidos</button>
-    <button class="filter-btn" data-cat="Shorts" onclick="setFilter(this,'Shorts')">Shorts</button>
-    <button class="filter-btn" data-cat="Conjuntos" onclick="setFilter(this,'Conjuntos')">Conjuntos</button>
+  <div id="street" style="height:0"></div>
+  <div id="personalizaciones" style="height:0"></div>
+  <div class="section-header">
+    <div class="section-label">Inventario</div>
+    <div class="section-title">CATÁLOGO</div>
+    <div class="section-line"></div>
   </div>
-  <div id="loading"><div class="spin"></div><span>Cargando catálogo...</span></div>
-  <div id="empty">No hay prendas disponibles en esta categoría.</div>
+  <div class="filters" id="filters">
+    <button class="filt on" onclick="setF(this,'Todas')">Todas</button>
+    <button class="filt" onclick="setF(this,'Blusas')">Blusas</button>
+    <button class="filt" onclick="setF(this,'Suéteres')">Suéteres</button>
+    <button class="filt" onclick="setF(this,'Chamarras')">Chamarras</button>
+    <button class="filt" onclick="setF(this,'Pantalones')">Pantalones</button>
+    <button class="filt" onclick="setF(this,'Faldas')">Faldas</button>
+    <button class="filt" onclick="setF(this,'Vestidos')">Vestidos</button>
+    <button class="filt" onclick="setF(this,'Shorts')">Shorts</button>
+    <button class="filt" onclick="setF(this,'Conjuntos')">Conjuntos</button>
+  </div>
+  <div id="loading"><div class="spin"></div>Cargando prendas...</div>
+  <div id="empty">Sin prendas en esta categoría.</div>
   <div class="grid" id="grid"></div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div style="font-family:Unbounded,sans-serif;font-size:11px;margin-bottom:8px;
-    background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-size:200% 100%;animation:stripe 3s linear infinite">BEAR TRAP</div>
-  <div>PIEZAS ÚNICAS · ROPA AMERICANA</div>
-  <div id="footer-ig" style="margin-top:8px;color:#888"></div>
+  <div class="footer-logo">BEAR TRAP</div>
+  <div class="footer-info" id="footer-info">ROPA AMERICANA · MÉXICO</div>
+  <a href="#" id="footer-ig" class="footer-info">@beartrap_mx</a>
 </footer>
 
 <!-- FLOAT BUTTONS -->
-<div class="float-btns">
-  <a id="float-ig" href="#" class="float-btn float-ig" target="_blank">📸</a>
-  <a id="float-wa" href="#" class="float-btn float-wa" target="_blank">💬</a>
+<div class="floats">
+  <a id="fl-ig" href="#" class="float-pill fp-ig" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    INSTAGRAM
+  </a>
+  <a id="fl-wa" href="#" class="float-pill fp-wa" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    WHATSAPP
+  </a>
 </div>
 
 <script>
-// ── CONFIG ──
 const FB = "https://bear-trap-bazar-default-rtdb.firebaseio.com";
-const FALLBACK = [{"id":"item_001","nombre":"Blusa floral vintage","categoria":"Blusas","precio":100,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":1},{"id":"item_002","nombre":"Blusa de rayas manga larga","categoria":"Suéteres","precio":150,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":2},{"id":"item_003","nombre":"Blusa crop estampada","categoria":"Chamarras","precio":130,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":3},{"id":"item_004","nombre":"Camisa de franela cuadros","categoria":"Pantalones","precio":150,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":4},{"id":"item_005","nombre":"Blusa satinada brillante","categoria":"Faldas","precio":100,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":5},{"id":"item_006","nombre":"Blusa oversized básica","categoria":"Vestidos","precio":100,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":6},{"id":"item_007","nombre":"Top de encaje bordado","categoria":"Shorts","precio":120,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":7},{"id":"item_008","nombre":"Camisa universitaria","categoria":"Conjuntos","precio":90,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":8},{"id":"item_009","nombre":"Blusa con moño","categoria":"Blusas","precio":150,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":9},{"id":"item_010","nombre":"Camiseta estampado retro","categoria":"Suéteres","precio":180,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":10},{"id":"item_011","nombre":"Blusa transparente puntillada","categoria":"Chamarras","precio":200,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":11},{"id":"item_012","nombre":"Top deportivo estampado","categoria":"Pantalones","precio":130,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":12},{"id":"item_013","nombre":"Blusa asimétrica","categoria":"Faldas","precio":120,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":13},{"id":"item_014","nombre":"Camisa hawaiana vintage","categoria":"Vestidos","precio":150,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":14},{"id":"item_015","nombre":"Blusa boho campesina","categoria":"Shorts","precio":130,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":15},{"id":"item_016","nombre":"Camiseta tie-dye colorida","categoria":"Conjuntos","precio":110,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":16},{"id":"item_017","nombre":"Blusa de lino blanca","categoria":"Blusas","precio":110,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":17},{"id":"item_018","nombre":"Top con corte en espalda","categoria":"Suéteres","precio":110,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":18},{"id":"item_019","nombre":"Camisa denim manga corta","categoria":"Chamarras","precio":70,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":19},{"id":"item_020","nombre":"Blusa con volantes","categoria":"Pantalones","precio":160,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":20},{"id":"item_021","nombre":"Suéter oversize de punto","categoria":"Faldas","precio":110,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":21},{"id":"item_022","nombre":"Sudadera vintage con capucha","categoria":"Vestidos","precio":130,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":22},{"id":"item_023","nombre":"Suéter de rayas marinero","categoria":"Shorts","precio":100,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":23},{"id":"item_024","nombre":"Hoodie estampado college","categoria":"Conjuntos","precio":150,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":24},{"id":"item_025","nombre":"Suéter crop de punto","categoria":"Blusas","precio":120,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":25},{"id":"item_026","nombre":"Cardigan largo boho","categoria":"Suéteres","precio":140,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":26},{"id":"item_027","nombre":"Suéter navideño ironico","categoria":"Chamarras","precio":80,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":27},{"id":"item_028","nombre":"Hoodie tie-dye pastel","categoria":"Pantalones","precio":130,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":28},{"id":"item_029","nombre":"Suéter de cuello alto","categoria":"Faldas","precio":160,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":29},{"id":"item_030","nombre":"Cardigan vintage 90s","categoria":"Vestidos","precio":110,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":30},{"id":"item_031","nombre":"Chamarra de mezclilla clásica","categoria":"Shorts","precio":200,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":31},{"id":"item_032","nombre":"Chamarra bomber vintage","categoria":"Conjuntos","precio":180,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":32},{"id":"item_033","nombre":"Chamarra de cuero sintético","categoria":"Blusas","precio":220,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":33},{"id":"item_034","nombre":"Chamarra ligera estampada","categoria":"Suéteres","precio":130,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":34},{"id":"item_035","nombre":"Chamarra universitaria varsity","categoria":"Chamarras","precio":160,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":35},{"id":"item_036","nombre":"Blazer oversize a cuadros","categoria":"Pantalones","precio":170,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":36},{"id":"item_037","nombre":"Chamarra de terciopelo","categoria":"Faldas","precio":150,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":37},{"id":"item_038","nombre":"Windbreaker retro 90s","categoria":"Vestidos","precio":140,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":38},{"id":"item_039","nombre":"Chamarra con bordados","categoria":"Shorts","precio":160,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":39},{"id":"item_040","nombre":"Chamarra corta de punto","categoria":"Conjuntos","precio":120,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":40},{"id":"item_041","nombre":"Pantalón de mezclilla slim","categoria":"Blusas","precio":130,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":41},{"id":"item_042","nombre":"Jeans baggy vintage","categoria":"Suéteres","precio":150,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":42},{"id":"item_043","nombre":"Pantalón de cuadros","categoria":"Chamarras","precio":110,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":43},{"id":"item_044","nombre":"Jeans con rotos","categoria":"Pantalones","precio":140,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":44},{"id":"item_045","nombre":"Pantalón palazzo de tela","categoria":"Faldas","precio":120,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":45},{"id":"item_046","nombre":"Jeans mom fit clásicos","categoria":"Vestidos","precio":150,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":46},{"id":"item_047","nombre":"Pantalón cargo utilitario","categoria":"Shorts","precio":130,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":47},{"id":"item_048","nombre":"Jeans skinny oscuros","categoria":"Conjuntos","precio":160,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":48},{"id":"item_049","nombre":"Pantalón de terciopelo","categoria":"Blusas","precio":120,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":49},{"id":"item_050","nombre":"Jeans boyfriend lavado ácido","categoria":"Suéteres","precio":140,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":50},{"id":"item_051","nombre":"Falda midi floral","categoria":"Chamarras","precio":100,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":51},{"id":"item_052","nombre":"Falda mini denim","categoria":"Pantalones","precio":90,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":52},{"id":"item_053","nombre":"Falda plisada escolar","categoria":"Faldas","precio":110,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":53},{"id":"item_054","nombre":"Falda asimétrica","categoria":"Vestidos","precio":130,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":54},{"id":"item_055","nombre":"Falda larga boho","categoria":"Shorts","precio":150,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":55},{"id":"item_056","nombre":"Minifalda de cuadros","categoria":"Conjuntos","precio":100,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":56},{"id":"item_057","nombre":"Falda de terciopelo","categoria":"Blusas","precio":130,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":57},{"id":"item_058","nombre":"Falda wrap floral","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":58},{"id":"item_059","nombre":"Falda de mezclilla con botones","categoria":"Chamarras","precio":110,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":59},{"id":"item_060","nombre":"Falda lápiz estampada","categoria":"Pantalones","precio":140,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":60},{"id":"item_061","nombre":"Vestido floral midi","categoria":"Faldas","precio":180,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":61},{"id":"item_062","nombre":"Vestido negro sin mangas","categoria":"Vestidos","precio":160,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":62},{"id":"item_063","nombre":"Vestido de punto bodycon","categoria":"Shorts","precio":150,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":63},{"id":"item_064","nombre":"Vestido vintage años 70","categoria":"Conjuntos","precio":200,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":64},{"id":"item_065","nombre":"Vestido camisero denim","categoria":"Blusas","precio":140,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":65},{"id":"item_066","nombre":"Vestido boho bordado","categoria":"Suéteres","precio":190,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":66},{"id":"item_067","nombre":"Vestido slip satinado","categoria":"Chamarras","precio":160,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":67},{"id":"item_068","nombre":"Vestido a cuadros escocés","categoria":"Pantalones","precio":150,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":68},{"id":"item_069","nombre":"Vestido oversize suéter","categoria":"Faldas","precio":170,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":69},{"id":"item_070","nombre":"Vestido lencero con encaje","categoria":"Vestidos","precio":150,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":70},{"id":"item_071","nombre":"Short de mezclilla vintage","categoria":"Shorts","precio":80,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":71},{"id":"item_072","nombre":"Short de licra deportivo","categoria":"Conjuntos","precio":70,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":72},{"id":"item_073","nombre":"Short de flores","categoria":"Blusas","precio":90,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":73},{"id":"item_074","nombre":"Bermuda cargo","categoria":"Suéteres","precio":100,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":74},{"id":"item_075","nombre":"Short de tela palazzo","categoria":"Chamarras","precio":110,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":75},{"id":"item_076","nombre":"Short mom fit","categoria":"Pantalones","precio":80,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":76},{"id":"item_077","nombre":"Short estampado tropical","categoria":"Faldas","precio":90,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":77},{"id":"item_078","nombre":"Short de terciopelo","categoria":"Vestidos","precio":110,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":78},{"id":"item_079","nombre":"Short ciclista básico","categoria":"Shorts","precio":70,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":79},{"id":"item_080","nombre":"Short de punto acanalado","categoria":"Conjuntos","precio":80,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":80},{"id":"item_081","nombre":"Conjunto de jogger","categoria":"Blusas","precio":180,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":81},{"id":"item_082","nombre":"Conjunto crop top + falda","categoria":"Suéteres","precio":150,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":82},{"id":"item_083","nombre":"Conjunto de punto a rayas","categoria":"Chamarras","precio":160,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":83},{"id":"item_084","nombre":"Conjunto deportivo","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":84},{"id":"item_085","nombre":"Conjunto de lino","categoria":"Faldas","precio":170,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":85},{"id":"item_086","nombre":"Conjunto de mezclilla coordinado","categoria":"Vestidos","precio":190,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":86},{"id":"item_087","nombre":"Conjunto top + pantalón palazzo","categoria":"Shorts","precio":160,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":87},{"id":"item_088","nombre":"Conjunto estampado floral","categoria":"Conjuntos","precio":180,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":88},{"id":"item_089","nombre":"Conjunto otoñal","categoria":"Blusas","precio":150,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":89},{"id":"item_090","nombre":"Conjunto bohemio","categoria":"Suéteres","precio":160,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":90},{"id":"item_091","nombre":"Blusa estampado flores grandes","categoria":"Chamarras","precio":100,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":91},{"id":"item_092","nombre":"Blusa de seda falsa","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":92},{"id":"item_093","nombre":"Blusa off-shoulder","categoria":"Faldas","precio":110,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":93},{"id":"item_094","nombre":"Top de crochet","categoria":"Vestidos","precio":130,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":94},{"id":"item_095","nombre":"Blusa con aplicaciones","categoria":"Shorts","precio":100,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":95},{"id":"item_096","nombre":"Camisa Oxford clásica","categoria":"Conjuntos","precio":110,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":96},{"id":"item_097","nombre":"Blusa de lunares","categoria":"Blusas","precio":90,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":97},{"id":"item_098","nombre":"Top bandeau floral","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":98},{"id":"item_099","nombre":"Blusa manga farol","categoria":"Chamarras","precio":100,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":99},{"id":"item_100","nombre":"Camisa de seda fría","categoria":"Pantalones","precio":110,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":100},{"id":"item_101","nombre":"Chamarra de pana","categoria":"Faldas","precio":150,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":101},{"id":"item_102","nombre":"Chamarra acolchada ligera","categoria":"Vestidos","precio":140,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":102},{"id":"item_103","nombre":"Chamarra corta estampada","categoria":"Shorts","precio":160,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":103},{"id":"item_104","nombre":"Chamarra de flecos boho","categoria":"Conjuntos","precio":150,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":104},{"id":"item_105","nombre":"Chamarra de cuadros","categoria":"Blusas","precio":130,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":105},{"id":"item_106","nombre":"Suéter tejido artesanal","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":106},{"id":"item_107","nombre":"Hoodie de terciopelo","categoria":"Chamarras","precio":130,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":107},{"id":"item_108","nombre":"Suéter mariposa bordada","categoria":"Pantalones","precio":100,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":108},{"id":"item_109","nombre":"Cardigan con bolsillos","categoria":"Faldas","precio":130,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":109},{"id":"item_110","nombre":"Suéter de angora falso","categoria":"Vestidos","precio":140,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":110},{"id":"item_111","nombre":"Pantalón de pinzas","categoria":"Shorts","precio":110,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":111},{"id":"item_112","nombre":"Pantalón fluido estampado","categoria":"Conjuntos","precio":120,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":112},{"id":"item_113","nombre":"Leggings de cuero sintético","categoria":"Blusas","precio":100,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":113},{"id":"item_114","nombre":"Pantalón con botones laterales","categoria":"Suéteres","precio":130,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":114},{"id":"item_115","nombre":"Pantalón cropped amplio","categoria":"Chamarras","precio":120,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":115},{"id":"item_116","nombre":"Jeans tiro alto clásico","categoria":"Pantalones","precio":130,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":116},{"id":"item_117","nombre":"Pantalón deportivo rayas","categoria":"Faldas","precio":120,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":117},{"id":"item_118","nombre":"Jeans con parches","categoria":"Vestidos","precio":110,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":118},{"id":"item_119","nombre":"Pantalón de franela","categoria":"Shorts","precio":130,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":119},{"id":"item_120","nombre":"Pantalón sastre","categoria":"Conjuntos","precio":100,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":120},{"id":"item_121","nombre":"Vestido con cinturón","categoria":"Blusas","precio":170,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":121},{"id":"item_122","nombre":"Vestido de encaje blanco","categoria":"Suéteres","precio":160,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":122},{"id":"item_123","nombre":"Vestido de rayas marinero","categoria":"Chamarras","precio":180,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":123},{"id":"item_124","nombre":"Vestido mini con estampado","categoria":"Pantalones","precio":190,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":124},{"id":"item_125","nombre":"Vestido asimétrico","categoria":"Faldas","precio":200,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":125},{"id":"item_126","nombre":"Falda de satín midi","categoria":"Vestidos","precio":130,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":126},{"id":"item_127","nombre":"Falda de vuelo mini","categoria":"Shorts","precio":120,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":127},{"id":"item_128","nombre":"Falda con bolsillos","categoria":"Conjuntos","precio":140,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":128},{"id":"item_129","nombre":"Falda cargo utilitaria","categoria":"Blusas","precio":130,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":129},{"id":"item_130","nombre":"Falda de volantes bohemia","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":130},{"id":"item_131","nombre":"Blusa de terciopelo","categoria":"Chamarras","precio":100,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":131},{"id":"item_132","nombre":"Blusa wrap floral","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":132},{"id":"item_133","nombre":"Blusa estilo gitano","categoria":"Faldas","precio":110,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":133},{"id":"item_134","nombre":"Top de lencería","categoria":"Vestidos","precio":100,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":134},{"id":"item_135","nombre":"Camisa de leñador","categoria":"Shorts","precio":130,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":135},{"id":"item_136","nombre":"Suéter de cuello de tortuga","categoria":"Conjuntos","precio":130,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":136},{"id":"item_137","nombre":"Hoodie deportivo básico","categoria":"Blusas","precio":140,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":137},{"id":"item_138","nombre":"Cardigan largo abierto","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":138},{"id":"item_139","nombre":"Blusa romántica con encaje","categoria":"Chamarras","precio":130,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":139},{"id":"item_140","nombre":"Suéter colorblock","categoria":"Pantalones","precio":140,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":140},{"id":"item_141","nombre":"Chamarra de satín","categoria":"Faldas","precio":90,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":141},{"id":"item_142","nombre":"Chamarra corta con cremalleras","categoria":"Vestidos","precio":100,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":142},{"id":"item_143","nombre":"Chamarra vintage lavada","categoria":"Shorts","precio":110,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":143},{"id":"item_144","nombre":"Chamarra de neopreno","categoria":"Conjuntos","precio":90,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":144},{"id":"item_145","nombre":"Blazer vintage retro","categoria":"Blusas","precio":100,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":145},{"id":"item_146","nombre":"Short de punto","categoria":"Suéteres","precio":180,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":146},{"id":"item_147","nombre":"Short a cuadros","categoria":"Chamarras","precio":200,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":147},{"id":"item_148","nombre":"Short de tul","categoria":"Pantalones","precio":160,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":148},{"id":"item_149","nombre":"Short cargo con bolsillos","categoria":"Faldas","precio":190,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":149},{"id":"item_150","nombre":"Short de satín","categoria":"Vestidos","precio":170,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":150},{"id":"item_151","nombre":"Jeans con bordados","categoria":"Shorts","precio":130,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":151},{"id":"item_152","nombre":"Pantalón de cuero sintético","categoria":"Conjuntos","precio":120,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":152},{"id":"item_153","nombre":"Pantalón jogger premium","categoria":"Blusas","precio":140,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":153},{"id":"item_154","nombre":"Pantalón de lana","categoria":"Suéteres","precio":130,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":154},{"id":"item_155","nombre":"Jeans flare vintage","categoria":"Chamarras","precio":120,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":155},{"id":"item_156","nombre":"Conjunto tie-dye","categoria":"Pantalones","precio":100,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":156},{"id":"item_157","nombre":"Conjunto de terciopelo","categoria":"Faldas","precio":110,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":157},{"id":"item_158","nombre":"Conjunto crop + bermuda","categoria":"Vestidos","precio":120,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":158},{"id":"item_159","nombre":"Conjunto festivo","categoria":"Shorts","precio":100,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":159},{"id":"item_160","nombre":"Conjunto casual básico","categoria":"Conjuntos","precio":90,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":160},{"id":"item_161","nombre":"Vestido de lunares","categoria":"Blusas","precio":150,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":161},{"id":"item_162","nombre":"Vestido floral maxi","categoria":"Suéteres","precio":140,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":162},{"id":"item_163","nombre":"Vestido strapless","categoria":"Chamarras","precio":160,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":163},{"id":"item_164","nombre":"Vestido de gasa","categoria":"Pantalones","precio":150,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":164},{"id":"item_165","nombre":"Vestido con transparencias","categoria":"Faldas","precio":130,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":165},{"id":"item_166","nombre":"Blusa de organza","categoria":"Vestidos","precio":130,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":166},{"id":"item_167","nombre":"Top de flecos","categoria":"Shorts","precio":120,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":167},{"id":"item_168","nombre":"Blusa campesina bordada","categoria":"Conjuntos","precio":110,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":168},{"id":"item_169","nombre":"Camisa de bambula","categoria":"Blusas","precio":100,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":169},{"id":"item_170","nombre":"Top halter floral","categoria":"Suéteres","precio":130,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":170},{"id":"item_171","nombre":"Suéter rompevientos","categoria":"Chamarras","precio":90,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":171},{"id":"item_172","nombre":"Cardigan de punto abierto","categoria":"Pantalones","precio":100,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":172},{"id":"item_173","nombre":"Hoodie vintage universitario","categoria":"Faldas","precio":110,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":173},{"id":"item_174","nombre":"Suéter estampado abstracto","categoria":"Vestidos","precio":100,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":174},{"id":"item_175","nombre":"Blusa de fiesta","categoria":"Shorts","precio":90,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":175},{"id":"item_176","nombre":"Chamarra de denim negra","categoria":"Conjuntos","precio":100,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":176},{"id":"item_177","nombre":"Chamarra puffer ligera","categoria":"Blusas","precio":90,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":177},{"id":"item_178","nombre":"Chamarra de lana","categoria":"Suéteres","precio":80,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":178},{"id":"item_179","nombre":"Chamarra military estilo","categoria":"Chamarras","precio":100,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":179},{"id":"item_180","nombre":"Chamarra de safari","categoria":"Pantalones","precio":90,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":180},{"id":"item_181","nombre":"Pantalón de seda","categoria":"Faldas","precio":120,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":181},{"id":"item_182","nombre":"Jeans semi-acampanados","categoria":"Vestidos","precio":130,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":182},{"id":"item_183","nombre":"Pantalón lino verano","categoria":"Shorts","precio":110,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":183},{"id":"item_184","nombre":"Pantalón tiro bajo","categoria":"Conjuntos","precio":120,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":184},{"id":"item_185","nombre":"Jeans rotos premium","categoria":"Blusas","precio":130,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":185},{"id":"item_186","nombre":"Falda de encaje","categoria":"Suéteres","precio":130,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":186},{"id":"item_187","nombre":"Falda de punto midi","categoria":"Chamarras","precio":110,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":187},{"id":"item_188","nombre":"Falda con vuelo largo","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":188},{"id":"item_189","nombre":"Falda denim desgastada","categoria":"Faldas","precio":130,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":189},{"id":"item_190","nombre":"Falda con estampado abstracto","categoria":"Vestidos","precio":140,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":190},{"id":"item_191","nombre":"Vestido de crochet","categoria":"Shorts","precio":150,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":191},{"id":"item_192","nombre":"Vestido de punto rojo","categoria":"Conjuntos","precio":160,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":192},{"id":"item_193","nombre":"Vestido cruzado floral","categoria":"Blusas","precio":140,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":193},{"id":"item_194","nombre":"Vestido playero","categoria":"Suéteres","precio":170,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":194},{"id":"item_195","nombre":"Vestido de cuadros","categoria":"Chamarras","precio":180,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":195},{"id":"item_196","nombre":"Blusa de cuello barco","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":196},{"id":"item_197","nombre":"Camisa de rayas finas","categoria":"Faldas","precio":120,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":197},{"id":"item_198","nombre":"Top de encaje negro","categoria":"Vestidos","precio":120,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":198},{"id":"item_199","nombre":"Blusa con tirantes","categoria":"Shorts","precio":120,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":199},{"id":"item_200","nombre":"Blusa hippie chic","categoria":"Conjuntos","precio":120,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":200},{"id":"item_201","nombre":"Conjunto de satín","categoria":"Blusas","precio":120,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":201},{"id":"item_202","nombre":"Conjunto vintage coordinado","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":202},{"id":"item_203","nombre":"Conjunto de flecos","categoria":"Chamarras","precio":120,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":203},{"id":"item_204","nombre":"Conjunto a rayas","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":204},{"id":"item_205","nombre":"Conjunto estampado geométrico","categoria":"Faldas","precio":120,"tallas":["M","L"],"foto":"","visible":true,"vendida":false,"orden":205},{"id":"item_206","nombre":"Short de vestir","categoria":"Vestidos","precio":120,"tallas":["XS","S"],"foto":"","visible":true,"vendida":false,"orden":206},{"id":"item_207","nombre":"Short de encaje","categoria":"Shorts","precio":120,"tallas":["L","XL"],"foto":"","visible":true,"vendida":false,"orden":207},{"id":"item_208","nombre":"Short de franela","categoria":"Conjuntos","precio":120,"tallas":["S","M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":208},{"id":"item_209","nombre":"Short tie-dye","categoria":"Blusas","precio":120,"tallas":["XS","S","M"],"foto":"","visible":true,"vendida":false,"orden":209},{"id":"item_210","nombre":"Short de polar","categoria":"Suéteres","precio":120,"tallas":["S","M","L"],"foto":"","visible":true,"vendida":false,"orden":210},{"id":"item_211","nombre":"Suéter efecto lavado","categoria":"Chamarras","precio":120,"tallas":["M","L","XL"],"foto":"","visible":true,"vendida":false,"orden":211},{"id":"item_212","nombre":"Hoodie con estampado urbano","categoria":"Pantalones","precio":120,"tallas":["S","M"],"foto":"","visible":true,"vendida":false,"orden":212}];
+
+// Default fallback items (no photos - just structure)
+const FALLBACK_COUNT = 212;
+const CATS = ["Blusas","Suéteres","Chamarras","Pantalones","Faldas","Vestidos","Shorts","Conjuntos"];
 
 let allItems = [];
-let currentFilter = "Todas";
-let config = { ig: "@beartrap_mx", wa: "5215512345678", slogan: "Ropa que atrapa." };
+let curFilter = "Todas";
+let cfg = { ig: "@beartrap_mx", wa: "5215512345678" };
 
 // ── CURSOR ──
-const cur = document.getElementById("cursor");
+const cur = document.getElementById("cur");
 document.addEventListener("mousemove", e => {
   cur.style.left = e.clientX + "px";
   cur.style.top = e.clientY + "px";
 });
 document.addEventListener("mouseover", e => {
-  if(e.target.matches("a,button,.card,.filter-btn,.nav-dot")) cur.classList.add("big");
-  else cur.classList.remove("big");
+  if(e.target.closest("a,button,.card,.filt")) cur.classList.add("hover");
+  else cur.classList.remove("hover");
 });
 
-// ── LOAD FROM FIREBASE ──
-async function loadCatalog() {
-  try {
-    const res = await fetch(`${FB}/items.json`, {cache:"no-store"});
-    if(!res.ok) throw new Error("HTTP "+res.status);
-    const data = await res.json();
-    if(data && typeof data === "object") {
-      // Firebase returns object with keys, convert to array
-      let arr = Array.isArray(data) ? data : Object.values(data);
-      arr = arr.filter(Boolean);
-      if(arr.length > 0) {
-        allItems = arr;
-        document.getElementById("loading").style.display = "none";
-        renderGrid();
-        return;
-      }
-    }
-    throw new Error("Empty Firebase");
-  } catch(e) {
-    console.warn("Firebase fallback:", e.message);
-    // Use embedded fallback data
-    allItems = FALLBACK.filter(i => i.visible !== false);
-    document.getElementById("loading").style.display = "none";
-    renderGrid();
-  }
-  // Also load config
-  loadConfig();
-}
-
-async function loadConfig() {
-  try {
-    const res = await fetch(`${FB}/config.json`, {cache:"no-store"});
-    if(res.ok) {
-      const c = await res.json();
-      if(c) { config = {...config,...c}; applyConfig(); }
-    }
-  } catch(e){}
-}
-
+// ── CONFIG ──
 function applyConfig() {
-  const wa = `https://wa.me/${config.wa}`;
-  const ig = `https://instagram.com/${config.ig.replace("@","")}`;
-  document.getElementById("nav-ig").href = ig;
-  document.getElementById("nav-wa").href = wa;
-  document.getElementById("hero-wa").href = wa;
-  document.getElementById("float-ig").href = ig;
-  document.getElementById("float-wa").href = wa;
-  document.getElementById("footer-ig").textContent = config.ig + " · " + config.slogan;
+  const waUrl = `https://wa.me/${cfg.wa}`;
+  const igUrl = `https://instagram.com/${cfg.ig.replace("@","")}`;
+  document.getElementById("nav-ig").href = igUrl;
+  document.getElementById("nav-wa").href = waUrl;
+  document.getElementById("hero-wa").href = waUrl;
+  document.getElementById("fl-ig").href = igUrl;
+  document.getElementById("fl-wa").href = waUrl;
+  document.getElementById("footer-ig").href = igUrl;
+  document.getElementById("footer-ig").textContent = cfg.ig;
+}
+
+// ── LOAD ──
+async function load() {
+  try {
+    // Load config
+    const cfgRes = await fetch(`${FB}/config.json`, {cache:"no-store"});
+    if(cfgRes.ok) {
+      const c = await cfgRes.json();
+      if(c) { cfg = {...cfg,...c}; }
+    }
+    applyConfig();
+
+    // Load items
+    const res = await fetch(`${FB}/items.json`, {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+
+    if(data) {
+      const arr = Array.isArray(data) ? data : Object.values(data);
+      allItems = arr.filter(i => i && i.visible !== false);
+      if(allItems.length === 0) throw new Error("empty");
+    } else {
+      throw new Error("null");
+    }
+
+    document.getElementById("loading").style.display = "none";
+    render();
+  } catch(e) {
+    console.warn("Firebase:", e.message);
+    // Show message to seed Firebase
+    document.getElementById("loading").innerHTML =
+      `<div style="text-align:center;color:#666;font-size:12px;letter-spacing:.1em">
+        <div style="font-size:32px;margin-bottom:12px">🐻</div>
+        Catálogo vacío — sube el inventario desde el admin.
+      </div>`;
+  }
 }
 
 // ── FILTER ──
-function setFilter(btn, cat) {
-  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  currentFilter = cat;
-  renderGrid();
+function setF(btn, cat) {
+  document.querySelectorAll(".filt").forEach(b => b.classList.remove("on"));
+  btn.classList.add("on");
+  curFilter = cat;
+  render();
+}
+
+function filterCat(cat, link) {
+  document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+  link.classList.add("active");
+  document.querySelectorAll(".filt").forEach(b => {
+    b.classList.toggle("on", b.textContent === cat || (cat === "Todas" && b.textContent === "Todas"));
+  });
+  curFilter = cat === "Conjuntos" ? "Conjuntos" : "Todas";
+  render();
+  document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});
 }
 
 // ── RENDER ──
-function renderGrid() {
-  const visible = allItems.filter(i => {
-    if(i.visible === false) return false;
-    if(currentFilter !== "Todas" && i.categoria !== currentFilter) return false;
-    return true;
-  });
+function render() {
+  const visible = allItems.filter(i =>
+    curFilter === "Todas" || i.categoria === curFilter
+  );
 
-  const grid = document.getElementById("grid");
   const empty = document.getElementById("empty");
+  const grid = document.getElementById("grid");
 
-  if(visible.length === 0) {
-    grid.innerHTML = "";
-    empty.style.display = "block";
-    return;
-  }
+  if(!visible.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
   empty.style.display = "none";
 
-  const wa = `https://wa.me/${config.wa}`;
+  const waBase = `https://wa.me/${cfg.wa}`;
 
   grid.innerHTML = visible.map(item => {
-    const imgHtml = item.foto
-      ? `<img class="card-img" src="${item.foto}" alt="${item.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        + `<div class="card-img-placeholder" style="display:none">🐻</div>`
-      : `<div class="card-img-placeholder">🐻</div>`;
+    const img = item.foto
+      ? `<img class="card-img" src="${item.foto}" alt="${item.nombre}" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + `<div class="card-ph" style="display:none">🐻</div>`
+      : `<div class="card-ph">🐻</div>`;
 
-    const tallas = (item.tallas||[]).map(t =>
-      `<span class="talla">${t}</span>`).join("");
-
-    const sold = item.vendida
-      ? `<div class="badge-sold">VENDIDO</div>` : "";
-
-    const msg = encodeURIComponent(`Hola! Me interesa: ${item.nombre} — $${item.precio}`);
+    const sizes = (item.tallas||[]).map(t => `<span class="sz">${t}</span>`).join("");
+    const sold = item.vendida ? `<div class="sold-badge">VENDIDO</div>` : "";
+    const msg = encodeURIComponent(`Hola! Me interesa: ${item.nombre} — $${item.precio} MXN`);
 
     return `<div class="card">
-      ${imgHtml}
-      ${sold}
+      ${img}${sold}
       <div class="card-body">
         <div class="card-cat">${item.categoria||""}</div>
         <div class="card-name">${item.nombre}</div>
         <div class="card-price">$${item.precio} MXN</div>
-        <div class="card-tallas">${tallas}</div>
-        ${!item.vendida ? `<button class="btn-wa" onclick="window.open('${wa}?text=${msg}','_blank')">💬 CONSULTAR</button>` : `<div style="text-align:center;color:#888;font-size:11px;padding:8px">Agotada</div>`}
+        <div class="card-sizes">${sizes}</div>
+        ${!item.vendida
+          ? `<button class="btn-consult" onclick="window.open('${waBase}?text=${msg}','_blank')">💬 CONSULTAR</button>`
+          : `<div style="text-align:center;color:#555;font-size:11px;padding:8px;letter-spacing:.08em">AGOTADA</div>`
+        }
       </div>
     </div>`;
   }).join("");
 }
 
-// ── INIT ──
+// Init
 applyConfig();
-loadCatalog();
+load();
 </script>
 </body>
 </html>
