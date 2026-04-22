@@ -507,7 +507,7 @@ footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
 <script>
 // ── FIREBASE CONFIG — reemplaza con tus datos ──
 const FB_CONFIG = {
-  apiKey: "REEMPLAZA_TU_API_KEY",
+  apiKey: "AIzaSyDBeqKZ0wjRft0toqXgxgZBXTU6ONMfGwc",
   authDomain: "bear-trap-bazar.firebaseapp.com",
   databaseURL: "https://bear-trap-bazar-default-rtdb.firebaseio.com",
   projectId: "bear-trap-bazar"
@@ -517,7 +517,7 @@ const db = firebase.database();
 
 let cfg = {ig:"@beartrapbazar",wa:"5215512345678"};
 let subfilters = {ra:""};
-
+s
 // ── CURSOR ──
 const cur = document.getElementById("cur");
 document.addEventListener("mousemove", e => {
@@ -594,7 +594,7 @@ function renderRA(allItems, photos){
   const sub = subfilters.ra;
   const items = allItems.filter(i => {
     if(i.visible===false) return false;
-    if(i.categoria !== "Ropa Americana") return false;
+    if(i.categoria !== "Ropa Americana") return false;FE
     if(sub && i.subcategoria && i.subcategoria !== sub) return false;
     if(sub && !i.subcategoria && i.nombre) return true; // show all if no subcategoria
     return true;
