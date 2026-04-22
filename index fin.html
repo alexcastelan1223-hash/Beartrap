@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bear Trap — Ropa que atrapa.</title>
+<meta name="description" content="Bear Trap — Ropa americana. Piezas únicas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@700;900&family=DM+Sans:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#07070a;color:#f0f0f0;font-family:"DM Sans",sans-serif;cursor:none;overflow-x:hidden}
+
+/* ── CURSOR ── */
+*{cursor:none !important}
+#cur{
+  position:fixed;
+  width:16px;height:16px;border-radius:50%;
+  pointer-events:none;z-index:99999;
+  border:2px solid rgba(255,180,0,.85);
+  background:rgba(255,160,0,.08);
+  top:-100px;left:-100px;
+  transform:translate(-50%,-50%);
+  transition:width .12s,height .12s,border-color .12s;
+}
+#cur.big{width:30px;height:30px;border-color:rgba(255,210,0,1);background:rgba(255,180,0,.12)}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;display:flex;align-items:center;
+  padding:0 28px;background:rgba(7,7,10,.88);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.05)}
+
+.nlogo{border:1px solid rgba(255,255,255,.18);border-radius:5px;padding:6px 10px;
+  display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+/* Logo bear — matches the gradient rounded-square logo exactly */
+.nlogo svg{width:30px;height:30px}
+.nlogo-text{display:flex;flex-direction:column;line-height:1.05;gap:0}
+.nlogo-b{font-family:"Unbounded",sans-serif;font-size:9.5px;font-weight:900;
+  background:linear-gradient(90deg,#ff6b00,#ffd600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nlogo-t{font-family:"Unbounded",sans-serif;font-size:9.5px;font-weight:900;
+  background:linear-gradient(90deg,#00ff87,#00c8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.nctr{flex:1;display:flex;justify-content:center;gap:36px}
+.nl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);text-decoration:none;padding:4px 0;
+  position:relative;transition:color .2s}
+.nl.on,.nl:hover{color:#fff}
+.nl.on::after{content:"";position:absolute;bottom:-2px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,#ff8c00,#ffd600);border-radius:1px}
+
+.nright{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.nsoc{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s}
+.nsoc:hover{color:#fff}
+.nsep{color:rgba(255,255,255,.1)}
+.ndot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.15);
+  cursor:pointer;transition:background .2s;margin-left:4px}
+.ndot:hover{background:rgba(255,255,255,.4)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding:80px 60px 60px;
+  position:relative;overflow:hidden}
+
+/* Glows matching screenshot exactly */
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 70% at 10% 60%,rgba(160,65,0,.55) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 60% at 82% 35%,rgba(80,0,150,.55) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 45% at 80% 75%,rgba(0,20,80,.4) 0%,transparent 55%),
+    radial-gradient(ellipse 30% 30% at 50% 50%,rgba(0,60,20,.2) 0%,transparent 70%)}
+
+.hleft{position:relative;z-index:2;flex:0 0 auto;max-width:580px}
+.hbadge{font-size:10px;letter-spacing:.22em;color:rgba(255,200,100,.6);
+  text-transform:uppercase;margin-bottom:18px}
+.htitle{font-family:"Bebas Neue",sans-serif;
+  font-size:clamp(100px,14vw,185px);line-height:.86;letter-spacing:.01em;
+  background:linear-gradient(170deg,#ffe44d 0%,#ff9500 45%,#ff5500 85%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:16px}
+.hslogan{font-family:"DM Sans",sans-serif;font-style:italic;
+  font-size:clamp(17px,2vw,22px);color:rgba(255,255,255,.75);margin-bottom:26px}
+.hslogan strong{color:#ff9500;font-style:italic;font-weight:700}
+
+/* Rainbow bars matching screenshot */
+.hstripe{display:flex;gap:4px;margin-bottom:32px;height:5px;width:340px}
+.hstripe span{flex:1;border-radius:3px}
+.hs1{background:#ff3b30}.hs2{background:#ff8c00}.hs3{background:#34c759}
+.hs4{background:#30d5c8}.hs5{background:#af52de}.hs6{background:#ff2d55}
+
+.hbtns{display:flex;gap:14px;flex-wrap:wrap}
+.bcat{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);border:none;border-radius:4px;
+  color:#000;font-weight:800;font-size:14px;letter-spacing:.04em;cursor:none;
+  transition:all .2s;text-decoration:none;font-family:"DM Sans",sans-serif}
+.bcat:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,160,0,.4)}
+.bwa-h{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
+  border-radius:4px;color:rgba(255,255,255,.7);font-weight:600;font-size:14px;
+  letter-spacing:.04em;cursor:none;transition:all .2s;text-decoration:none;
+  font-family:"DM Sans",sans-serif}
+.bwa-h:hover{border-color:rgba(37,211,102,.5);color:#25d366;transform:translateY(-2px)}
+
+/* ── 3D BEAR (right side) — matches screenshot ── */
+.hbear{position:absolute;right:6%;top:50%;transform:translateY(-50%);
+  z-index:2;width:340px;height:340px;animation:fl 5s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(-50%)}50%{transform:translateY(calc(-50% - 15px))}}
+
+/* Glow behind bear */
+.bear-glow{position:absolute;top:50%;left:50%;
+  width:310px;height:310px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse,rgba(80,0,160,.6) 0%,rgba(0,20,100,.35) 45%,transparent 70%);
+  filter:blur(32px);animation:gp 4s ease-in-out infinite}
+@keyframes gp{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(1)}
+              50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+
+/* Sparkles */
+.sp{position:absolute;animation:sk 3s ease-in-out infinite;pointer-events:none}
+@keyframes sk{0%,100%{opacity:.55;transform:scale(1) rotate(0deg)}50%{opacity:1;transform:scale(1.25) rotate(10deg)}}
+.sp-sy{top:5%;right:18%;font-size:26px;color:#ffd700;filter:drop-shadow(0 0 6px #ffd700);animation-delay:0s}
+.sp-sp{top:22%;left:2%;font-size:20px;color:#ff2d78;filter:drop-shadow(0 0 5px #ff2d78);animation-delay:.6s}
+.sp-dy{top:40%;right:0%;font-size:14px;color:#ffe566;animation-delay:.9s}
+.sp-dc{top:65%;right:-1%;font-size:11px;color:#00c8ff;animation-delay:1.3s}
+.sp-gg{bottom:22%;left:6%;width:9px;height:9px;border-radius:50%;background:#00ff87;animation-delay:.4s}
+.sp-gb{bottom:32%;right:7%;width:11px;height:11px;border-radius:50%;background:#1a8fff;animation-delay:1s}
+.sp-gp{bottom:14%;right:20%;width:7px;height:7px;border-radius:50%;background:#b24bff;animation-delay:1.6s}
+.sp-gc{top:54%;left:0%;width:6px;height:6px;border-radius:50%;background:#00dfff;animation-delay:.7s}
+
+/* ── ROPA AMERICANA SECTION ── */
+.section-wrap{max-width:1400px;margin:0 auto;padding:0 28px}
+.sec-hdr{padding:70px 0 28px;display:flex;align-items:flex-end;gap:18px}
+.sec-name{font-family:"Bebas Neue",sans-serif;font-size:clamp(32px,4vw,52px);letter-spacing:.05em}
+.sec-bar{flex:1;height:1px;background:#1e1e24;margin-bottom:8px}
+.sec-cnt{font-size:11px;color:#555;letter-spacing:.1em;padding-bottom:5px}
+
+/* ── FILTERS ── */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.fb{padding:6px 18px;border-radius:20px;border:1px solid #1e1e24;
+  background:transparent;color:#555;font-size:11px;font-weight:600;
+  letter-spacing:.08em;font-family:"DM Sans",sans-serif;cursor:none;transition:all .2s}
+.fb.on,.fb:hover{border-color:rgba(255,145,0,.5);color:#ff9500;background:rgba(255,145,0,.07)}
+
+/* ── PRODUCT GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;padding-bottom:70px}
+.card{background:#111115;border:1px solid #1c1c20;border-radius:8px;overflow:hidden;
+  transition:all .22s;position:relative}
+.card:hover{border-color:rgba(255,145,0,.3);transform:translateY(-5px);
+  box-shadow:0 18px 44px rgba(0,0,0,.55)}
+.cimgw{width:100%;aspect-ratio:3/4;overflow:hidden;background:#16161c;position:relative}
+.cimg{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.card:hover .cimg{transform:scale(1.05)}
+.cph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;background:linear-gradient(135deg,#131318,#1c1c24);gap:10px}
+.cph-ico{font-size:44px;opacity:.25}
+.cph-cat{font-size:9px;letter-spacing:.16em;color:rgba(255,255,255,.12);text-transform:uppercase}
+.cbody{padding:13px}
+.ccat{font-size:9px;letter-spacing:.14em;color:#555;text-transform:uppercase;margin-bottom:3px}
+.cname{font-weight:700;font-size:14px;line-height:1.25;margin-bottom:8px;color:#e8e8e8}
+.cbot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:11px}
+.cprice{font-family:"Bebas Neue",sans-serif;font-size:24px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ctallas{display:flex;gap:3px;flex-wrap:wrap}
+.talla{padding:2px 6px;border:1px solid #1e1e24;border-radius:3px;font-size:9px;color:#555}
+.bwa-c{width:100%;padding:10px;border:none;border-radius:5px;
+  background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;
+  font-weight:700;font-size:12px;letter-spacing:.06em;cursor:none;transition:opacity .2s}
+.bwa-c:hover{opacity:.86}
+.badge-sold{position:absolute;top:10px;left:10px;
+  background:linear-gradient(135deg,#ff2d78,#b24bff);
+  color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;
+  padding:3px 11px;border-radius:4px}
+.badge-new{position:absolute;top:10px;right:10px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);
+  color:#000;font-size:9px;font-weight:800;letter-spacing:.08em;
+  padding:3px 9px;border-radius:4px}
+
+/* ── COMING SOON SECTIONS ── */
+.coming-section{padding:70px 0 80px}
+.cs-inner{background:linear-gradient(135deg,#0e0e14,#141420);
+  border:1px solid #1e1e2a;border-radius:12px;
+  padding:80px 40px;text-align:center;position:relative;overflow:hidden}
+.cs-inner::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(100,0,180,.15),transparent 70%);
+  pointer-events:none}
+.cs-tag{display:inline-block;padding:5px 16px;border-radius:20px;
+  border:1px solid rgba(255,214,0,.25);color:rgba(255,214,0,.6);
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px}
+.cs-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(40px,6vw,72px);
+  letter-spacing:.06em;margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cs-sub{font-size:14px;color:#555;letter-spacing:.08em;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cs-dots{display:flex;justify-content:center;gap:10px;margin-bottom:28px}
+.cs-dot{width:8px;height:8px;border-radius:50%;animation:csd 2s ease-in-out infinite}
+.cs-dot:nth-child(1){background:#ff6b35;animation-delay:0s}
+.cs-dot:nth-child(2){background:#ffd600;animation-delay:.3s}
+.cs-dot:nth-child(3){background:#00ff87;animation-delay:.6s}
+.cs-dot:nth-child(4){background:#00c8ff;animation-delay:.9s}
+.cs-dot:nth-child(5){background:#b24bff;animation-delay:1.2s}
+@keyframes csd{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.4);opacity:1}}
+.cs-ig{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;
+  border:1px solid rgba(255,255,255,.12);border-radius:30px;
+  color:rgba(255,255,255,.6);font-size:12px;font-weight:600;letter-spacing:.08em;
+  text-decoration:none;transition:all .2s}
+.cs-ig:hover{border-color:rgba(255,145,0,.4);color:#ff9500}
+
+/* ── LOADING ── */
+.loading-grid{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+  gap:14px;padding:80px;color:#555;font-size:11px;letter-spacing:.1em}
+.spin{width:28px;height:28px;border-radius:50%;border:2px solid #1e1e24;
+  border-top-color:#ff8c00;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── FLOAT PILLS ── */
+.float-pills{position:fixed;bottom:24px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:800}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:30px;
+  font-weight:700;font-size:12px;letter-spacing:.06em;text-decoration:none;
+  transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(0,0,0,.45);
+  font-family:"DM Sans",sans-serif}
+.pill:hover{transform:scale(1.07) translateX(-3px);box-shadow:0 6px 24px rgba(0,0,0,.55)}
+.pill-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.pill-wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid #1a1a20;padding:32px 28px;text-align:center}
+.flogo{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.14em;margin-bottom:8px;
+  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero{padding:88px 28px 60px;flex-direction:column;min-height:auto}
+  .hbear{position:relative;right:auto;top:auto;transform:none;
+    width:240px;height:240px;margin:40px auto 0;
+    animation:fl2 5s ease-in-out infinite}
+  @keyframes fl2{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .nctr{display:none}
+  .htitle{font-size:clamp(80px,22vw,130px)}
+  .hstripe{width:100%}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  nav{padding:0 16px}
+  .nright .nsoc span{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nlogo">
+    <!-- Logo bear: rounded square, orange→green gradient, with triangles -->
+    <svg viewBox="0 0 50 50" fill="none">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ff6b35"/>
+          <stop offset="35%" stop-color="#ffd600"/>
+          <stop offset="65%" stop-color="#00ff87"/>
+          <stop offset="100%" stop-color="#00c8ff"/>
+        </linearGradient>
+      </defs>
+      <!-- Ears -->
+      <circle cx="15" cy="12" r="7" fill="url(#lg)"/>
+      <circle cx="35" cy="12" r="7" fill="url(#lg)"/>
+      <!-- Body/head rounded square -->
+      <rect x="7" y="14" width="36" height="30" rx="12" fill="url(#lg)"/>
+      <!-- Eyes -->
+      <circle cx="19" cy="26" r="3.5" fill="#111"/>
+      <circle cx="31" cy="26" r="3.5" fill="#111"/>
+      <!-- Nose -->
+      <circle cx="25" cy="32" r="2.2" fill="#111"/>
+      <!-- Triangles bottom -->
+      <polygon points="10,44 14,38 18,44" fill="#ff3b55"/>
+      <polygon points="18,44 22,38 26,44" fill="#ffd600"/>
+      <polygon points="26,44 30,38 34,44" fill="#00ff87"/>
+      <polygon points="34,44 38,38 42,44" fill="#00c8ff"/>
+    </svg>
+    <div class="nlogo-text">
+      <span class="nlogo-b">BEAR</span>
+      <span class="nlogo-t">TRAP</span>
+    </div>
+  </a>
+
+  <div class="nctr">
+    <a href="#ropa-americana" class="nl on" id="nl-ra">ROPA AMERICANA</a>
+    <a href="#street-syndicate" class="nl" id="nl-ss">STREET SYNDICATE</a>
+    <a href="#personalizaciones" class="nl" id="nl-pe">PERSONALIZACIONES</a>
+  </div>
+
+  <div class="nright">
+    <a id="n-ig" href="#" class="nsoc" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="2" width="20" height="20" rx="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>INSTAGRAM</span>
+    </a>
+    <span class="nsep">|</span>
+    <a id="n-wa" href="#" class="nsoc" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+      </svg>
+      <span>WHATSAPP</span>
+    </a>
+    <div class="ndot" onclick="location.href='/gestion/'" title="Gestión"></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hleft">
+    <div class="hbadge">PIEZAS ÚNICAS · 2026</div>
+    <div class="htitle">BEAR<br>TRAP</div>
+    <div class="hslogan">Ropa que <strong>atrapa.</strong></div>
+    <div class="hstripe">
+      <span class="hs1"></span><span class="hs2"></span><span class="hs3"></span>
+      <span class="hs4"></span><span class="hs5"></span><span class="hs6"></span>
+    </div>
+    <div class="hbtns">
+      <a href="#ropa-americana" class="bcat">→ VER CATÁLOGO</a>
+      <a id="h-wa" href="#" class="bwa-h" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+        </svg>
+        WHATSAPP
+      </a>
+    </div>
+  </div>
+
+  <!-- 3D KAWAII BEAR — matches screenshot: brown, big eyes, pink cheeks, sparkles -->
+  <div class="hbear">
+    <div class="bear-glow"></div>
+    <div class="sp sp-sy">★</div>
+    <div class="sp sp-sp">★</div>
+    <div class="sp sp-dy">✦</div>
+    <div class="sp sp-dc">✦</div>
+    <div class="sp sp-gg"></div>
+    <div class="sp sp-gb"></div>
+    <div class="sp sp-gp"></div>
+    <div class="sp sp-gc"></div>
+    <svg viewBox="0 0 320 320" fill="none" style="position:relative;z-index:2;width:100%;height:100%">
+      <defs>
+        <radialGradient id="head" cx="38%" cy="30%" r="65%">
+          <stop offset="0%" stop-color="#8a5430"/>
+          <stop offset="35%" stop-color="#6b3e1e"/>
+          <stop offset="80%" stop-color="#4a2a0e"/>
+          <stop offset="100%" stop-color="#3a1f08"/>
+        </radialGradient>
+        <radialGradient id="ear-in" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#7a4822"/>
+          <stop offset="100%" stop-color="#5c3415"/>
+        </radialGradient>
+        <radialGradient id="muzzle" cx="50%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#d49878"/>
+          <stop offset="60%" stop-color="#b87555"/>
+          <stop offset="100%" stop-color="#a06040"/>
+        </radialGradient>
+        <radialGradient id="nose" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#2a1408"/>
+          <stop offset="100%" stop-color="#0d0704"/>
+        </radialGradient>
+        <radialGradient id="eye-l" cx="35%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="#1a1a1a"/>
+          <stop offset="100%" stop-color="#050505"/>
+        </radialGradient>
+      </defs>
+      <!-- Ears outer -->
+      <circle cx="90" cy="88" r="44" fill="#3a1f08"/>
+      <circle cx="230" cy="88" r="44" fill="#3a1f08"/>
+      <!-- Ears inner -->
+      <circle cx="90" cy="88" r="28" fill="url(#ear-in)"/>
+      <circle cx="230" cy="88" r="28" fill="url(#ear-in)"/>
+      <!-- Head -->
+      <circle cx="160" cy="172" r="118" fill="url(#head)"/>
+      <!-- Top highlight -->
+      <ellipse cx="138" cy="122" rx="50" ry="30" fill="rgba(255,255,255,.06)" transform="rotate(-18 138 122)"/>
+      <!-- Muzzle -->
+      <ellipse cx="160" cy="206" rx="52" ry="38" fill="url(#muzzle)"/>
+      <ellipse cx="160" cy="200" rx="42" ry="26" fill="rgba(255,255,255,.07)"/>
+      <!-- Eye whites -->
+      <ellipse cx="118" cy="162" rx="25" ry="28" fill="white"/>
+      <ellipse cx="202" cy="162" rx="25" ry="28" fill="white"/>
+      <!-- Iris -->
+      <circle cx="121" cy="166" r="18" fill="url(#eye-l)"/>
+      <circle cx="205" cy="166" r="18" fill="url(#eye-l)"/>
+      <!-- Eye highlight big -->
+      <circle cx="114" cy="157" r="8" fill="white" opacity=".92"/>
+      <circle cx="198" cy="157" r="8" fill="white" opacity=".92"/>
+      <!-- Eye highlight small -->
+      <circle cx="128" cy="171" r="3.5" fill="white" opacity=".45"/>
+      <circle cx="212" cy="171" r="3.5" fill="white" opacity=".45"/>
+      <!-- Nose -->
+      <ellipse cx="160" cy="196" rx="15" ry="11" fill="url(#nose)"/>
+      <ellipse cx="156" cy="193" rx="4.5" ry="2.8" fill="rgba(255,255,255,.2)"/>
+      <!-- Smile -->
+      <path d="M142 212 Q160 227 178 212" stroke="#8b5a35" stroke-width="3" fill="none" stroke-linecap="round" opacity=".75"/>
+      <!-- Cheek blush -->
+      <ellipse cx="100" cy="192" rx="20" ry="12" fill="#ff8888" opacity=".18"/>
+      <ellipse cx="220" cy="192" rx="20" ry="12" fill="#ff8888" opacity=".18"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ROPA AMERICANA -->
+<div id="ropa-americana">
+  <div class="section-wrap">
+    <div class="sec-hdr">
+      <div class="sec-name">ROPA AMERICANA</div>
+      <div class="sec-bar"></div>
+      <div class="sec-cnt" id="cnt-ra">cargando...</div>
+    </div>
+    <div class="filters" id="filt-ra">
+      <button class="fb on" onclick="filt('ra',this,'')">Todas</button>
+      <button class="fb" onclick="filt('ra',this,'Chamarras')">Chamarras</button>
+      <button class="fb" onclick="filt('ra',this,'Suéteres')">Suéteres</button>
+      <button class="fb" onclick="filt('ra',this,'Pantalones')">Pantalones</button>
+      <button class="fb" onclick="filt('ra',this,'Faldas')">Faldas</button>
+      <button class="fb" onclick="filt('ra',this,'Vestidos')">Vestidos</button>
+      <button class="fb" onclick="filt('ra',this,'Shorts')">Shorts</button>
+      <button class="fb" onclick="filt('ra',this,'Blusas')">Blusas</button>
+    </div>
+    <div class="grid" id="g-ra">
+      <div class="loading-grid"><div class="spin"></div><span>Cargando catálogo...</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- STREET SYNDICATE — Coming Soon -->
+<div id="street-syndicate">
+  <div class="section-wrap">
+    <div class="sec-hdr">
+      <div class="sec-name">STREET SYNDICATE</div>
+      <div class="sec-bar"></div>
+    </div>
+    <div class="coming-section">
+      <div class="cs-inner">
+        <div class="cs-tag">En construcción</div>
+        <div class="cs-title">COMING SOON</div>
+        <div class="cs-sub">Nuestra línea de streetwear está en desarrollo.<br>Piezas únicas, ediciones limitadas, estética urbana sin filtro.<br>Síguenos para enterarte primero.</div>
+        <div class="cs-dots">
+          <div class="cs-dot"></div><div class="cs-dot"></div><div class="cs-dot"></div>
+          <div class="cs-dot"></div><div class="cs-dot"></div>
+        </div>
+        <a id="cs-ss-ig" href="#" class="cs-ig" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+          </svg>
+          SEGUIR EN INSTAGRAM
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONALIZACIONES — Coming Soon -->
+<div id="personalizaciones">
+  <div class="section-wrap">
+    <div class="sec-hdr">
+      <div class="sec-name">PERSONALIZACIONES</div>
+      <div class="sec-bar"></div>
+    </div>
+    <div class="coming-section">
+      <div class="cs-inner">
+        <div class="cs-tag">Próximamente</div>
+        <div class="cs-title">COMING SOON</div>
+        <div class="cs-sub">Personalizamos prendas a tu medida. Bordados, estampados, cortes.<br>Tu ropa, tu identidad. Pronto disponible para pedidos.<br>Manda un mensaje para más información.</div>
+        <div class="cs-dots">
+          <div class="cs-dot"></div><div class="cs-dot"></div><div class="cs-dot"></div>
+          <div class="cs-dot"></div><div class="cs-dot"></div>
+        </div>
+        <a id="cs-pe-wa" href="#" class="cs-ig" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+          </svg>
+          CONSULTAR POR WHATSAPP
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="flogo">BEAR TRAP</div>
+  <p id="f-ig">@beartrapbazar</p>
+  <p>ROPA AMERICANA · PIEZAS ÚNICAS · MÉXICO</p>
+</footer>
+
+<div class="float-pills">
+  <a id="fp-ig" href="#" class="pill pill-ig" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="2" y="2" width="20" height="20" rx="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+    </svg>
+    INSTAGRAM
+  </a>
+  <a id="fp-wa" href="#" class="pill pill-wa" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+    </svg>
+    WHATSAPP
+  </a>
+</div>
+
+<script>
+const FB_CONFIG = {
+  apiKey: "AIzaSyDBeqKZ0wjRft0toqXgxgZBXTU6ONMfGwc",
+  authDomain: "bear-trap-bazar.firebaseapp.com",
+  databaseURL: "https://bear-trap-bazar-default-rtdb.firebaseio.com",
+  projectId: "bear-trap-bazar",
+  storageBucket: "bear-trap-bazar.firebasestorage.app",
+  messagingSenderId: "880305303252",
+  appId: "1:880305303252:web:a159ecd854d7625850d541"
+};
+
+firebase.initializeApp(FB_CONFIG);
+const db = firebase.database();
+
+let cfg = {ig:"@beartrapbazar", wa:"5215512345678"};
+let subfilters = {ra:""};
+let cachedItems = [];
+let cachedPhotos = {};
+
+// ── CURSOR ──
+const cur = document.getElementById("cur");
+document.addEventListener("mousemove", e => {
+  cur.style.left = e.clientX + "px";
+  cur.style.top  = e.clientY + "px";
+}, {passive:true});
+document.addEventListener("mouseover", e => {
+  const t = e.target;
+  if(t.matches("a,button,.card,.ndot,.fb,.pill") || t.closest("a,button,.card"))
+    cur.classList.add("big");
+  else cur.classList.remove("big");
+}, {passive:true});
+
+// ── NAV ACTIVE ──
+window.addEventListener("scroll", () => {
+  const secs = [["ropa-americana","nl-ra"],["street-syndicate","nl-ss"],["personalizaciones","nl-pe"]];
+  let active = 0;
+  secs.forEach(([id], i) => {
+    const el = document.getElementById(id);
+    if(el && el.getBoundingClientRect().top < 120) active = i;
+  });
+  secs.forEach(([,nid], i) => document.getElementById(nid).classList.toggle("on", i===active));
+}, {passive:true});
+
+// ── APPLY CONFIG ──
+function applyConfig(){
+  const wa = "https://wa.me/" + (cfg.wa||"");
+  const ig = "https://instagram.com/" + (cfg.ig||"").replace("@","");
+  document.querySelectorAll("#n-ig,#fp-ig,#cs-ss-ig").forEach(el => { if(el) el.href=ig; });
+  document.querySelectorAll("#n-wa,#h-wa,#fp-wa,#cs-pe-wa").forEach(el => { if(el) el.href=wa; });
+  const figEl = document.getElementById("f-ig");
+  if(figEl) figEl.textContent = cfg.ig||"";
+}
+
+// ── RENDER ──
+function render(){
+  renderRA(cachedItems, cachedPhotos);
+}
+
+function filt(sec, btn, sub){
+  subfilters[sec] = sub;
+  document.getElementById("filt-"+sec).querySelectorAll(".fb").forEach(b => b.classList.remove("on"));
+  btn.classList.add("on");
+  render();
+}
+
+function renderRA(allItems, photos){
+  const sub = subfilters.ra;
+  // Show ALL visible items from Ropa Americana — no subcategory filter breaking things
+  const items = allItems.filter(i => {
+    if(i.visible === false) return false;
+    // Accept items that are "Ropa Americana" OR have no category (backwards compat)
+    const cat = (i.categoria||i.cat||"").toLowerCase();
+    if(cat && cat !== "ropa americana") return false;
+    return true;
+  });
+
+  const cntEl = document.getElementById("cnt-ra");
+  if(cntEl) cntEl.textContent = items.length + " prendas";
+
+  const wa = "https://wa.me/" + (cfg.wa||"");
+  const grid = document.getElementById("g-ra");
+  if(!grid) return;
+
+  if(!items.length){
+    grid.innerHTML = `<div class="loading-grid"><span style="color:#444">Sin prendas disponibles en este momento.</span></div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(item => {
+    const id   = item.id || "";
+    const foto = photos[id] || photos[String(id)] || "";
+    const isNew  = item.nuevo;
+    const imgEl  = foto && foto.startsWith("data:")
+      ? `<img class="cimg" src="${foto}" alt="${item.nombre}" loading="lazy">`
+      : foto
+        ? `<img class="cimg" src="${foto}" alt="${item.nombre}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cph><div class=cph-ico>🐻</div></div>'">`
+        : `<div class="cph"><div class="cph-ico">🐻</div><div class="cph-cat">${item.categoria||""}</div></div>`;
+    const tallas = (item.tallas||[]).map(t=>`<span class="talla">${t}</span>`).join("");
+    const nombre = item.nombre||"";
+    const precio = item.precio||0;
+    const msg    = encodeURIComponent(`Hola! Me interesa: ${nombre} — $${precio} MXN`);
+    const btn    = !item.vendida
+      ? `<button class="bwa-c" onclick="window.open('${wa}?text=${msg}','_blank')">💬 CONSULTAR</button>`
+      : `<div style="text-align:center;font-size:11px;color:#444;padding:8px">Pieza agotada</div>`;
+    return `<div class="card">
+      <div class="cimgw">${imgEl}${item.vendida?'<div class="badge-sold">VENDIDA</div>':''}${isNew?'<div class="badge-new">NUEVO</div>':''}</div>
+      <div class="cbody">
+        <div class="ccat">${item.categoria||""}</div>
+        <div class="cname">${nombre}</div>
+        <div class="cbot"><div class="cprice">$${precio}</div><div class="ctallas">${tallas}</div></div>
+        ${btn}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── INIT — load once, then real-time ──
+function init(){
+  // Config
+  db.ref("config").on("value", snap => {
+    const c = snap.val();
+    if(c){ cfg = {...cfg, ...c}; applyConfig(); }
+    else applyConfig();
+  }, err => {
+    console.warn("Config error:", err);
+    applyConfig();
+  });
+
+  // Load items ONCE first, then listen
+  db.ref("items").once("value").then(iSnap => {
+    const raw = iSnap.val();
+    cachedItems = raw
+      ? (Array.isArray(raw) ? raw : Object.values(raw)).filter(Boolean)
+      : [];
+    console.log("Items loaded:", cachedItems.length);
+
+    // Now load photos
+    return db.ref("photos").once("value");
+  }).then(pSnap => {
+    cachedPhotos = pSnap.val() || {};
+    console.log("Photos loaded:", Object.keys(cachedPhotos).length);
+    render();
+
+    // NOW set up real-time listeners for future changes
+    db.ref("items").on("value", snap => {
+      const raw = snap.val();
+      cachedItems = raw
+        ? (Array.isArray(raw) ? raw : Object.values(raw)).filter(Boolean)
+        : [];
+      render();
+    });
+    db.ref("photos").on("value", snap => {
+      cachedPhotos = snap.val() || {};
+      render();
+    });
+
+  }).catch(err => {
+    console.error("Firebase load error:", err.message);
+    document.getElementById("g-ra").innerHTML =
+      `<div class="loading-grid"><span style="color:#ff2d78">Error al cargar: ${err.message}<br><br>Verifica las reglas de Firebase:<br>".read": true</span></div>`;
+  });
+}
+
+init();
+</script>
+</body>
+</html>
