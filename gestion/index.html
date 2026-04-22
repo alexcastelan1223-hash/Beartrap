@@ -6,213 +6,322 @@
 <title>Bear Trap — Gestión</title>
 <meta name="robots" content="noindex,nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Firebase SDKs -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<!-- SheetJS para exportar Excel -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#080809;--s:#101012;--c:#16161a;--b:#222226;--t:#eee;--mu:#555;--gold:#ffc107;--or:#ff8c00;--green:#00e676;--pink:#ff2d78;--cyan:#00c8ff}
+:root{--bg:#080809;--s:#0f0f13;--c:#16161c;--b:#222228;--t:#ebebeb;--mu:#505060;
+  --gold:#ffc107;--or:#ff8c00;--green:#00e676;--pink:#ff2d78;--cyan:#00c8ff;--pur:#b24bff}
 body{background:var(--bg);color:var(--t);font-family:"DM Sans",sans-serif;min-height:100vh}
-/* STEP 1 — Firebase config */
-#step-config{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
-.cfg-box{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:40px;width:460px}
-.cfg-title{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em;
-  background:linear-gradient(135deg,#ff8c00,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
-.cfg-sub{font-size:11px;color:var(--mu);letter-spacing:.08em;margin-bottom:24px;line-height:1.6}
+
+/* ══ PANTALLA DE CONFIGURACIÓN FIREBASE ══ */
+#screen-cfg{position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;align-items:center;justify-content:center}
+.cfg-box{background:var(--s);border:1px solid var(--b);border-radius:10px;
+  padding:44px;width:480px;max-width:95vw}
+.cfg-logo{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:.08em;
+  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;margin-bottom:4px}
+.cfg-sub{font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:24px}
 .cfg-sub a{color:var(--cyan);text-decoration:none}
-.cfg-field{margin-bottom:14px}
-.cfg-field label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mu);margin-bottom:6px;text-transform:uppercase}
-.cfg-field input{width:100%;padding:10px 12px;background:var(--c);border:1px solid var(--b);border-radius:4px;
-  color:var(--t);font-family:"DM Mono",monospace;font-size:12px;outline:none;transition:border .2s}
-.cfg-field input:focus{border-color:var(--gold)}
-.cfg-field small{display:block;font-size:10px;color:var(--mu);margin-top:4px;line-height:1.5}
-.btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:4px;
-  color:#000;font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s;margin-top:8px}
-.btn-primary:hover{opacity:.88}
+.cfg-sub a:hover{text-decoration:underline}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mu);
+  text-transform:uppercase;margin-bottom:6px}
+.field input{width:100%;padding:11px 13px;background:var(--c);border:1px solid var(--b);
+  border-radius:5px;color:var(--t);font-family:"DM Mono",monospace;font-size:12px;
+  outline:none;transition:border .2s}
+.field input:focus{border-color:var(--gold)}
+.field small{display:block;font-size:10px;color:var(--mu);margin-top:5px;line-height:1.5}
 #cfg-err{color:var(--pink);font-size:11px;margin:8px 0;min-height:16px}
-/* STEP 2 — Firebase login */
-#step-auth{display:none;position:fixed;inset:0;background:var(--bg);z-index:9998;align-items:center;justify-content:center}
-.auth-box{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:44px;width:360px;text-align:center}
-.auth-title{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.06em;
-  background:linear-gradient(135deg,#ff8c00,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.btn-connect{width:100%;padding:13px;background:linear-gradient(135deg,#ffc107,#ff8c00);
+  border:none;border-radius:5px;color:#000;font-family:"Bebas Neue",sans-serif;
+  font-size:19px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s;margin-top:4px}
+.btn-connect:hover{opacity:.88}
+
+/* ══ PANTALLA DE LOGIN FIREBASE AUTH ══ */
+#screen-auth{position:fixed;inset:0;background:var(--bg);z-index:9998;
+  display:none;align-items:center;justify-content:center}
+.auth-box{background:var(--s);border:1px solid var(--b);border-radius:10px;
+  padding:44px;width:380px;max-width:95vw;text-align:center}
+.auth-logo{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.08em;
+  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;margin-bottom:4px}
 .auth-sub{font-size:11px;color:var(--mu);letter-spacing:.1em;margin-bottom:28px}
-.auth-field label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mu);text-align:left;margin-bottom:6px;text-transform:uppercase}
-.auth-field input{width:100%;padding:11px 14px;background:var(--c);border:1px solid var(--b);border-radius:4px;
-  color:var(--t);font-family:inherit;font-size:14px;outline:none;transition:border .2s;margin-bottom:12px}
+.auth-field label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mu);
+  text-align:left;margin-bottom:6px;text-transform:uppercase;margin-top:14px}
+.auth-field input{width:100%;padding:11px 13px;background:var(--c);border:1px solid var(--b);
+  border-radius:5px;color:var(--t);font-family:inherit;font-size:14px;outline:none;transition:border .2s}
 .auth-field input:focus{border-color:var(--gold)}
-#auth-err{color:var(--pink);font-size:11px;margin:4px 0 8px;min-height:16px}
-/* ADMIN */
-#AS{display:none}
-.stripe{height:3px;background:linear-gradient(90deg,#ff3b30,#ff8c00,#34c759,#30d5c8,#af52de,#ff2d55);background-size:200%;animation:st 3s linear infinite}
+#auth-err{color:var(--pink);font-size:11px;margin:10px 0 4px;min-height:16px}
+.auth-btn{width:100%;padding:13px;background:linear-gradient(135deg,#ffc107,#ff8c00);
+  border:none;border-radius:5px;color:#000;font-family:"Bebas Neue",sans-serif;
+  font-size:19px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s;margin-top:8px}
+.auth-btn:hover{opacity:.88}
+/* BOTÓN SIEMPRE VISIBLE para reconfigurar */
+.btn-reconfig{display:block;margin-top:20px;font-size:11px;color:var(--mu);
+  letter-spacing:.08em;cursor:pointer;background:none;border:none;width:100%;
+  transition:color .2s;text-decoration:underline;font-family:inherit}
+.btn-reconfig:hover{color:var(--cyan)}
+
+/* ══ ADMIN ══ */
+#screen-admin{display:none}
+.stripe{height:3px;background:linear-gradient(90deg,#ff3b30,#ff8c00,#34c759,#30d5c8,#af52de,#ff2d55);
+  background-size:200%;animation:st 3s linear infinite}
 @keyframes st{to{background-position:200%}}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;
-  background:var(--s);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:100}
-.tlogo{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.1em;
-  background:linear-gradient(135deg,#ff8c00,#ffc107);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.tbadge{padding:2px 8px;border-radius:10px;background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.2);
-  color:var(--gold);font-size:10px;letter-spacing:.1em;margin-left:8px}
-.tr2{display:flex;gap:8px;align-items:center}
-.bsm{padding:6px 16px;border-radius:3px;font-size:11px;font-family:"DM Sans",sans-serif;font-weight:600;
-  letter-spacing:.08em;cursor:pointer;transition:all .2s;text-decoration:none;border:1px solid var(--b)}
-.bv{background:rgba(0,200,255,.08);color:var(--cyan);border-color:rgba(0,200,255,.2)}
-.bv:hover{background:rgba(0,200,255,.15)}
-.bo{background:transparent;color:var(--mu);cursor:pointer}
-.bo:hover{border-color:var(--pink);color:var(--pink)}
-.ac{max-width:1400px;margin:0 auto;padding:20px}
-#SB{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:4px;margin-bottom:18px;font-size:11px;letter-spacing:.08em;font-family:"DM Mono",monospace}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+  height:54px;background:var(--s);border-bottom:1px solid var(--b);
+  position:sticky;top:0;z-index:100}
+.t-logo{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.1em;
+  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.t-badge{padding:2px 8px;border-radius:10px;background:rgba(255,193,7,.1);
+  border:1px solid rgba(255,193,7,.2);color:var(--gold);font-size:10px;
+  letter-spacing:.1em;margin-left:8px;font-family:"DM Mono",monospace}
+.t-email{font-size:10px;color:var(--mu);font-family:"DM Mono",monospace;letter-spacing:.06em}
+.t-right{display:flex;align-items:center;gap:8px}
+.bsm{padding:7px 16px;border-radius:4px;font-size:11px;font-family:"DM Sans",sans-serif;
+  font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .2s;
+  text-decoration:none;border:1px solid var(--b)}
+.bv{background:rgba(0,200,255,.08);color:var(--cyan);border-color:rgba(0,200,255,.22)}
+.bv:hover{background:rgba(0,200,255,.16)}
+.bout{background:transparent;color:var(--mu)}
+.bout:hover{border-color:var(--pink);color:var(--pink)}
+
+.ac{max-width:1440px;margin:0 auto;padding:22px}
+
+/* STATUS */
+#SB{display:flex;align-items:center;gap:9px;padding:10px 15px;border-radius:5px;
+  margin-bottom:20px;font-size:11px;letter-spacing:.08em;font-family:"DM Mono",monospace}
 #SB.ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);color:var(--green)}
 #SB.err{background:rgba(255,45,120,.06);border:1px solid rgba(255,45,120,.2);color:var(--pink)}
 #SB.ld{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.2);color:var(--gold)}
-.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.dok{background:var(--green)}.derr{background:var(--pink)}.dld{background:var(--gold);animation:pl 1.2s ease-in-out infinite}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dok{background:var(--green)}.derr{background:var(--pink)}
+.dld{background:var(--gold);animation:pl 1.2s ease-in-out infinite}
 @keyframes pl{0%,100%{opacity:1}50%{opacity:.2}}
-.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.sc{background:var(--s);border:1px solid var(--b);border-radius:4px;padding:18px}
-.sv{font-family:"Bebas Neue",sans-serif;font-size:38px;color:var(--gold)}
-.sl{font-size:10px;letter-spacing:.12em;color:var(--mu);text-transform:uppercase;margin-top:2px}
-.tb{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.sr{flex:1;min-width:180px;padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:3px;color:var(--t);font-family:inherit;font-size:12px;outline:none}
-.sr:focus{border-color:var(--gold)}
-.fs{padding:9px 12px;background:var(--s);border:1px solid var(--b);border-radius:3px;color:var(--t);font-family:inherit;font-size:12px;cursor:pointer}
-.ba{padding:9px 22px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:3px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
-.ba:hover{opacity:.88}
-.tw{overflow-x:auto}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
+.stat{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:18px}
+.stat-v{font-family:"Bebas Neue",sans-serif;font-size:40px;color:var(--gold);line-height:1}
+.stat-l{font-size:10px;letter-spacing:.12em;color:var(--mu);text-transform:uppercase;margin-top:4px}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.tsearch{flex:1;min-width:180px;padding:10px 13px;background:var(--s);border:1px solid var(--b);
+  border-radius:4px;color:var(--t);font-family:inherit;font-size:12px;outline:none}
+.tsearch:focus{border-color:var(--gold)}
+.tsel{padding:10px 13px;background:var(--s);border:1px solid var(--b);border-radius:4px;
+  color:var(--t);font-family:inherit;font-size:12px;cursor:pointer}
+.badd{padding:10px 22px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;
+  border-radius:4px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:18px;
+  letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.badd:hover{opacity:.88}
+.bxls{padding:10px 18px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
+  border-radius:4px;color:var(--green);font-family:"DM Sans",sans-serif;font-weight:600;
+  font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;letter-spacing:.06em}
+.bxls:hover{background:rgba(0,230,118,.16)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:9px 12px;text-align:left;color:var(--mu);font-size:10px;letter-spacing:.1em;border-bottom:1px solid var(--b);font-weight:500;text-transform:uppercase;white-space:nowrap}
-td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+th{padding:10px 13px;text-align:left;color:var(--mu);font-size:10px;letter-spacing:.1em;
+  border-bottom:1px solid var(--b);font-weight:500;text-transform:uppercase;white-space:nowrap}
+td{padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
 tr:hover td{background:rgba(255,255,255,.015)}
-.ti{width:44px;height:52px;object-fit:cover;border-radius:3px;display:block}
-.tp{width:44px;height:52px;background:#1a1a20;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:.4}
-.sw2{position:relative;width:34px;height:18px;display:inline-block;cursor:pointer}
-.sw2 input{display:none}
-.sw2-t{position:absolute;inset:0;border-radius:9px;background:var(--b);transition:.2s}
-.sw2 input:checked+.sw2-t{background:var(--green)}
-.sw2-th{position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
-.sw2 input:checked~.sw2-th{left:18px}
-.ab{padding:5px 10px;border-radius:3px;font-size:10px;font-family:inherit;letter-spacing:.06em;cursor:pointer;border:1px solid var(--b);background:transparent;color:var(--mu);transition:all .2s;white-space:nowrap}
-.ab:hover{border-color:var(--gold);color:var(--gold)}
-.ad:hover{border-color:var(--pink);color:var(--pink)}
-.sb2{padding:2px 8px;border-radius:3px;background:linear-gradient(135deg,var(--pink),#9b27af);color:#fff;font-size:10px;font-weight:700;margin-left:6px}
-#empty{display:none;padding:50px;text-align:center;color:var(--mu);font-size:12px;letter-spacing:.1em}
-.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.84);z-index:2000;align-items:center;justify-content:center;padding:16px}
+.timg{width:46px;height:56px;object-fit:cover;border-radius:4px;display:block}
+.tph{width:46px;height:56px;background:linear-gradient(135deg,#1a1a20,#22222c);
+  border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;opacity:.35}
+.sw{position:relative;width:36px;height:20px;display:inline-block;cursor:pointer}
+.sw input{display:none}
+.sw-t{position:absolute;inset:0;border-radius:10px;background:var(--b);transition:.2s}
+.sw input:checked+.sw-t{background:var(--green)}
+.sw-th{position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked~.sw-th{left:19px}
+.abtn{padding:5px 11px;border-radius:3px;font-size:10px;font-family:inherit;
+  letter-spacing:.06em;cursor:pointer;border:1px solid var(--b);background:transparent;
+  color:var(--mu);transition:all .2s;white-space:nowrap}
+.abtn:hover{border-color:var(--gold);color:var(--gold)}
+.adel:hover{border-color:var(--pink);color:var(--pink)}
+.vsold{padding:2px 9px;border-radius:3px;background:linear-gradient(135deg,var(--pink),var(--pur));
+  color:#fff;font-size:10px;font-weight:700;margin-left:6px;letter-spacing:.06em}
+#tbl-empty{display:none;padding:55px;text-align:center;color:var(--mu);font-size:12px;letter-spacing:.1em}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:2000;
+  align-items:center;justify-content:center;padding:16px}
 .mbg.open{display:flex}
-.modal{background:var(--s);border:1px solid var(--b);border-radius:6px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
-.mh{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
-.mt{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.06em}
-.mc{background:none;border:none;color:var(--mu);font-size:18px;cursor:pointer}
-.mb{padding:20px}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.fg.one{grid-template-columns:1fr}
-.ff{display:flex;flex-direction:column;gap:5px}
+.modal{background:var(--s);border:1px solid var(--b);border-radius:8px;
+  width:100%;max-width:560px;max-height:92vh;overflow-y:auto}
+.mhd{padding:22px 22px 0;display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em}
+.mclose{background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;padding:4px}
+.mclose:hover{color:#fff}
+.mbody{padding:22px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.form-grid.one{grid-template-columns:1fr}
+.ff{display:flex;flex-direction:column;gap:6px}
 .ff label{font-size:10px;letter-spacing:.1em;color:var(--mu);text-transform:uppercase}
-.ff input,.ff select{padding:9px 10px;background:var(--c);border:1px solid var(--b);border-radius:3px;color:var(--t);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
+.ff input,.ff select{padding:10px 11px;background:var(--c);border:1px solid var(--b);
+  border-radius:4px;color:var(--t);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
 .ff input:focus,.ff select:focus{border-color:var(--gold)}
-.tr3{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
-.tc{display:none}.tl{padding:5px 10px;border:1px solid var(--b);border-radius:3px;font-size:11px;cursor:pointer;transition:all .2s}
-.tc:checked+.tl{border-color:var(--gold);color:var(--gold);background:rgba(255,193,7,.06)}
-.pi{width:72px;height:88px;object-fit:cover;border-radius:3px;border:1px solid var(--b);margin-top:8px}
-.ms{width:100%;padding:12px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:4px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:19px;letter-spacing:.08em;cursor:pointer;margin-top:14px;transition:opacity .2s}
-.ms:hover{opacity:.88}
-.cfg2{background:var(--s);border:1px solid var(--b);border-radius:4px;padding:20px;margin-top:20px}
-.ch{font-size:10px;letter-spacing:.15em;color:var(--mu);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--b)}
-.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.cf label{display:block;font-size:10px;letter-spacing:.1em;color:var(--mu);margin-bottom:5px;text-transform:uppercase}
-.cf input{width:100%;padding:9px 10px;background:var(--c);border:1px solid var(--b);border-radius:3px;color:var(--t);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
+.tallas-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tc{display:none}
+.tl{padding:6px 11px;border:1px solid var(--b);border-radius:4px;
+  font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
+.tc:checked+.tl{border-color:var(--gold);color:var(--gold);background:rgba(255,193,7,.07)}
+.foto-preview{width:76px;height:92px;object-fit:cover;border-radius:5px;
+  border:1px solid var(--b);margin-top:10px;display:none}
+.foto-info{font-size:10px;color:var(--mu);margin-top:6px;letter-spacing:.06em}
+.btn-save{width:100%;padding:13px;background:linear-gradient(135deg,#ffc107,#ff8c00);
+  border:none;border-radius:5px;color:#000;font-family:"Bebas Neue",sans-serif;
+  font-size:20px;letter-spacing:.08em;cursor:pointer;margin-top:14px;transition:opacity .2s}
+.btn-save:hover{opacity:.88}
+.btn-save:disabled{opacity:.4;cursor:not-allowed}
+
+/* CONFIG SECTION */
+.cfg-sec{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:22px;margin-top:22px}
+.cfg-sec-hdr{font-size:10px;letter-spacing:.16em;color:var(--mu);text-transform:uppercase;
+  margin-bottom:18px;padding-bottom:11px;border-bottom:1px solid var(--b)}
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
+.cf label{display:block;font-size:10px;letter-spacing:.1em;color:var(--mu);
+  margin-bottom:6px;text-transform:uppercase}
+.cf input{width:100%;padding:10px 11px;background:var(--c);border:1px solid var(--b);
+  border-radius:4px;color:var(--t);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
 .cf input:focus{border-color:var(--gold)}
-.bsc{padding:10px 22px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;border-radius:3px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s}
-.bsc:hover{opacity:.88}
-.bk{background:var(--s);border:1px solid var(--b);border-radius:4px;padding:20px;margin-top:16px}
-.bkh{font-size:10px;letter-spacing:.15em;color:var(--mu);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--b)}
-.bex{padding:9px 18px;background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.2);border-radius:3px;color:var(--cyan);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
-.bex:hover{background:rgba(0,200,255,.16)}
-.bim{padding:9px 18px;background:rgba(255,193,7,.06);border:1px solid var(--b);border-radius:3px;color:var(--gold);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
-.bim:hover{background:rgba(255,193,7,.14)}
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--s);border:1px solid var(--b);color:var(--gold);padding:11px 22px;border-radius:3px;font-size:11px;letter-spacing:.1em;transition:transform .3s;z-index:9999;white-space:nowrap;font-family:"DM Mono",monospace}
+.btn-cfg{padding:10px 24px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;
+  border-radius:4px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:17px;
+  letter-spacing:.08em;cursor:pointer;transition:opacity .2s}
+.btn-cfg:hover{opacity:.88}
+
+/* BACKUP SECTION */
+.bk-sec{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:22px;margin-top:16px}
+.bk-hdr{font-size:10px;letter-spacing:.16em;color:var(--mu);text-transform:uppercase;
+  margin-bottom:16px;padding-bottom:11px;border-bottom:1px solid var(--b)}
+.bkbtn{padding:10px 18px;border-radius:4px;font-size:11px;cursor:pointer;
+  transition:all .2s;font-family:inherit;font-weight:600;letter-spacing:.06em}
+.bk-exp{background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.22);color:var(--cyan)}
+.bk-exp:hover{background:rgba(0,200,255,.18)}
+.bk-imp{background:rgba(255,193,7,.07);border:1px solid var(--b);color:var(--gold)}
+.bk-imp:hover{background:rgba(255,193,7,.16)}
+
+/* UPLOAD PROGRESS */
+.upload-bar{width:100%;height:4px;background:var(--b);border-radius:2px;margin-top:10px;overflow:hidden;display:none}
+.upload-bar-fill{height:100%;background:linear-gradient(90deg,#ffc107,#ff8c00);border-radius:2px;transition:width .3s}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--s);border:1px solid var(--b);color:var(--gold);padding:12px 24px;
+  border-radius:4px;font-size:11px;letter-spacing:.1em;transition:transform .3s;
+  z-index:9999;white-space:nowrap;font-family:"DM Mono",monospace}
 #toast.show{transform:translateX(-50%) translateY(0)}
-@media(max-width:768px){.sg{grid-template-columns:1fr 1fr}.fg{grid-template-columns:1fr}.cg{grid-template-columns:1fr}.tb{flex-direction:column;align-items:stretch}}
+
+@media(max-width:768px){
+  .stats{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .cfg-grid{grid-template-columns:1fr}
+  .toolbar{flex-direction:column;align-items:stretch}
+}
 </style>
 </head>
 <body>
 
-<!-- PASO 1: Configurar Firebase (solo la primera vez) -->
-<div id="step-config">
+<!-- ══ CONFIGURACIÓN FIREBASE (primera vez o si hay error) ══ -->
+<div id="screen-cfg">
   <div class="cfg-box">
-    <div class="cfg-title">🐻 CONFIGURAR FIREBASE</div>
+    <div class="cfg-logo">🐻 BEAR TRAP — CONFIGURAR FIREBASE</div>
     <div class="cfg-sub">
-      Solo necesitas hacer esto <strong>una vez</strong>.<br>
-      Ve a <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> →
-      tu proyecto → ⚙️ Configuración → Configuración del proyecto → copia los datos de tu app web.
+      Solo necesitas hacer esto <strong>una vez</strong>. Ve a
+      <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a>
+      → tu proyecto → ⚙️ Configuración → Configuración del proyecto → tu app web → copia los datos.
     </div>
-    <div class="cfg-field">
+    <div class="field">
       <label>API Key</label>
-      <input id="cfg-apikey" placeholder="AIzaSy...">
-      <small>Proyecto → Configuración → Tu app web → apiKey</small>
+      <input id="f-apikey" placeholder="AIzaSy..." spellcheck="false" autocomplete="off">
+      <small>Empieza con "AIzaSy..." — es la línea apiKey del firebaseConfig</small>
     </div>
-    <div class="cfg-field">
+    <div class="field">
       <label>Project ID</label>
-      <input id="cfg-projectid" placeholder="bear-trap-bazar">
-      <small>Proyecto → Configuración → projectId</small>
+      <input id="f-pid" placeholder="bear-trap-bazar" spellcheck="false" autocomplete="off">
+      <small>Ejemplo: bear-trap-bazar — es el campo projectId</small>
     </div>
     <div id="cfg-err"></div>
-    <button class="btn-primary" onclick="initFirebase()">CONECTAR FIREBASE →</button>
+    <button class="btn-connect" onclick="conectarFirebase()">CONECTAR →</button>
   </div>
 </div>
 
-<!-- PASO 2: Login con email Firebase -->
-<div id="step-auth" style="display:flex;display:none">
+<!-- ══ LOGIN FIREBASE AUTH ══ -->
+<div id="screen-auth">
   <div class="auth-box">
-    <div class="auth-title">🐻 BEAR TRAP</div>
-    <div class="auth-sub">PANEL DE GESTIÓN — ACCESO SEGURO</div>
+    <div class="auth-logo">🐻 BEAR TRAP</div>
+    <div class="auth-sub">PANEL DE GESTIÓN</div>
     <div class="auth-field">
       <label>Email de administrador</label>
-      <input type="email" id="auth-email" placeholder="tu@email.com" autocomplete="email">
-      <label>Contraseña de Firebase</label>
-      <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password">
+      <input type="email" id="a-email" autocomplete="email" placeholder="tu@email.com">
+      <label>Contraseña</label>
+      <input type="password" id="a-pass" autocomplete="current-password" placeholder="••••••••">
     </div>
     <div id="auth-err"></div>
-    <button class="btn-primary" onclick="doAuth()">ENTRAR</button>
+    <button class="auth-btn" onclick="doLogin()">ENTRAR</button>
+    <button class="btn-reconfig" onclick="reconfigurar()">🔄 Cambiar configuración Firebase</button>
   </div>
 </div>
 
-<!-- ADMIN -->
-<div id="AS">
+<!-- ══ ADMIN ══ -->
+<div id="screen-admin">
   <div class="stripe"></div>
   <div class="topbar">
-    <div style="display:flex;align-items:center">
-      <span class="tlogo">🐻 BEAR TRAP</span>
-      <span class="tbadge">ADMIN</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="t-logo">🐻 BEAR TRAP</span>
+      <span class="t-badge">ADMIN</span>
     </div>
-    <div class="tr2">
-      <span id="user-email" style="font-size:10px;color:var(--mu);letter-spacing:.08em"></span>
+    <span class="t-email" id="t-email"></span>
+    <div class="t-right">
       <a href="/" class="bsm bv" target="_blank">→ VER SITIO</a>
-      <button class="bsm bo" onclick="logout()">SALIR</button>
+      <button class="bsm bout" onclick="doLogout()">SALIR</button>
     </div>
   </div>
 
   <div class="ac">
-    <div class="sg">
-      <div class="sc"><div class="sv" id="st">0</div><div class="sl">Total prendas</div></div>
-      <div class="sc"><div class="sv" id="sv">0</div><div class="sl">Visibles</div></div>
-      <div class="sc"><div class="sv" id="ss" style="color:var(--pink)">0</div><div class="sl">Vendidas</div></div>
-      <div class="sc"><div class="sv" id="sp">$0</div><div class="sl">Precio promedio</div></div>
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat"><div class="stat-v" id="s-tot">0</div><div class="stat-l">Total prendas</div></div>
+      <div class="stat"><div class="stat-v" id="s-vis">0</div><div class="stat-l">Visibles</div></div>
+      <div class="stat"><div class="stat-v" id="s-sold" style="color:var(--pink)">0</div><div class="stat-l">Vendidas</div></div>
+      <div class="stat"><div class="stat-v" id="s-avg">$0</div><div class="stat-l">Precio promedio</div></div>
     </div>
+
+    <!-- STATUS -->
     <div id="SB" class="ld">
-      <div class="dot dld" id="SD"></div>
-      <span id="ST">Cargando...</span>
+      <div class="sdot dld" id="sdot"></div>
+      <span id="stxt">Conectando...</span>
     </div>
-    <div class="tb">
-      <input class="sr" type="text" placeholder="🔍 Buscar prenda..." id="search" oninput="renderTable()">
-      <select class="fs" id="fcat" onchange="renderTable()">
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <input class="tsearch" type="text" id="search" placeholder="🔍 Buscar prenda..." oninput="renderTable()">
+      <select class="tsel" id="f-cat" onchange="renderTable()">
+        <option value="">Todas las categorías</option>
+        <option>Ropa Americana</option>
+        <option>Street Syndicate</option>
+        <option>Personalizaciones</option>
+      </select>
+      <select class="tsel" id="f-vis" onchange="renderTable()">
         <option value="">Todas</option>
-        <option>Ropa Americana</option><option>Street Syndicate</option><option>Personalizaciones</option>
+        <option value="true">Visibles</option>
+        <option value="false">Ocultas</option>
       </select>
-      <select class="fs" id="fvis" onchange="renderTable()">
-        <option value="">Todas</option><option value="true">Visibles</option><option value="false">Ocultas</option>
-      </select>
-      <button class="ba" onclick="openModal()">+ AGREGAR</button>
+      <button class="bxls" onclick="exportExcel()">📊 EXPORTAR EXCEL</button>
+      <button class="badd" onclick="openModal()">+ AGREGAR</button>
     </div>
-    <div class="tw">
+
+    <!-- TABLE -->
+    <div class="table-wrap">
       <table>
         <thead><tr>
           <th>FOTO</th><th>#</th><th>PRENDA</th><th>CATEGORÍA</th>
@@ -221,45 +330,55 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div id="empty">Sin resultados</div>
-    <div class="cfg2">
-      <div class="ch">⚙ CONFIGURACIÓN DEL SITIO</div>
-      <div class="cg">
+    <div id="tbl-empty">Sin resultados para esta búsqueda</div>
+
+    <!-- CONFIG -->
+    <div class="cfg-sec">
+      <div class="cfg-sec-hdr">⚙ CONFIGURACIÓN DEL SITIO</div>
+      <div class="cfg-grid">
         <div class="cf"><label>Instagram</label><input id="c-ig" placeholder="@beartrapbazar"></div>
-        <div class="cf"><label>WhatsApp (con código país)</label><input id="c-wa" placeholder="5215512345678"></div>
-        <div class="cf"><label>Eslogan</label><input id="c-sl" placeholder="Ropa que atrapa."></div>
+        <div class="cf"><label>WhatsApp (con código de país)</label><input id="c-wa" placeholder="5215512345678"></div>
+        <div class="cf"><label>Eslogan del sitio</label><input id="c-sl" placeholder="Ropa que atrapa."></div>
+        <div class="cf"><label>WhatsApp para Personalizaciones</label><input id="c-wa2" placeholder="5215512345678"></div>
       </div>
-      <button class="bsc" onclick="saveConfig()">GUARDAR CONFIGURACIÓN</button>
+      <button class="btn-cfg" onclick="saveConfig()">GUARDAR CONFIGURACIÓN</button>
     </div>
-    <div class="bk">
-      <div class="bkh">💾 RESPALDO</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="bex" onclick="exportJSON()">↓ Exportar JSON</button>
-        <button class="bim" onclick="document.getElementById('imp').click()">↑ Importar JSON</button>
-        <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(this)">
+
+    <!-- BACKUP -->
+    <div class="bk-sec">
+      <div class="bk-hdr">💾 RESPALDO DE INVENTARIO</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="bkbtn bk-exp" onclick="exportJSON()">↓ Exportar JSON completo</button>
+        <button class="bkbtn bk-imp" onclick="document.getElementById('f-imp').click()">↑ Importar JSON</button>
+        <input type="file" id="f-imp" accept=".json" style="display:none" onchange="importJSON(this)">
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- ══ MODAL AGREGAR/EDITAR ══ -->
 <div class="mbg" id="modal">
   <div class="modal">
-    <div class="mh">
-      <div class="mt" id="mtitle">AGREGAR PRENDA</div>
-      <button class="mc" onclick="closeModal()">✕</button>
+    <div class="mhd">
+      <div class="mtitle" id="mtitle">AGREGAR PRENDA</div>
+      <button class="mclose" onclick="closeModal()">✕</button>
     </div>
-    <div class="mb">
-      <div class="fg">
-        <div class="ff"><label>Nombre</label><input id="f-n" placeholder="Ej: Chamarra bomber"></div>
+    <div class="mbody">
+      <div class="form-grid">
+        <div class="ff"><label>Nombre de la prenda</label><input id="f-n" placeholder="Chamarra bomber vintage"></div>
         <div class="ff"><label>Categoría</label>
-          <select id="f-c"><option>Ropa Americana</option><option>Street Syndicate</option><option>Personalizaciones</option></select></div>
-        <div class="ff"><label>Precio (MXN)</label><input type="number" id="f-p" placeholder="150"></div>
+          <select id="f-cat2">
+            <option>Ropa Americana</option>
+            <option>Street Syndicate</option>
+            <option>Personalizaciones</option>
+          </select>
+        </div>
+        <div class="ff"><label>Precio (MXN)</label><input type="number" id="f-p" placeholder="150" min="0"></div>
         <div class="ff"><label>Color</label><input id="f-col" placeholder="Negro, Rosa..."></div>
       </div>
-      <div class="ff" style="margin-bottom:12px">
-        <label>Tallas</label>
-        <div class="tr3">
+      <div class="ff" style="margin-bottom:14px">
+        <label>Tallas disponibles</label>
+        <div class="tallas-row">
           <input type="checkbox" id="t-xs" class="tc" value="XS"><label for="t-xs" class="tl">XS</label>
           <input type="checkbox" id="t-s"  class="tc" value="S"><label for="t-s"  class="tl">S</label>
           <input type="checkbox" id="t-m"  class="tc" value="M"><label for="t-m"  class="tl">M</label>
@@ -269,277 +388,425 @@ tr:hover td{background:rgba(255,255,255,.015)}
           <input type="checkbox" id="t-u"  class="tc" value="Única"><label for="t-u" class="tl">Única</label>
         </div>
       </div>
-      <div class="ff fg one" style="margin-bottom:8px">
+      <div class="ff form-grid one" style="margin-bottom:6px">
         <label>Foto de la prenda</label>
-        <input type="file" id="f-foto" accept="image/*" onchange="prevFoto(this)">
+        <input type="file" id="f-foto" accept="image/*" onchange="onFotoChange(this)">
+        <div class="foto-info" id="foto-info"></div>
       </div>
-      <img id="f-prev" class="pi" src="" style="display:none">
-      <button class="ms" onclick="saveItem()">GUARDAR PRENDA</button>
+      <img id="f-prev" class="foto-preview" src="" alt="Preview">
+      <div class="upload-bar" id="upload-bar"><div class="upload-bar-fill" id="upload-fill"></div></div>
+      <button class="btn-save" id="btn-save" onclick="saveItem()">GUARDAR PRENDA</button>
     </div>
   </div>
 </div>
+
 <div id="toast"></div>
 
 <script>
-const TMAP={XS:"t-xs",S:"t-s",M:"t-m",L:"t-l",XL:"t-xl",XXL:"t-xxl","Única":"t-u"};
+// ══════════════════════════════════════
+// FIREBASE SETUP
+// ══════════════════════════════════════
+const TMAP = {XS:"t-xs",S:"t-s",M:"t-m",L:"t-l",XL:"t-xl",XXL:"t-xxl","Única":"t-u"};
 let db, items=[], photos={}, cfg={ig:"@beartrapbazar",wa:"5215512345678",slogan:"Ropa que atrapa."};
-let editIdx=null;
+let editIdx=null, fbReady=false;
 
-// ── FIREBASE INIT ──────────────────────────────────
-function initFirebase(){
-  const apiKey   = document.getElementById("cfg-apikey").value.trim();
-  const projectId= document.getElementById("cfg-projectid").value.trim();
-  if(!apiKey||!projectId){document.getElementById("cfg-err").textContent="Completa ambos campos";return;}
-  const dbURL = `https://${projectId}-default-rtdb.firebaseio.com`;
+function conectarFirebase(){
+  const apiKey = document.getElementById("f-apikey").value.trim();
+  const pid    = document.getElementById("f-pid").value.trim();
+  if(!apiKey||!pid){ document.getElementById("cfg-err").textContent="Completa ambos campos"; return; }
   try{
     if(!firebase.apps.length){
-      firebase.initializeApp({apiKey,authDomain:`${projectId}.firebaseapp.com`,databaseURL:dbURL,projectId});
+      firebase.initializeApp({
+        apiKey,
+        authDomain:`${pid}.firebaseapp.com`,
+        databaseURL:`https://${pid}-default-rtdb.firebaseio.com`,
+        projectId:pid
+      });
     }
     db = firebase.database();
-    // Save to localStorage so next visit no need to re-enter
-    localStorage.setItem("bt_fb_key", apiKey);
-    localStorage.setItem("bt_fb_pid", projectId);
-    document.getElementById("step-config").style.display="none";
-    document.getElementById("step-auth").style.display="flex";
-    document.getElementById("auth-email").focus();
-  }catch(e){document.getElementById("cfg-err").textContent="Error: "+e.message;}
+    // Save config so next time auto-loads
+    localStorage.setItem("bt_api", apiKey);
+    localStorage.setItem("bt_pid", pid);
+    fbReady = true;
+    document.getElementById("screen-cfg").style.display="none";
+    document.getElementById("screen-auth").style.display="flex";
+    document.getElementById("a-email").focus();
+  }catch(e){
+    document.getElementById("cfg-err").textContent = "Error: " + e.message;
+  }
+}
+
+function reconfigurar(){
+  localStorage.removeItem("bt_api");
+  localStorage.removeItem("bt_pid");
+  document.getElementById("screen-auth").style.display="none";
+  document.getElementById("screen-cfg").style.display="flex";
+  document.getElementById("f-apikey").value="";
+  document.getElementById("f-pid").value="";
+  document.getElementById("cfg-err").textContent="";
 }
 
 // Auto-init if saved
-window.addEventListener("load",()=>{
-  const key=localStorage.getItem("bt_fb_key"), pid=localStorage.getItem("bt_fb_pid");
-  if(key&&pid){
-    document.getElementById("cfg-apikey").value=key;
-    document.getElementById("cfg-projectid").value=pid;
-    initFirebase();
+window.addEventListener("load", () => {
+  const key=localStorage.getItem("bt_api"), pid=localStorage.getItem("bt_pid");
+  if(key && pid){
+    document.getElementById("f-apikey").value=key;
+    document.getElementById("f-pid").value=pid;
+    conectarFirebase();
   }
+  // Enter key support
+  document.addEventListener("keydown", e => {
+    if(e.key==="Enter"){
+      if(document.getElementById("screen-auth").style.display!=="none") doLogin();
+      if(document.getElementById("screen-cfg").style.display!=="none") conectarFirebase();
+    }
+  });
 });
 
-// ── AUTH ──────────────────────────────────────────
-async function doAuth(){
-  const email=document.getElementById("auth-email").value.trim();
-  const pass =document.getElementById("auth-pass").value;
-  document.getElementById("auth-err").textContent="";
+// ══════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════
+const AUTH_ERRORS = {
+  "auth/wrong-password":"Contraseña incorrecta",
+  "auth/user-not-found":"Usuario no encontrado",
+  "auth/invalid-email":"Email inválido",
+  "auth/too-many-requests":"Demasiados intentos. Espera unos minutos.",
+  "auth/invalid-credential":"Email o contraseña incorrectos"
+};
+
+async function doLogin(){
+  const email = document.getElementById("a-email").value.trim();
+  const pass  = document.getElementById("a-pass").value;
+  document.getElementById("auth-err").textContent = "Entrando...";
   try{
-    await firebase.auth().signInWithEmailAndPassword(email,pass);
-    document.getElementById("step-auth").style.display="none";
-    document.getElementById("AS").style.display="block";
-    document.getElementById("user-email").textContent=email;
+    await firebase.auth().signInWithEmailAndPassword(email, pass);
+    document.getElementById("screen-auth").style.display="none";
+    document.getElementById("screen-admin").style.display="block";
+    document.getElementById("t-email").textContent = email;
     loadData();
   }catch(e){
-    const msgs={
-      "auth/wrong-password":"Contraseña incorrecta",
-      "auth/user-not-found":"Usuario no registrado",
-      "auth/invalid-email":"Email inválido",
-      "auth/too-many-requests":"Demasiados intentos. Espera unos minutos."
-    };
-    document.getElementById("auth-err").textContent=msgs[e.code]||e.message;
+    document.getElementById("auth-err").textContent = AUTH_ERRORS[e.code] || e.message;
   }
 }
 
-function logout(){
+function doLogout(){
   firebase.auth().signOut();
-  document.getElementById("AS").style.display="none";
-  document.getElementById("step-auth").style.display="flex";
-  document.getElementById("auth-pass").value="";
+  document.getElementById("screen-admin").style.display="none";
+  document.getElementById("screen-auth").style.display="flex";
+  document.getElementById("a-pass").value="";
+  document.getElementById("auth-err").textContent="";
 }
 
-document.addEventListener("keydown",e=>{
-  if(e.key==="Enter"){
-    if(document.getElementById("step-auth").style.display!=="none") doAuth();
-    if(document.getElementById("step-config").style.display!=="none") initFirebase();
-  }
-});
-
-// ── STATUS ──────────────────────────────────────
-function setS(type,txt){
-  const b=document.getElementById("SB"),d=document.getElementById("SD"),t=document.getElementById("ST");
-  b.className=type; d.className="dot d"+type; t.textContent=txt;
+// ══════════════════════════════════════
+// LOAD DATA — Realtime listeners
+// ══════════════════════════════════════
+function setStatus(type, txt){
+  const b=document.getElementById("SB"), d=document.getElementById("sdot"), t=document.getElementById("stxt");
+  b.className=type; d.className="sdot d"+type; t.textContent=txt;
 }
 
-// ── LOAD DATA (realtime) ────────────────────────
 function loadData(){
-  setS("ld","Cargando datos de Firebase...");
-  db.ref("items").on("value", snap=>{
-    const raw=snap.val();
-    items=raw?(Array.isArray(raw)?raw:Object.values(raw)).filter(Boolean):[];
+  setStatus("ld","Cargando inventario de Firebase...");
+  // Listen to items in real time
+  db.ref("items").on("value", snap => {
+    const raw = snap.val();
+    items = raw ? (Array.isArray(raw)?raw:Object.values(raw)).filter(Boolean) : [];
+    setStatus("ok","Firebase conectado ✓  •  "+items.length+" prendas");
     updateStats(); renderTable();
-    setS("ok","Firebase conectado ✓  •  "+items.length+" prendas");
   });
-  db.ref("photos").on("value", snap=>{photos=snap.val()||{}; renderTable();});
-  db.ref("config").once("value", snap=>{
-    const c=snap.val(); if(c){cfg={...cfg,...c};applyConfig();}
+  // Listen to photos
+  db.ref("photos").on("value", snap => {
+    photos = snap.val() || {};
+    renderTable();
+  });
+  // Load config once
+  db.ref("config").once("value", snap => {
+    const c = snap.val();
+    if(c){ cfg={...cfg,...c}; applyCfgForm(); }
   });
 }
 
-function applyConfig(){
-  document.getElementById("c-ig").value=cfg.ig||"";
-  document.getElementById("c-wa").value=cfg.wa||"";
-  document.getElementById("c-sl").value=cfg.slogan||"";
+function applyCfgForm(){
+  document.getElementById("c-ig").value  = cfg.ig||"";
+  document.getElementById("c-wa").value  = cfg.wa||"";
+  document.getElementById("c-sl").value  = cfg.slogan||"";
+  document.getElementById("c-wa2").value = cfg.wa2||"";
 }
 function updateStats(){
-  document.getElementById("st").textContent=items.length;
-  document.getElementById("sv").textContent=items.filter(i=>i.visible!==false).length;
-  document.getElementById("ss").textContent=items.filter(i=>i.vendida).length;
-  const avg=items.length?Math.round(items.reduce((a,i)=>a+(+i.precio||0),0)/items.length):0;
-  document.getElementById("sp").textContent="$"+avg;
+  document.getElementById("s-tot").textContent  = items.length;
+  document.getElementById("s-vis").textContent  = items.filter(i=>i.visible!==false).length;
+  document.getElementById("s-sold").textContent = items.filter(i=>i.vendida).length;
+  const avg = items.length ? Math.round(items.reduce((a,i)=>a+(+i.precio||0),0)/items.length) : 0;
+  document.getElementById("s-avg").textContent = "$"+avg;
 }
 
-// ── TABLE ───────────────────────────────────────
+// ══════════════════════════════════════
+// TABLE
+// ══════════════════════════════════════
 function renderTable(){
-  const q=document.getElementById("search").value.toLowerCase();
-  const cat=document.getElementById("fcat").value;
-  const vis=document.getElementById("fvis").value;
-  let f=items.filter(i=>{
-    if(q&&!i.nombre.toLowerCase().includes(q))return false;
-    if(cat&&i.categoria!==cat)return false;
-    if(vis!==""&&String(i.visible!==false)!==vis)return false;
+  const q   = document.getElementById("search").value.toLowerCase();
+  const cat = document.getElementById("f-cat").value;
+  const vis = document.getElementById("f-vis").value;
+  const f = items.filter(i => {
+    if(q && !i.nombre.toLowerCase().includes(q)) return false;
+    if(cat && i.categoria !== cat) return false;
+    if(vis!=="" && String(i.visible!==false) !== vis) return false;
     return true;
   });
-  document.getElementById("empty").style.display=f.length?"none":"block";
-  document.getElementById("tbody").innerHTML=f.map(item=>{
-    const ri=items.indexOf(item);
-    const foto=photos[item.id]||"";
-    const imgEl=foto?`<img class="ti" src="${foto}" loading="lazy">`:`<div class="tp">🐻</div>`;
-    return`<tr>
-      <td>${imgEl}</td>
+  document.getElementById("tbl-empty").style.display = f.length ? "none" : "block";
+  document.getElementById("tbody").innerHTML = f.map(item => {
+    const ri   = items.indexOf(item);
+    const foto = photos[item.id] || "";
+    const img  = foto
+      ? `<img class="timg" src="${foto}" loading="lazy" onerror="this.className='';this.outerHTML='<div class=tph>🐻</div>'">`
+      : `<div class="tph">🐻</div>`;
+    const tallas = (item.tallas||[]).join(", ");
+    return `<tr>
+      <td>${img}</td>
       <td style="color:var(--mu)">${ri+1}</td>
-      <td><strong>${item.nombre}</strong>${item.vendida?`<span class="sb2">VENDIDA</span>`:""}</td>
+      <td><strong>${item.nombre}</strong>${item.vendida?`<span class="vsold">VENDIDA</span>`:""}</td>
       <td style="color:var(--mu);font-size:11px">${item.categoria||""}</td>
-      <td style="color:var(--gold);font-family:Bebas Neue,sans-serif;font-size:18px">$${item.precio}</td>
-      <td style="color:var(--mu);font-size:11px">${(item.tallas||[]).join(", ")}</td>
-      <td><label class="sw2"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${ri},this.checked)"><div class="sw2-t"></div><div class="sw2-th"></div></label></td>
-      <td><label class="sw2"><input type="checkbox" ${item.vendida?"checked":""} onchange="toggleS(${ri},this.checked)"><div class="sw2-t"></div><div class="sw2-th"></div></label></td>
-      <td style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="ab" onclick="openModal(${ri})">✏ Editar</button>
-        <button class="ab ad" onclick="del(${ri})">🗑</button>
+      <td style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px">$${item.precio}</td>
+      <td style="color:var(--mu);font-size:11px">${tallas}</td>
+      <td><label class="sw"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
+      <td><label class="sw"><input type="checkbox" ${item.vendida?"checked":""} onchange="toggleS(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="abtn" onclick="openModal(${ri})">✏ Editar</button>
+        <button class="abtn adel" onclick="delItem(${ri})">🗑 Borrar</button>
       </td>
     </tr>`;
   }).join("");
 }
 
-// ── WRITE HELPERS (Firebase Realtime) ─────────────
-async function writeItems(){await db.ref("items").set(items);}
-async function writePhoto(id,foto){await db.ref("photos/"+id).set(foto);}
-async function deletePhoto(id){await db.ref("photos/"+id).remove();}
-
-async function toggleV(i,v){items[i].visible=v;await writeItems();toast("Visibilidad actualizada ✓");}
-async function toggleS(i,v){items[i].vendida=v;await writeItems();toast(v?"VENDIDA ✓":"Disponible ✓");}
-async function del(i){
-  if(!confirm(`¿Borrar "${items[i].nombre}"?`))return;
-  const id=items[i].id;
-  items.splice(i,1);
-  await writeItems();
-  await deletePhoto(id);
-  toast("Eliminada ✓");
+// ══════════════════════════════════════
+// TOGGLES
+// ══════════════════════════════════════
+async function toggleV(i, v){
+  items[i].visible = v;
+  await db.ref("items").set(items);
+  updateStats();
+  toast("Visibilidad actualizada ✓");
+}
+async function toggleS(i, v){
+  items[i].vendida = v;
+  await db.ref("items").set(items);
+  updateStats();
+  toast(v ? "Marcada como VENDIDA ✓" : "Disponible ✓");
+}
+async function delItem(i){
+  if(!confirm(`¿Borrar "${items[i].nombre}"?`)) return;
+  const id = items[i].id;
+  items.splice(i, 1);
+  await db.ref("items").set(items);
+  await db.ref("photos/"+id).remove();
+  updateStats(); renderTable();
+  toast("Prenda eliminada ✓");
 }
 
-// ── MODAL ──────────────────────────────────────
+// ══════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════
 function openModal(idx){
-  editIdx=idx!==undefined?idx:null;
-  document.getElementById("mtitle").textContent=editIdx!==null?"EDITAR PRENDA":"AGREGAR PRENDA";
-  Object.values(TMAP).forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
-  ["f-n","f-col"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("f-p").value="";
-  document.getElementById("f-c").value="Ropa Americana";
+  editIdx = idx !== undefined ? idx : null;
+  document.getElementById("mtitle").textContent = editIdx!==null ? "EDITAR PRENDA" : "AGREGAR PRENDA";
+  // Reset form
+  Object.values(TMAP).forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=false; });
+  document.getElementById("f-n").value   = "";
+  document.getElementById("f-p").value   = "";
+  document.getElementById("f-col").value = "";
+  document.getElementById("f-cat2").value= "Ropa Americana";
+  document.getElementById("f-foto").value= "";
   document.getElementById("f-prev").style.display="none";
-  document.getElementById("f-foto").value="";
-  if(editIdx!==null){
-    const it=items[editIdx];
-    document.getElementById("f-n").value=it.nombre||"";
-    document.getElementById("f-c").value=it.categoria||"Ropa Americana";
-    document.getElementById("f-p").value=it.precio||"";
-    document.getElementById("f-col").value=it.color||"";
-    (it.tallas||[]).forEach(t=>{const el=document.getElementById(TMAP[t]);if(el)el.checked=true;});
-    const foto=photos[it.id]||"";
-    if(foto){document.getElementById("f-prev").src=foto;document.getElementById("f-prev").style.display="block";}
+  document.getElementById("foto-info").textContent="";
+  document.getElementById("upload-bar").style.display="none";
+  document.getElementById("btn-save").disabled = false;
+  if(editIdx !== null){
+    const it = items[editIdx];
+    document.getElementById("f-n").value    = it.nombre||"";
+    document.getElementById("f-cat2").value = it.categoria||"Ropa Americana";
+    document.getElementById("f-p").value    = it.precio||"";
+    document.getElementById("f-col").value  = it.color||"";
+    (it.tallas||[]).forEach(t => { const el=document.getElementById(TMAP[t]); if(el) el.checked=true; });
+    const foto = photos[it.id]||"";
+    if(foto){ document.getElementById("f-prev").src=foto; document.getElementById("f-prev").style.display="block"; }
   }
   document.getElementById("modal").classList.add("open");
 }
-function closeModal(){document.getElementById("modal").classList.remove("open");editIdx=null;}
-function prevFoto(input){
-  const f=input.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{document.getElementById("f-prev").src=e.target.result;document.getElementById("f-prev").style.display="block";};
-  r.readAsDataURL(f);
-}
-async function saveItem(){
-  const nombre=document.getElementById("f-n").value.trim();
-  if(!nombre){alert("Escribe el nombre");return;}
-  const tallas=["XS","S","M","L","XL","XXL","Única"].filter(t=>{const el=document.getElementById(TMAP[t]);return el&&el.checked;});
-  const fi=document.getElementById("f-foto");
-  const itemId=editIdx!==null?(items[editIdx].id||"item_"+Date.now()):"item_"+Date.now();
-  const item={
-    id:itemId,nombre,
-    categoria:document.getElementById("f-c").value,
-    precio:parseInt(document.getElementById("f-p").value)||0,
-    color:document.getElementById("f-col").value.trim(),
-    tallas,
-    visible:editIdx!==null?(items[editIdx].visible!==false):true,
-    vendida:editIdx!==null?(items[editIdx].vendida||false):false,
-    orden:editIdx!==null?(items[editIdx].orden||0):items.length+1
-  };
-  if(editIdx!==null)items[editIdx]=item; else items.push(item);
-  await writeItems();
-  if(fi.files[0]){
-    const foto=await new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result);rd.readAsDataURL(fi.files[0]);});
-    await writePhoto(itemId,foto);
-  }
-  closeModal();
-  toast(editIdx!==null?"Prenda actualizada ✓":"Prenda agregada ✓");
+function closeModal(){ document.getElementById("modal").classList.remove("open"); editIdx=null; }
+
+// ── IMAGE COMPRESSION — makes uploads fast ──
+function compressImage(file, maxPx=800, quality=0.78){
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let {width:w, height:h} = img;
+      if(w > maxPx || h > maxPx){
+        if(w>h){ h=Math.round(h*maxPx/w); w=maxPx; }
+        else    { w=Math.round(w*maxPx/h); h=maxPx; }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width=w; canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.src=url;
+  });
 }
 
-// ── CONFIG ──────────────────────────────────────
+function onFotoChange(input){
+  const f = input.files[0];
+  if(!f) return;
+  const sizeMB = (f.size/1024/1024).toFixed(1);
+  document.getElementById("foto-info").textContent = `Original: ${sizeMB} MB — comprimiendo...`;
+  compressImage(f).then(data => {
+    const compMB = (data.length*0.75/1024/1024).toFixed(2);
+    document.getElementById("foto-info").textContent = `Comprimida: ~${compMB} MB ✓`;
+    document.getElementById("f-prev").src = data;
+    document.getElementById("f-prev").style.display = "block";
+  });
+}
+
+async function saveItem(){
+  const nombre = document.getElementById("f-n").value.trim();
+  if(!nombre){ alert("Escribe el nombre de la prenda"); return; }
+  document.getElementById("btn-save").disabled = true;
+  document.getElementById("btn-save").textContent = "GUARDANDO...";
+  const tallas = ["XS","S","M","L","XL","XXL","Única"].filter(t => {
+    const el = document.getElementById(TMAP[t]); return el && el.checked;
+  });
+  const itemId = editIdx!==null ? (items[editIdx].id||"item_"+Date.now()) : ("item_"+Date.now());
+  const item = {
+    id: itemId,
+    nombre,
+    categoria: document.getElementById("f-cat2").value,
+    precio: parseInt(document.getElementById("f-p").value)||0,
+    color: document.getElementById("f-col").value.trim(),
+    tallas,
+    visible: editIdx!==null ? (items[editIdx].visible!==false) : true,
+    vendida: editIdx!==null ? (items[editIdx].vendida||false) : false,
+    orden:   editIdx!==null ? (items[editIdx].orden||0) : items.length+1
+  };
+  if(editIdx!==null) items[editIdx]=item; else items.push(item);
+  // Show upload progress
+  document.getElementById("upload-bar").style.display="block";
+  document.getElementById("upload-fill").style.width="30%";
+  try{
+    await db.ref("items").set(items);
+    document.getElementById("upload-fill").style.width="60%";
+    // Upload photo if new one selected
+    const fi = document.getElementById("f-foto");
+    if(fi.files[0]){
+      const compressed = await compressImage(fi.files[0]);
+      document.getElementById("upload-fill").style.width="80%";
+      await db.ref("photos/"+itemId).set(compressed);
+    }
+    document.getElementById("upload-fill").style.width="100%";
+    setTimeout(()=>{ document.getElementById("upload-bar").style.display="none"; },500);
+    updateStats(); closeModal();
+    toast(editIdx!==null ? "Prenda actualizada ✓" : "Prenda agregada ✓");
+  }catch(e){
+    toast("Error al guardar: "+e.message);
+  }
+  document.getElementById("btn-save").disabled=false;
+  document.getElementById("btn-save").textContent="GUARDAR PRENDA";
+}
+
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
 async function saveConfig(){
-  cfg.ig=document.getElementById("c-ig").value.trim();
-  cfg.wa=document.getElementById("c-wa").value.trim();
-  cfg.slogan=document.getElementById("c-sl").value.trim();
+  cfg.ig     = document.getElementById("c-ig").value.trim();
+  cfg.wa     = document.getElementById("c-wa").value.trim();
+  cfg.slogan = document.getElementById("c-sl").value.trim();
+  cfg.wa2    = document.getElementById("c-wa2").value.trim();
   await db.ref("config").set(cfg);
   toast("Configuración guardada ✓");
 }
 
-// ── BACKUP ──────────────────────────────────────
-function exportJSON(){
-  const blob=new Blob([JSON.stringify({items,photos,config:cfg},null,2)],{type:"application/json"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download="beartrap-"+new Date().toISOString().slice(0,10)+".json";a.click();
-  toast("Exportado ✓");
+// ══════════════════════════════════════
+// EXPORT EXCEL
+// ══════════════════════════════════════
+function exportExcel(){
+  const rows = items.map((it,i) => ({
+    "N°":           i+1,
+    "Nombre":       it.nombre||"",
+    "Categoría":    it.categoria||"",
+    "Precio (MXN)": it.precio||0,
+    "Color":        it.color||"",
+    "Tallas":       (it.tallas||[]).join(", "),
+    "Visible":      it.visible!==false ? "Sí" : "No",
+    "Vendida":      it.vendida ? "Sí" : "No",
+    "Tiene foto":   photos[it.id] ? "Sí" : "No"
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  // Column widths
+  ws["!cols"] = [{wch:5},{wch:30},{wch:18},{wch:14},{wch:14},{wch:20},{wch:8},{wch:8},{wch:10}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+  XLSX.writeFile(wb, `beartrap-inventario-${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast("Excel exportado ✓");
 }
-function importJSON(input){
-  const f=input.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=async e=>{
+
+// ══════════════════════════════════════
+// BACKUP JSON
+// ══════════════════════════════════════
+function exportJSON(){
+  const blob = new Blob([JSON.stringify({items,photos,config:cfg},null,2)],{type:"application/json"});
+  const a = document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download = `beartrap-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast("JSON exportado ✓");
+}
+
+async function importJSON(input){
+  const f = input.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = async e => {
     try{
-      const d=JSON.parse(e.target.result);
-      const rawItems=d.items||[];
-      items=rawItems.map((it,idx)=>({
-        id:String(it.id||"item_"+(idx+1)),
-        nombre:it.nombre||"",
-        categoria:it.categoria||it.cat||"Ropa Americana",
-        precio:Number(it.precio)||0,
-        color:it.color||"",
-        tallas:it.tallas||[],
-        visible:it.visible!==false,
-        vendida:it.vendida||false,
-        orden:it.orden||idx+1
+      const d = JSON.parse(e.target.result);
+      const rawItems = d.items||[];
+      const newItems = rawItems.map((it,idx) => ({
+        id:        String(it.id||"item_"+(idx+1)),
+        nombre:    it.nombre||"",
+        categoria: it.categoria||it.cat||"Ropa Americana",
+        precio:    Number(it.precio)||0,
+        color:     it.color||"",
+        tallas:    it.tallas||[],
+        visible:   it.visible!==false,
+        vendida:   it.vendida||false,
+        orden:     it.orden||idx+1
       }));
-      const newPhotos={};
-      if(d.photos)Object.assign(newPhotos,d.photos);
-      rawItems.forEach((it,idx)=>{
-        const id=String(it.id||"item_"+(idx+1));
-        const foto=it.img||it.foto||"";
-        if(foto)newPhotos[id]=foto;
+      const newPhotos = {};
+      if(d.photos) Object.assign(newPhotos, d.photos);
+      // old format: img field inside item
+      rawItems.forEach((it,idx) => {
+        const id   = String(it.id||"item_"+(idx+1));
+        const foto = it.img||it.foto||"";
+        if(foto && foto.startsWith("data:")) newPhotos[id] = foto;
       });
-      await db.ref("items").set(items);
+      await db.ref("items").set(newItems);
       await db.ref("photos").set(newPhotos);
-      if(d.config||d.cfg){cfg={...cfg,...(d.config||d.cfg)};await db.ref("config").set(cfg);applyConfig();}
-      toast("Importado ✓ — "+items.length+" prendas");
-    }catch(err){alert("Error: "+err.message);}
+      if(d.config||d.cfg){
+        cfg={...cfg,...(d.config||d.cfg)};
+        await db.ref("config").set(cfg);
+        applyCfgForm();
+      }
+      toast("Importado ✓ — "+newItems.length+" prendas");
+    }catch(err){ alert("Error al leer el archivo: "+err.message); }
   };
   r.readAsText(f);
 }
 
-function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+function toast(m){
+  const t = document.getElementById("toast");
+  t.textContent=m; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
 </script>
 </body>
 </html>
