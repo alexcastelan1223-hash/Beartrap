@@ -16,10 +16,18 @@ html{scroll-behavior:smooth}
 body{background:#07070a;color:#f0f0f0;font-family:"DM Sans",sans-serif;cursor:none;overflow-x:hidden}
 
 /* ── CURSOR ── */
-#cur{position:fixed;width:16px;height:16px;border-radius:50%;pointer-events:none;z-index:99999;
-  border:1.5px solid rgba(255,180,0,.7);top:0;left:0;transform:translate(-50%,-50%);
-  transition:width .15s,height .15s,opacity .15s}
-#cur.big{width:28px;height:28px;border-color:rgba(255,200,0,.9)}
+*{cursor:none !important}
+#cur{
+  position:fixed;
+  width:16px;height:16px;border-radius:50%;
+  pointer-events:none;z-index:99999;
+  border:2px solid rgba(255,180,0,.85);
+  background:rgba(255,160,0,.08);
+  top:-100px;left:-100px;
+  transform:translate(-50%,-50%);
+  transition:width .12s,height .12s,border-color .12s;
+}
+#cur.big{width:30px;height:30px;border-color:rgba(255,210,0,1);background:rgba(255,180,0,.12)}
 
 /* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;display:flex;align-items:center;
@@ -510,25 +518,28 @@ const FB_CONFIG = {
   apiKey: "AIzaSyDBeqKZ0wjRft0toqXgxgZBXTU6ONMfGwc",
   authDomain: "bear-trap-bazar.firebaseapp.com",
   databaseURL: "https://bear-trap-bazar-default-rtdb.firebaseio.com",
-  projectId: "bear-trap-bazar"
+  projectId: "bear-trap-bazar",
+  storageBucket: "bear-trap-bazar.appspot.com",
+  messagingSenderId: "1234567890"
 };
 firebase.initializeApp(FB_CONFIG);
 const db = firebase.database();
 
 let cfg = {ig:"@beartrapbazar",wa:"5215512345678"};
 let subfilters = {ra:""};
-s
+
 // ── CURSOR ──
 const cur = document.getElementById("cur");
 document.addEventListener("mousemove", e => {
   cur.style.left = e.clientX + "px";
   cur.style.top  = e.clientY + "px";
-});
+}, {passive:true});
 document.addEventListener("mouseover", e => {
-  if(e.target.matches("a,button,.card,.ndot,.fb"))
+  const t = e.target;
+  if(t.matches("a,button,.card,.ndot,.fb,.pill,.bcat,.bwa-h,.bwa-c") || t.closest("a,button,.card"))
     cur.classList.add("big");
   else cur.classList.remove("big");
-});
+}, {passive:true});
 
 // ── NAV ACTIVE ──
 window.addEventListener("scroll", () => {
@@ -594,7 +605,7 @@ function renderRA(allItems, photos){
   const sub = subfilters.ra;
   const items = allItems.filter(i => {
     if(i.visible===false) return false;
-    if(i.categoria !== "Ropa Americana") return false;FE
+    if(i.categoria !== "Ropa Americana") return false;
     if(sub && i.subcategoria && i.subcategoria !== sub) return false;
     if(sub && !i.subcategoria && i.nombre) return true; // show all if no subcategoria
     return true;
