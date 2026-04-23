@@ -229,6 +229,96 @@ footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
   .grid{grid-template-columns:repeat(2,1fr);gap:10px}
   nav{padding:0 16px}
 }
+
+/* ── MODAL PRENDA ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+  display:none;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(6px)}
+.overlay.open{display:flex}
+.pmodal{background:#0f0f13;border:1px solid #222228;border-radius:12px;
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+  display:flex;gap:0;flex-direction:row}
+.pmodal-img{width:220px;flex-shrink:0;background:#16161c;border-radius:12px 0 0 12px;overflow:hidden}
+.pmodal-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pmodal-img .cph{width:100%;height:100%;min-height:280px;border-radius:12px 0 0 12px}
+.pmodal-body{flex:1;padding:28px 24px;display:flex;flex-direction:column;gap:0}
+.pmodal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.08);
+  border:none;color:#fff;width:32px;height:32px;border-radius:50%;
+  font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.pmodal-close:hover{background:rgba(255,255,255,.18)}
+.pmodal-wrap{position:relative}
+.pmodal-cat{font-size:9px;letter-spacing:.18em;color:#555;text-transform:uppercase;margin-bottom:6px}
+.pmodal-name{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.04em;
+  line-height:1.1;margin-bottom:16px;color:#eee}
+.pmodal-price{font-family:"Bebas Neue",sans-serif;font-size:38px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:20px;line-height:1}
+.pmodal-specs{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;
+  padding:16px;background:#16161c;border-radius:8px;border:1px solid #1e1e24}
+.pspec{display:flex;align-items:center;justify-content:space-between;font-size:12px}
+.pspec-label{color:#555;letter-spacing:.1em;text-transform:uppercase;font-size:10px}
+.pspec-val{color:#ddd;font-weight:600;text-align:right}
+.pmodal-tallas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.pmodal-talla{padding:6px 14px;border:1px solid #2a2a32;border-radius:5px;
+  font-size:11px;color:#aaa;font-weight:600}
+.pmodal-talla.ok{border-color:rgba(255,193,7,.4);color:#ffc107;background:rgba(255,193,7,.06)}
+.pbtn-ig{width:100%;padding:12px;border:none;border-radius:6px;
+  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  color:#fff;font-weight:700;font-size:14px;letter-spacing:.06em;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s}
+.pbtn-ig:hover{opacity:.88}
+.pbtn-sold{width:100%;padding:12px;border-radius:6px;background:#1e1e24;
+  color:#555;font-size:13px;letter-spacing:.06em;text-align:center;font-weight:600}
+@media(max-width:600px){
+  .pmodal{flex-direction:column}
+  .pmodal-img{width:100%;height:240px;border-radius:12px 12px 0 0}
+  .pmodal-img .cph{min-height:240px;border-radius:12px 12px 0 0}
+  .pmodal-img img{height:240px}
+}
+
+/* ── PRODUCT MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);
+  z-index:5000;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.pmodal{background:#111115;border:1px solid #2a2a30;border-radius:12px;
+  width:100%;max-width:520px;max-height:90vh;overflow-y:auto;position:relative}
+.pm-img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px 12px 0 0}
+.pm-img-ph{width:100%;aspect-ratio:3/4;background:linear-gradient(135deg,#131318,#1c1c24);
+  border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.25}
+.pm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.12);
+  color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;z-index:10}
+.pm-close:hover{background:rgba(255,45,120,.5)}
+.pm-body{padding:22px}
+.pm-cat{font-size:10px;letter-spacing:.18em;color:#555;text-transform:uppercase;margin-bottom:6px}
+.pm-name{font-family:"Bebas Neue",sans-serif;font-size:clamp(24px,5vw,34px);
+  letter-spacing:.04em;line-height:1;margin-bottom:14px}
+.pm-price{font-family:"Bebas Neue",sans-serif;font-size:40px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px}
+.pm-specs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.pm-spec{background:#1a1a20;border:1px solid #222228;border-radius:6px;padding:12px}
+.pm-spec-label{font-size:9px;letter-spacing:.14em;color:#555;text-transform:uppercase;margin-bottom:4px}
+.pm-spec-value{font-size:13px;font-weight:600;color:#e0e0e0}
+.pm-tallas{margin-bottom:20px}
+.pm-tallas-label{font-size:9px;letter-spacing:.14em;color:#555;text-transform:uppercase;margin-bottom:8px}
+.pm-tallas-row{display:flex;gap:6px;flex-wrap:wrap}
+.pm-talla{padding:6px 14px;border:1px solid #2a2a30;border-radius:4px;font-size:12px;
+  font-weight:600;color:#888}
+.pm-talla.ok{border-color:rgba(255,145,0,.4);color:#ff9500}
+.pm-sold{text-align:center;padding:14px;border-radius:6px;
+  background:rgba(255,45,120,.08);border:1px solid rgba(255,45,120,.2);
+  color:#ff2d78;font-size:12px;letter-spacing:.08em;margin-bottom:0}
+.pm-btn{width:100%;padding:14px;border:none;border-radius:6px;
+  background:linear-gradient(135deg,#e6683c,#dc2743,#cc2366,#bc1888);
+  color:#fff;font-weight:700;font-size:14px;letter-spacing:.06em;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .2s;text-decoration:none}
+.pm-btn:hover{opacity:.88}
+.pm-stripe{height:3px;border-radius:0 0 12px 12px;
+  background:linear-gradient(90deg,#ff3b30,#ff8c00,#34c759,#30d5c8,#af52de,#ff2d55)}
 </style>
 </head>
 <body>
@@ -300,11 +390,11 @@ footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
     </div>
     <div class="hbtns">
       <a href="#ropa-americana" class="bcat">→ VER CATÁLOGO</a>
-      <a id="h-wa" href="#" class="bwah" target="_blank">
+      <a id="h-ig2" href="#" class="bwah" target="_blank">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
         </svg>
-        WHATSAPP
+        INSTAGRAM
       </a>
     </div>
   </div>
@@ -427,11 +517,11 @@ footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
           <div class="cs-dot"></div><div class="cs-dot"></div><div class="cs-dot"></div>
           <div class="cs-dot"></div><div class="cs-dot"></div>
         </div>
-        <a id="cs-wa" href="#" class="cs-btn" target="_blank">
+        <a id="cs-ig2" href="#" class="cs-btn" target="_blank">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
           </svg>
-          CONSULTAR POR WHATSAPP
+          SEGUIR EN INSTAGRAM
         </a>
       </div>
     </div>
@@ -495,7 +585,9 @@ function applyConfig(){
   const wa = "https://wa.me/" + cfg.wa;
   const ig = "https://instagram.com/" + cfg.ig.replace("@","");
   ["n-ig","p-ig","cs-ig"].forEach(id=>{const el=document.getElementById(id);if(el)el.href=ig;});
-  ["n-wa","h-wa","p-wa","cs-wa"].forEach(id=>{const el=document.getElementById(id);if(el)el.href=wa;});
+  ["n-wa","p-wa"].forEach(id=>{const el=document.getElementById(id);if(el)el.href=wa;});
+  ["n-ig","p-ig","cs-ig","cs-ig2"].forEach(id=>{const el=document.getElementById(id);if(el)el.href=ig;});
+  const hig2=document.getElementById("h-ig2");if(hig2)hig2.href=ig;
   const fi=document.getElementById("f-ig"); if(fi) fi.textContent=cfg.ig;
 }
 
@@ -511,30 +603,20 @@ function setFilt(btn, sub){
 function renderGrid(){
   const items = allItems.filter(i => {
     if(i.visible===false) return false;
-    const cat = (i.categoria||i.cat||"").toLowerCase().trim();
-    // Show if category matches "ropa americana" or is empty (backwards compat)
-    if(cat && cat !== "ropa americana") return false;
-    // Sub-filter by nombre keyword (chamarras, suéteres, etc.)
+    // Sub-filter by keyword in nombre
     if(subfilt){
       const nombre = (i.nombre||"").toLowerCase();
-      const icat   = (i.subcategoria||"").toLowerCase();
-      const sfLow  = subfilt.toLowerCase();
-      // Try matching subcategoria field first, then nombre
-      if(icat && icat !== sfLow) return false;
-      if(!icat){
-        // Keyword match in nombre as fallback
-        const keywords = {
-          "chamarras":["chamarra","chaqueta","bomber","varsity","windbreaker","blazer"],
-          "suéteres":["suéter","sueter","hoodie","sudadera","cardigan","cardigan","sweater"],
-          "pantalones":["pantalón","pantalon","jeans","jean","legging","cargo"],
-          "faldas":["falda"],
-          "vestidos":["vestido"],
-          "shorts":["short","bermuda"],
-          "blusas":["blusa","top","camisa","camiseta"]
-        };
-        const kws = keywords[sfLow] || [sfLow];
-        if(!kws.some(k => nombre.includes(k))) return false;
-      }
+      const keywords = {
+        "chamarras":["chamarra","chaqueta","bomber","varsity","windbreaker","blazer"],
+        "suéteres":["suéter","sueter","hoodie","sudadera","cardigan","sweater"],
+        "pantalones":["pantalón","pantalon","jeans","jean","legging","cargo"],
+        "faldas":["falda"],
+        "vestidos":["vestido"],
+        "shorts":["short","bermuda"],
+        "blusas":["blusa","top","camisa","camiseta"]
+      };
+      const kws = keywords[subfilt.toLowerCase()] || [subfilt.toLowerCase()];
+      if(!kws.some(k => nombre.includes(k))) return false;
     }
     return true;
   });
@@ -554,11 +636,11 @@ function renderGrid(){
       ? `<img class="cimg" src="${foto}" alt="${item.nombre||""}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cph><div class=cph-ico>🐻</div></div>'">`
       : `<div class="cph"><div class="cph-ico">🐻</div><div class="cph-cat">${item.categoria||""}</div></div>`;
     const tallas = (item.tallas||[]).map(t=>`<span class="talla">${t}</span>`).join("");
-    const msg = encodeURIComponent(`Hola! Me interesa: ${item.nombre} — $${item.precio} MXN`);
+    const igLink = "https://instagram.com/" + cfg.ig.replace("@","");
     const btn = !item.vendida
-      ? `<button class="bwac" onclick="window.open('${wa}?text=${msg}','_blank')">💬 CONSULTAR</button>`
+      ? `<button class="bwac" onclick="window.open('${igLink}','_blank')">📩 PREGUNTAR EN IG</button>`
       : `<div style="text-align:center;font-size:11px;color:#444;padding:8px">Pieza agotada</div>`;
-    return `<div class="card">
+    return `<div class="card" onclick="openPM('${item.id}')">
       <div class="cimgw">${imgEl}${item.vendida?'<div class="badge-sold">VENDIDA</div>':''}${item.nuevo?'<div class="badge-new">NUEVO</div>':''}</div>
       <div class="cbody">
         <div class="ccat">${item.categoria||""}</div>
@@ -569,6 +651,123 @@ function renderGrid(){
     </div>`;
   }).join("");
 }
+
+
+// ── MODAL PRENDA ──
+const ALL_TALLAS = ["XS","S","M","L","XL","XXL","Única"];
+function openCard(id){
+  const item = allItems.find(i => String(i.id)===String(id));
+  if(!item) return;
+  const foto = allPhotos[item.id] || allPhotos[String(item.id)] || "";
+  const igLink = "https://instagram.com/" + cfg.ig.replace("@","");
+
+  // Image
+  document.getElementById("pm-img").innerHTML = foto
+    ? `<img src="${foto}" alt="${item.nombre}">`
+    : `<div class="cph"><div class="cph-ico">🐻</div></div>`;
+
+  document.getElementById("pm-cat").textContent   = item.categoria || "";
+  document.getElementById("pm-name").textContent  = item.nombre || "";
+  document.getElementById("pm-price").textContent = "$" + (item.precio||0) + " MXN";
+
+  // Specs
+  const specs = [
+    {l:"Subcategoría", v: item.subcategoria||item.cat||"—"},
+    {l:"Color",        v: item.color||"—"},
+    {l:"Marca",        v: item.marca||"—"},
+    {l:"Condición",    v: item.condicion||"—"},
+  ].filter(s => s.v && s.v !== "—");
+
+  document.getElementById("pm-specs").innerHTML = specs.length
+    ? specs.map(s=>`<div class="pspec"><span class="pspec-label">${s.l}</span><span class="pspec-val">${s.v}</span></div>`).join("")
+    : `<div class="pspec"><span class="pspec-label">Categoría</span><span class="pspec-val">${item.categoria||"—"}</span></div>`;
+
+  // Tallas
+  const tallas = item.tallas||[];
+  document.getElementById("pm-tallas").innerHTML = ALL_TALLAS
+    .filter(t => tallas.includes(t))
+    .map(t=>`<div class="pmodal-talla ok">${t}</div>`).join("") ||
+    `<div style="font-size:11px;color:#555">Talla única</div>`;
+
+  // Button
+  document.getElementById("pm-btn").innerHTML = !item.vendida
+    ? `<button class="pbtn-ig" onclick="window.open('${igLink}','_blank')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+        </svg>
+        CONSULTAR EN INSTAGRAM
+      </button>`
+    : `<div class="pbtn-sold">Pieza agotada</div>`;
+
+  document.getElementById("overlay").classList.add("open");
+}
+function closeOverlay(e){ if(e.target===document.getElementById("overlay")) closeModal2(); }
+function closeModal2(){ document.getElementById("overlay").classList.remove("open"); }
+document.addEventListener("keydown", e => { if(e.key==="Escape") closeModal2(); });
+
+
+
+// ── PRODUCT MODAL ──
+function openPM(itemId){
+  const item   = allItems.find(i => String(i.id) === String(itemId));
+  if(!item) return;
+  const foto   = allPhotos[item.id] || allPhotos[String(item.id)] || "";
+  const ig     = "https://instagram.com/" + cfg.ig.replace("@","");
+  
+  // Image
+  document.getElementById("pm-img-wrap").innerHTML = foto
+    ? `<img class="pm-img" src="${foto}" alt="${item.nombre||""}">`
+    : `<div class="pm-img-ph">🐻</div>`;
+
+  // Basic info
+  document.getElementById("pm-cat").textContent   = item.categoria || item.cat || "";
+  document.getElementById("pm-name").textContent  = item.nombre || "";
+  document.getElementById("pm-price").textContent = "$" + (item.precio||0) + " MXN";
+
+  // Specs grid
+  const specs = [
+    {label:"Subcategoría", value: item.subcategoria || item.tipo || "—"},
+    {label:"Color",        value: item.color || "—"},
+    {label:"Marca",        value: item.marca || "—"},
+    {label:"Categoría",    value: item.categoria || item.cat || "—"},
+  ];
+  document.getElementById("pm-specs").innerHTML = specs
+    .map(s=>`<div class="pm-spec"><div class="pm-spec-label">${s.label}</div><div class="pm-spec-value">${s.value}</div></div>`)
+    .join("");
+
+  // Tallas
+  const allTallas = ["XS","S","M","L","XL","XXL","Única"];
+  const itemTallas = item.tallas || [];
+  document.getElementById("pm-tallas").innerHTML = allTallas
+    .map(t=>`<div class="pm-talla ${itemTallas.includes(t)?'ok':''}">${t}</div>`)
+    .join("");
+  document.getElementById("pm-tallas-wrap").style.display = itemTallas.length ? "block" : "none";
+
+  // Action
+  document.getElementById("pm-action").innerHTML = item.vendida
+    ? `<div class="pm-sold">Esta pieza ya fue vendida</div>`
+    : `<a href="${ig}" target="_blank" class="pm-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+        </svg>
+        PREGUNTAR EN INSTAGRAM
+      </a>`;
+
+  document.getElementById("poverlay").classList.add("open");
+}
+
+function closePM(e){
+  if(e.target.id==="poverlay") document.getElementById("poverlay").classList.remove("open");
+}
+
+// Close with Escape key
+document.addEventListener("keydown", e => {
+  if(e.key==="Escape") document.getElementById("poverlay").classList.remove("open");
+});
 
 // LOAD — fetch REST, sin SDK, sin errores de "firebase is not defined"
 async function load(){
@@ -611,5 +810,42 @@ async function load(){
 
 load();
 </script>
+
+<!-- MODAL DETALLE PRENDA -->
+<div class="overlay" id="overlay" onclick="closeOverlay(event)">
+  <div class="pmodal pmodal-wrap" id="pmodal">
+    <button class="pmodal-close" onclick="closeModal2()">✕</button>
+    <div class="pmodal-img" id="pm-img"></div>
+    <div class="pmodal-body">
+      <div class="pmodal-cat" id="pm-cat"></div>
+      <div class="pmodal-name" id="pm-name"></div>
+      <div class="pmodal-price" id="pm-price"></div>
+      <div class="pmodal-specs" id="pm-specs"></div>
+      <div class="pmodal-tallas" id="pm-tallas"></div>
+      <div id="pm-btn"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PRODUCT MODAL -->
+<div class="overlay" id="poverlay" onclick="closePM(event)">
+  <div class="pmodal" id="pmodal">
+    <div class="pm-close" onclick="document.getElementById('poverlay').classList.remove('open')">✕</div>
+    <div id="pm-img-wrap"></div>
+    <div class="pm-body">
+      <div class="pm-cat" id="pm-cat"></div>
+      <div class="pm-name" id="pm-name"></div>
+      <div class="pm-price" id="pm-price"></div>
+      <div class="pm-specs" id="pm-specs"></div>
+      <div class="pm-tallas" id="pm-tallas-wrap">
+        <div class="pm-tallas-label">Tallas disponibles</div>
+        <div class="pm-tallas-row" id="pm-tallas"></div>
+      </div>
+      <div id="pm-action"></div>
+    </div>
+    <div class="pm-stripe"></div>
+  </div>
+</div>
 </body>
 </html>
