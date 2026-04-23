@@ -442,20 +442,11 @@ function setFilt(btn,sub){
 
 // RENDER
 function renderGrid(){
-  const kw={
-    "Chamarras":["chamarra","chaqueta","bomber","varsity","windbreaker","blazer"],
-    "Suéteres":["suéter","sueter","hoodie","sudadera","cardigan","sweater"],
-    "Pantalones":["pantalón","pantalon","jeans","jean","legging","cargo"],
-    "Faldas":["falda"],"Vestidos":["vestido"],
-    "Shorts":["short","bermuda"],
-    "Blusas":["blusa","camisa","camiseta"]
-  };
   const items=allItems.filter(i=>{
     if(i.visible===false)return false;
     if(!subfilt)return true;
-    if(i.subcategoria&&i.subcategoria===subfilt)return true;
-    const n=(i.nombre||"").toLowerCase();
-    return(kw[subfilt]||[subfilt.toLowerCase()]).some(k=>n.includes(k));
+    // Match exactly by subcategoria field (set in admin)
+    return (i.subcategoria||"") === subfilt;
   });
   document.getElementById("cnt-ra").textContent=items.length+" prendas";
   const grid=document.getElementById("g-ra");
