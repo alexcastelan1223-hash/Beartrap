@@ -324,7 +324,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>FOTO</th><th>#</th><th>PRENDA</th><th>CATEGORÍA</th>
+          <th>FOTO</th><th>#</th><th>PRENDA</th><th>CATEGORÍA</th><th>SUBCATEGORÍA</th>
           <th>PRECIO</th><th>TALLAS</th><th>VISIBLE</th><th>VENDIDA</th><th>ACCIONES</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
@@ -373,8 +373,36 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <option>Personalizaciones</option>
           </select>
         </div>
+        <div class="ff"><label>Subcategoría</label>
+          <select id="f-subcat">
+            <option value="">— Sin especificar —</option>
+            <option>Chamarras</option>
+            <option>Blusas</option>
+            <option>Suéteres</option>
+            <option>Pantalones</option>
+            <option>Faldas</option>
+            <option>Vestidos</option>
+            <option>Shorts</option>
+            <option>Conjuntos</option>
+            <option>Accesorios</option>
+            <option>Chamarras</option><option>Blusas</option><option>Suéteres</option>
+            <option>Pantalones</option><option>Faldas</option><option>Vestidos</option>
+            <option>Shorts</option><option>Conjuntos</option><option>Tops</option>
+            <option>Camisas</option><option>Camisetas</option><option>Hoodies</option>
+          </select>
+        </div>
         <div class="ff"><label>Precio (MXN)</label><input type="number" id="f-p" placeholder="150" min="0"></div>
-        <div class="ff"><label>Color</label><input id="f-col" placeholder="Negro, Rosa..."></div>
+        <div class="ff"><label>Color</label><input id="f-col" placeholder="Negro, Rosa, Azul..."></div>
+        <div class="ff"><label>Marca</label><input id="f-marca" placeholder="Nike, Levi's, Vintage..."></div>
+        <div class="ff"><label>Condición</label>
+          <select id="f-cond">
+            <option value="">— Sin especificar —</option>
+            <option>Nueva con etiqueta</option>
+            <option>Como nueva</option>
+            <option>Excelente</option>
+            <option>Buena</option>
+          </select>
+        </div>
       </div>
       <div class="ff" style="margin-bottom:14px">
         <label>Tallas disponibles</label>
@@ -566,6 +594,7 @@ function renderTable(){
       <td style="color:var(--mu)">${ri+1}</td>
       <td><strong>${item.nombre}</strong>${item.vendida?`<span class="vsold">VENDIDA</span>`:""}</td>
       <td style="color:var(--mu);font-size:11px">${item.categoria||""}</td>
+      <td style="color:var(--mu);font-size:11px">${item.subcategoria||"—"}</td>
       <td style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px">$${item.precio}</td>
       <td style="color:var(--mu);font-size:11px">${tallas}</td>
       <td><label class="sw"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
@@ -611,21 +640,27 @@ function openModal(idx){
   document.getElementById("mtitle").textContent = editIdx!==null ? "EDITAR PRENDA" : "AGREGAR PRENDA";
   // Reset form
   Object.values(TMAP).forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=false; });
-  document.getElementById("f-n").value   = "";
-  document.getElementById("f-p").value   = "";
-  document.getElementById("f-col").value = "";
-  document.getElementById("f-cat2").value= "Ropa Americana";
-  document.getElementById("f-foto").value= "";
+  document.getElementById("f-n").value      = "";
+  document.getElementById("f-p").value      = "";
+  document.getElementById("f-col").value    = "";
+  document.getElementById("f-marca").value  = "";
+  document.getElementById("f-cat2").value   = "Ropa Americana";
+  document.getElementById("f-subcat").value = "";
+  document.getElementById("f-cond").value   = "";
+  document.getElementById("f-foto").value   = "";
   document.getElementById("f-prev").style.display="none";
   document.getElementById("foto-info").textContent="";
   document.getElementById("upload-bar").style.display="none";
   document.getElementById("btn-save").disabled = false;
   if(editIdx !== null){
     const it = items[editIdx];
-    document.getElementById("f-n").value    = it.nombre||"";
-    document.getElementById("f-cat2").value = it.categoria||"Ropa Americana";
-    document.getElementById("f-p").value    = it.precio||"";
-    document.getElementById("f-col").value  = it.color||"";
+    document.getElementById("f-n").value      = it.nombre||"";
+    document.getElementById("f-cat2").value   = it.categoria||"Ropa Americana";
+    document.getElementById("f-subcat").value = it.subcategoria||"";
+    document.getElementById("f-p").value      = it.precio||"";
+    document.getElementById("f-col").value    = it.color||"";
+    document.getElementById("f-marca").value  = it.marca||"";
+    document.getElementById("f-cond").value   = it.condicion||"";
     (it.tallas||[]).forEach(t => { const el=document.getElementById(TMAP[t]); if(el) el.checked=true; });
     const foto = photos[it.id]||"";
     if(foto){ document.getElementById("f-prev").src=foto; document.getElementById("f-prev").style.display="block"; }
@@ -680,9 +715,12 @@ async function saveItem(){
   const item = {
     id: itemId,
     nombre,
-    categoria: document.getElementById("f-cat2").value,
-    precio: parseInt(document.getElementById("f-p").value)||0,
-    color: document.getElementById("f-col").value.trim(),
+    categoria:    document.getElementById("f-cat2").value,
+    subcategoria: document.getElementById("f-subcat").value,
+    precio:       parseInt(document.getElementById("f-p").value)||0,
+    color:        document.getElementById("f-col").value.trim(),
+    marca:        document.getElementById("f-marca").value.trim(),
+    condicion:    document.getElementById("f-cond").value,
     tallas,
     visible: editIdx!==null ? (items[editIdx].visible!==false) : true,
     vendida: editIdx!==null ? (items[editIdx].vendida||false) : false,
@@ -733,9 +771,11 @@ function exportExcel(){
     "N°":           i+1,
     "Nombre":       it.nombre||"",
     "Categoría":    it.categoria||"",
-    "Precio (MXN)": it.precio||0,
-    "Color":        it.color||"",
-    "Tallas":       (it.tallas||[]).join(", "),
+    "Precio (MXN)":  it.precio||0,
+    "Color":         it.color||"",
+    "Subcategoría":  it.subcategoria||"",
+    "Marca":         it.marca||"",
+    "Tallas":        (it.tallas||[]).join(", "),
     "Visible":      it.visible!==false ? "Sí" : "No",
     "Vendida":      it.vendida ? "Sí" : "No",
     "Tiene foto":   photos[it.id] ? "Sí" : "No"
