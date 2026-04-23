@@ -325,7 +325,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <table>
         <thead><tr>
           <th>FOTO</th><th>#</th><th>PRENDA</th><th>CATEGORÍA</th><th>SUBCATEGORÍA</th>
-          <th>PRECIO</th><th>TALLAS</th><th>VISIBLE</th><th>VENDIDA</th><th>ACCIONES</th>
+          <th>PRECIO</th><th>COSTO 🔒</th><th>TALLAS</th><th>VISIBLE</th><th>VENDIDA</th><th>ACCIONES</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -391,7 +391,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <option>Camisas</option><option>Camisetas</option><option>Hoodies</option>
           </select>
         </div>
-        <div class="ff"><label>Precio (MXN)</label><input type="number" id="f-p" placeholder="150" min="0"></div>
+        <div class="ff"><label>Precio de venta (MXN)</label><input type="number" id="f-p" placeholder="150" min="0"></div>
+        <div class="ff"><label>Costo (privado 🔒)</label><input type="number" id="f-costo" placeholder="80" min="0"></div>
         <div class="ff"><label>Color</label><input id="f-col" placeholder="Negro, Rosa, Azul..."></div>
         <div class="ff"><label>Marca</label><input id="f-marca" placeholder="Nike, Levi's, Vintage..."></div>
         <div class="ff"><label>Condición</label>
@@ -596,6 +597,7 @@ function renderTable(){
       <td style="color:var(--mu);font-size:11px">${item.categoria||""}</td>
       <td style="color:var(--mu);font-size:11px">${item.subcategoria||"—"}</td>
       <td style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px">$${item.precio}</td>
+      <td style="color:#555;font-size:12px">${item.costo ? '$'+item.costo : '—'}</td>
       <td style="color:var(--mu);font-size:11px">${tallas}</td>
       <td><label class="sw"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
       <td><label class="sw"><input type="checkbox" ${item.vendida?"checked":""} onchange="toggleS(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
@@ -642,6 +644,7 @@ function openModal(idx){
   Object.values(TMAP).forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=false; });
   document.getElementById("f-n").value      = "";
   document.getElementById("f-p").value      = "";
+  document.getElementById("f-costo").value  = "";
   document.getElementById("f-col").value    = "";
   document.getElementById("f-marca").value  = "";
   document.getElementById("f-cat2").value   = "Ropa Americana";
@@ -658,6 +661,7 @@ function openModal(idx){
     document.getElementById("f-cat2").value   = it.categoria||"Ropa Americana";
     document.getElementById("f-subcat").value = it.subcategoria||"";
     document.getElementById("f-p").value      = it.precio||"";
+    document.getElementById("f-costo").value  = it.costo||"";
     document.getElementById("f-col").value    = it.color||"";
     document.getElementById("f-marca").value  = it.marca||"";
     document.getElementById("f-cond").value   = it.condicion||"";
@@ -718,6 +722,7 @@ async function saveItem(){
     categoria:    document.getElementById("f-cat2").value,
     subcategoria: document.getElementById("f-subcat").value,
     precio:       parseInt(document.getElementById("f-p").value)||0,
+    costo:        parseInt(document.getElementById("f-costo").value)||0,
     color:        document.getElementById("f-col").value.trim(),
     marca:        document.getElementById("f-marca").value.trim(),
     condicion:    document.getElementById("f-cond").value,
@@ -771,7 +776,9 @@ function exportExcel(){
     "N°":           i+1,
     "Nombre":       it.nombre||"",
     "Categoría":    it.categoria||"",
-    "Precio (MXN)":  it.precio||0,
+    "Precio venta":  it.precio||0,
+    "Costo":         it.costo||0,
+    "Ganancia":      (it.precio||0)-(it.costo||0),
     "Color":         it.color||"",
     "Subcategoría":  it.subcategoria||"",
     "Marca":         it.marca||"",
