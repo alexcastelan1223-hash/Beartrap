@@ -3,810 +3,613 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bear Trap — Gestión</title>
-<meta name="robots" content="noindex,nofollow">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<!-- SheetJS para exportar Excel -->
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<title>Bear Trap — Ropa que atrapa.</title>
+<meta name="description" content="Bear Trap — Ropa americana única. Catálogo oficial.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@700;900&family=DM+Sans:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#080809;--s:#0f0f13;--c:#16161c;--b:#222228;--t:#ebebeb;--mu:#505060;
-  --gold:#ffc107;--or:#ff8c00;--green:#00e676;--pink:#ff2d78;--cyan:#00c8ff;--pur:#b24bff}
-body{background:var(--bg);color:var(--t);font-family:"DM Sans",sans-serif;min-height:100vh}
+*{cursor:none !important}
+html{scroll-behavior:smooth}
+body{background:#07070a;color:#f0f0f0;font-family:"DM Sans",sans-serif;overflow-x:hidden}
 
-/* ══ PANTALLA DE CONFIGURACIÓN FIREBASE ══ */
-#screen-cfg{position:fixed;inset:0;background:var(--bg);z-index:9999;
-  display:flex;align-items:center;justify-content:center}
-.cfg-box{background:var(--s);border:1px solid var(--b);border-radius:10px;
-  padding:44px;width:480px;max-width:95vw}
-.cfg-logo{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:.08em;
-  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;margin-bottom:4px}
-.cfg-sub{font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:24px}
-.cfg-sub a{color:var(--cyan);text-decoration:none}
-.cfg-sub a:hover{text-decoration:underline}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mu);
-  text-transform:uppercase;margin-bottom:6px}
-.field input{width:100%;padding:11px 13px;background:var(--c);border:1px solid var(--b);
-  border-radius:5px;color:var(--t);font-family:"DM Mono",monospace;font-size:12px;
-  outline:none;transition:border .2s}
-.field input:focus{border-color:var(--gold)}
-.field small{display:block;font-size:10px;color:var(--mu);margin-top:5px;line-height:1.5}
-#cfg-err{color:var(--pink);font-size:11px;margin:8px 0;min-height:16px}
-.btn-connect{width:100%;padding:13px;background:linear-gradient(135deg,#ffc107,#ff8c00);
-  border:none;border-radius:5px;color:#000;font-family:"Bebas Neue",sans-serif;
-  font-size:19px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s;margin-top:4px}
-.btn-connect:hover{opacity:.88}
+/* CURSOR */
+#cur{position:fixed;width:16px;height:16px;border-radius:50%;pointer-events:none;
+  z-index:99999;border:2px solid rgba(255,175,0,.8);background:rgba(255,150,0,.06);
+  top:-50px;left:-50px;transform:translate(-50%,-50%);
+  transition:width .12s,height .12s,border-color .12s}
+#cur.big{width:30px;height:30px;border-color:rgba(255,210,0,1)}
 
-/* ══ PANTALLA DE LOGIN FIREBASE AUTH ══ */
-#screen-auth{position:fixed;inset:0;background:var(--bg);z-index:9998;
-  display:none;align-items:center;justify-content:center}
-.auth-box{background:var(--s);border:1px solid var(--b);border-radius:10px;
-  padding:44px;width:380px;max-width:95vw;text-align:center}
-.auth-logo{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.08em;
-  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;margin-bottom:4px}
-.auth-sub{font-size:11px;color:var(--mu);letter-spacing:.1em;margin-bottom:28px}
-.auth-field label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mu);
-  text-align:left;margin-bottom:6px;text-transform:uppercase;margin-top:14px}
-.auth-field input{width:100%;padding:11px 13px;background:var(--c);border:1px solid var(--b);
-  border-radius:5px;color:var(--t);font-family:inherit;font-size:14px;outline:none;transition:border .2s}
-.auth-field input:focus{border-color:var(--gold)}
-#auth-err{color:var(--pink);font-size:11px;margin:10px 0 4px;min-height:16px}
-.auth-btn{width:100%;padding:13px;background:linear-gradient(135deg,#ffc107,#ff8c00);
-  border:none;border-radius:5px;color:#000;font-family:"Bebas Neue",sans-serif;
-  font-size:19px;letter-spacing:.08em;cursor:pointer;transition:opacity .2s;margin-top:8px}
-.auth-btn:hover{opacity:.88}
-/* BOTÓN SIEMPRE VISIBLE para reconfigurar */
-.btn-reconfig{display:block;margin-top:20px;font-size:11px;color:var(--mu);
-  letter-spacing:.08em;cursor:pointer;background:none;border:none;width:100%;
-  transition:color .2s;text-decoration:underline;font-family:inherit}
-.btn-reconfig:hover{color:var(--cyan)}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;
+  display:flex;align-items:center;padding:0 28px;
+  background:rgba(7,7,10,.9);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.nlogo{border:1px solid rgba(255,255,255,.18);border-radius:5px;padding:5px 10px;
+  display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.nlogo svg{width:30px;height:30px}
+.nlogo-text{display:flex;flex-direction:column;line-height:1.05}
+.nlb{font-family:"Unbounded",sans-serif;font-size:9px;font-weight:900;
+  background:linear-gradient(90deg,#ff6b00,#ffd600);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nlt{font-family:"Unbounded",sans-serif;font-size:9px;font-weight:900;
+  background:linear-gradient(90deg,#00ff87,#00c8ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nctr{flex:1;display:flex;justify-content:center;gap:36px}
+.nl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);text-decoration:none;padding:4px 0;
+  position:relative;transition:color .2s}
+.nl.on,.nl:hover{color:#fff}
+.nl.on::after{content:"";position:absolute;bottom:-2px;left:0;right:0;
+  height:2px;background:linear-gradient(90deg,#ff8c00,#ffd600);border-radius:1px}
+.nright{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.nsoc{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);text-decoration:none;
+  display:flex;align-items:center;gap:6px;transition:color .2s}
+.nsoc:hover{color:#fff}
+.nsep{color:rgba(255,255,255,.1)}
+.ndot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.15);
+  transition:background .2s;margin-left:4px}
+.ndot:hover{background:rgba(255,255,255,.4)}
 
-/* ══ ADMIN ══ */
-#screen-admin{display:none}
-.stripe{height:3px;background:linear-gradient(90deg,#ff3b30,#ff8c00,#34c759,#30d5c8,#af52de,#ff2d55);
-  background-size:200%;animation:st 3s linear infinite}
-@keyframes st{to{background-position:200%}}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 22px;
-  height:54px;background:var(--s);border-bottom:1px solid var(--b);
-  position:sticky;top:0;z-index:100}
-.t-logo{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:.1em;
-  background:linear-gradient(135deg,#ff8c00,#ffd600);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.t-badge{padding:2px 8px;border-radius:10px;background:rgba(255,193,7,.1);
-  border:1px solid rgba(255,193,7,.2);color:var(--gold);font-size:10px;
-  letter-spacing:.1em;margin-left:8px;font-family:"DM Mono",monospace}
-.t-email{font-size:10px;color:var(--mu);font-family:"DM Mono",monospace;letter-spacing:.06em}
-.t-right{display:flex;align-items:center;gap:8px}
-.bsm{padding:7px 16px;border-radius:4px;font-size:11px;font-family:"DM Sans",sans-serif;
-  font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .2s;
-  text-decoration:none;border:1px solid var(--b)}
-.bv{background:rgba(0,200,255,.08);color:var(--cyan);border-color:rgba(0,200,255,.22)}
-.bv:hover{background:rgba(0,200,255,.16)}
-.bout{background:transparent;color:var(--mu)}
-.bout:hover{border-color:var(--pink);color:var(--pink)}
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;
+  padding:80px 60px 60px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 70% at 10% 60%,rgba(160,65,0,.55) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 60% at 82% 35%,rgba(80,0,150,.55) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 40% at 78% 72%,rgba(0,20,80,.4) 0%,transparent 55%)}
+.hleft{position:relative;z-index:2;flex:0 0 auto;max-width:560px}
+.hbadge{font-size:10px;letter-spacing:.22em;color:rgba(255,200,100,.6);
+  text-transform:uppercase;margin-bottom:18px}
+.htitle{font-family:"Bebas Neue",sans-serif;
+  font-size:clamp(100px,14vw,185px);line-height:.86;
+  background:linear-gradient(170deg,#ffe44d 0%,#ff9500 45%,#ff5500 85%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:16px;letter-spacing:.01em}
+.hslogan{font-family:"DM Sans",sans-serif;font-style:italic;
+  font-size:clamp(17px,2vw,22px);color:rgba(255,255,255,.75);margin-bottom:26px}
+.hslogan strong{color:#ff9500;font-style:italic;font-weight:700}
+.hstripe{display:flex;gap:4px;margin-bottom:32px;height:5px;width:340px}
+.hstripe span{flex:1;border-radius:3px}
+.hs1{background:#ff3b30}.hs2{background:#ff8c00}.hs3{background:#34c759}
+.hs4{background:#30d5c8}.hs5{background:#af52de}.hs6{background:#ff2d55}
+.hbtns{display:flex;gap:14px;flex-wrap:wrap}
+.bcat{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);border:none;border-radius:4px;
+  color:#000;font-weight:800;font-size:14px;letter-spacing:.04em;
+  transition:all .2s;text-decoration:none}
+.bcat:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,160,0,.4)}
+.bwah{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
+  border-radius:4px;color:rgba(255,255,255,.7);font-weight:600;font-size:14px;
+  letter-spacing:.04em;transition:all .2s;text-decoration:none}
+.bwah:hover{border-color:rgba(37,211,102,.5);color:#25d366;transform:translateY(-2px)}
 
-.ac{max-width:1440px;margin:0 auto;padding:22px}
+/* BEAR */
+.hbear{position:absolute;right:6%;top:50%;transform:translateY(-50%);
+  z-index:2;width:340px;height:340px;animation:fl 5s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(-50%)}50%{transform:translateY(calc(-50% - 15px))}}
+.bglow{position:absolute;top:50%;left:50%;width:310px;height:310px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse,rgba(80,0,160,.6) 0%,rgba(0,20,100,.35) 45%,transparent 70%);
+  filter:blur(32px);animation:gp 4s ease-in-out infinite}
+@keyframes gp{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(1)}
+              50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+.sp{position:absolute;animation:sk 3s ease-in-out infinite;pointer-events:none}
+@keyframes sk{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.25)}}
+.sp1{top:5%;right:18%;font-size:26px;color:#ffd700;filter:drop-shadow(0 0 6px #ffd700)}
+.sp2{top:22%;left:2%;font-size:20px;color:#ff2d78;animation-delay:.6s}
+.sp3{top:40%;right:0;font-size:14px;color:#ffe566;animation-delay:.9s}
+.sp4{top:65%;right:-1%;font-size:11px;color:#00c8ff;animation-delay:1.3s}
+.sp5{bottom:22%;left:6%;width:9px;height:9px;border-radius:50%;background:#00ff87;animation-delay:.4s}
+.sp6{bottom:32%;right:7%;width:11px;height:11px;border-radius:50%;background:#1a8fff;animation-delay:1s}
+.sp7{bottom:14%;right:20%;width:7px;height:7px;border-radius:50%;background:#b24bff;animation-delay:1.6s}
+.sp8{top:54%;left:0;width:6px;height:6px;border-radius:50%;background:#00dfff;animation-delay:.7s}
 
-/* STATUS */
-#SB{display:flex;align-items:center;gap:9px;padding:10px 15px;border-radius:5px;
-  margin-bottom:20px;font-size:11px;letter-spacing:.08em;font-family:"DM Mono",monospace}
-#SB.ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);color:var(--green)}
-#SB.err{background:rgba(255,45,120,.06);border:1px solid rgba(255,45,120,.2);color:var(--pink)}
-#SB.ld{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.2);color:var(--gold)}
-.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.dok{background:var(--green)}.derr{background:var(--pink)}
-.dld{background:var(--gold);animation:pl 1.2s ease-in-out infinite}
-@keyframes pl{0%,100%{opacity:1}50%{opacity:.2}}
+/* SECTION */
+.sw{max-width:1400px;margin:0 auto;padding:0 28px}
+.shdr{padding:70px 0 28px;display:flex;align-items:flex-end;gap:18px}
+.sname{font-family:"Bebas Neue",sans-serif;font-size:clamp(32px,4vw,52px);letter-spacing:.05em}
+.sbar{flex:1;height:1px;background:#1e1e24;margin-bottom:8px}
+.scnt{font-size:11px;color:#555;letter-spacing:.1em;padding-bottom:5px}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
-.stat{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:18px}
-.stat-v{font-family:"Bebas Neue",sans-serif;font-size:40px;color:var(--gold);line-height:1}
-.stat-l{font-size:10px;letter-spacing:.12em;color:var(--mu);text-transform:uppercase;margin-top:4px}
+/* FILTERS */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.fb{padding:6px 18px;border-radius:20px;border:1px solid #1e1e24;
+  background:transparent;color:#555;font-size:11px;font-weight:600;
+  letter-spacing:.08em;font-family:"DM Sans",sans-serif;transition:all .2s}
+.fb.on,.fb:hover{border-color:rgba(255,145,0,.5);color:#ff9500;background:rgba(255,145,0,.07)}
 
-/* TOOLBAR */
-.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.tsearch{flex:1;min-width:180px;padding:10px 13px;background:var(--s);border:1px solid var(--b);
-  border-radius:4px;color:var(--t);font-family:inherit;font-size:12px;outline:none}
-.tsearch:focus{border-color:var(--gold)}
-.tsel{padding:10px 13px;background:var(--s);border:1px solid var(--b);border-radius:4px;
-  color:var(--t);font-family:inherit;font-size:12px;cursor:pointer}
-.badd{padding:10px 22px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;
-  border-radius:4px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:18px;
-  letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
-.badd:hover{opacity:.88}
-.bxls{padding:10px 18px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
-  border-radius:4px;color:var(--green);font-family:"DM Sans",sans-serif;font-weight:600;
-  font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;letter-spacing:.06em}
-.bxls:hover{background:rgba(0,230,118,.16)}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));
+  gap:14px;padding-bottom:70px}
 
-/* TABLE */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:10px 13px;text-align:left;color:var(--mu);font-size:10px;letter-spacing:.1em;
-  border-bottom:1px solid var(--b);font-weight:500;text-transform:uppercase;white-space:nowrap}
-td{padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
-tr:hover td{background:rgba(255,255,255,.015)}
-.timg{width:46px;height:56px;object-fit:cover;border-radius:4px;display:block}
-.tph{width:46px;height:56px;background:linear-gradient(135deg,#1a1a20,#22222c);
-  border-radius:4px;display:flex;align-items:center;justify-content:center;
-  font-size:20px;opacity:.35}
-.sw{position:relative;width:36px;height:20px;display:inline-block;cursor:pointer}
-.sw input{display:none}
-.sw-t{position:absolute;inset:0;border-radius:10px;background:var(--b);transition:.2s}
-.sw input:checked+.sw-t{background:var(--green)}
-.sw-th{position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
-.sw input:checked~.sw-th{left:19px}
-.abtn{padding:5px 11px;border-radius:3px;font-size:10px;font-family:inherit;
-  letter-spacing:.06em;cursor:pointer;border:1px solid var(--b);background:transparent;
-  color:var(--mu);transition:all .2s;white-space:nowrap}
-.abtn:hover{border-color:var(--gold);color:var(--gold)}
-.adel:hover{border-color:var(--pink);color:var(--pink)}
-.vsold{padding:2px 9px;border-radius:3px;background:linear-gradient(135deg,var(--pink),var(--pur));
-  color:#fff;font-size:10px;font-weight:700;margin-left:6px;letter-spacing:.06em}
-#tbl-empty{display:none;padding:55px;text-align:center;color:var(--mu);font-size:12px;letter-spacing:.1em}
+/* CARD */
+.card{background:#111115;border:1px solid #1c1c20;border-radius:8px;
+  overflow:hidden;transition:all .22s;position:relative}
+.card:hover{border-color:rgba(255,145,0,.3);transform:translateY(-5px);
+  box-shadow:0 18px 44px rgba(0,0,0,.55)}
+.cimgw{width:100%;aspect-ratio:3/4;overflow:hidden;background:#16161c;position:relative}
+.cimg{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.card:hover .cimg{transform:scale(1.05)}
+.cph{width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#131318,#1c1c24);gap:10px}
+.cph-ico{font-size:44px;opacity:.25}
+.cph-cat{font-size:9px;letter-spacing:.16em;color:rgba(255,255,255,.12);text-transform:uppercase}
+.cbody{padding:13px}
+.ccat{font-size:9px;letter-spacing:.14em;color:#555;text-transform:uppercase;margin-bottom:3px}
+.cname{font-weight:700;font-size:14px;line-height:1.25;margin-bottom:8px;color:#e8e8e8}
+.cbot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:11px}
+.cprice{font-family:"Bebas Neue",sans-serif;font-size:24px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ctallas{display:flex;gap:3px;flex-wrap:wrap}
+.talla{padding:2px 6px;border:1px solid #1e1e24;border-radius:3px;font-size:9px;color:#555}
+.bwac{width:100%;padding:10px;border:none;border-radius:5px;
+  background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;
+  font-weight:700;font-size:12px;letter-spacing:.06em;transition:opacity .2s}
+.bwac:hover{opacity:.86}
+.badge-sold{position:absolute;top:10px;left:10px;
+  background:linear-gradient(135deg,#ff2d78,#b24bff);
+  color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;
+  padding:3px 11px;border-radius:4px}
+.badge-new{position:absolute;top:10px;right:10px;
+  background:linear-gradient(135deg,#ffd600,#ff8c00);
+  color:#000;font-size:9px;font-weight:800;padding:3px 9px;border-radius:4px}
 
-/* MODAL */
-.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:2000;
-  align-items:center;justify-content:center;padding:16px}
-.mbg.open{display:flex}
-.modal{background:var(--s);border:1px solid var(--b);border-radius:8px;
-  width:100%;max-width:560px;max-height:92vh;overflow-y:auto}
-.mhd{padding:22px 22px 0;display:flex;align-items:center;justify-content:space-between}
-.mtitle{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em}
-.mclose{background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;padding:4px}
-.mclose:hover{color:#fff}
-.mbody{padding:22px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
-.form-grid.one{grid-template-columns:1fr}
-.ff{display:flex;flex-direction:column;gap:6px}
-.ff label{font-size:10px;letter-spacing:.1em;color:var(--mu);text-transform:uppercase}
-.ff input,.ff select{padding:10px 11px;background:var(--c);border:1px solid var(--b);
-  border-radius:4px;color:var(--t);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
-.ff input:focus,.ff select:focus{border-color:var(--gold)}
-.tallas-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.tc{display:none}
-.tl{padding:6px 11px;border:1px solid var(--b);border-radius:4px;
-  font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit}
-.tc:checked+.tl{border-color:var(--gold);color:var(--gold);background:rgba(255,193,7,.07)}
-.foto-preview{width:76px;height:92px;object-fit:cover;border-radius:5px;
-  border:1px solid var(--b);margin-top:10px;display:none}
-.foto-info{font-size:10px;color:var(--mu);margin-top:6px;letter-spacing:.06em}
-.btn-save{width:100%;padding:13px;background:linear-gradient(135deg,#ffc107,#ff8c00);
-  border:none;border-radius:5px;color:#000;font-family:"Bebas Neue",sans-serif;
-  font-size:20px;letter-spacing:.08em;cursor:pointer;margin-top:14px;transition:opacity .2s}
-.btn-save:hover{opacity:.88}
-.btn-save:disabled{opacity:.4;cursor:not-allowed}
+/* COMING SOON */
+.cs-wrap{padding:0 0 70px}
+.cs-inner{background:linear-gradient(135deg,#0e0e14,#141420);
+  border:1px solid #1e1e2a;border-radius:12px;
+  padding:80px 40px;text-align:center;position:relative;overflow:hidden}
+.cs-inner::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(100,0,180,.15),transparent 70%);
+  pointer-events:none}
+.cs-tag{display:inline-block;padding:5px 16px;border-radius:20px;
+  border:1px solid rgba(255,214,0,.25);color:rgba(255,214,0,.6);
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px}
+.cs-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(40px,6vw,72px);
+  letter-spacing:.06em;margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cs-sub{font-size:14px;color:#555;letter-spacing:.06em;margin-bottom:32px;
+  max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cs-dots{display:flex;justify-content:center;gap:10px;margin-bottom:28px}
+.cs-dot{width:8px;height:8px;border-radius:50%;animation:csd 2s ease-in-out infinite}
+.cs-dot:nth-child(1){background:#ff6b35;animation-delay:0s}
+.cs-dot:nth-child(2){background:#ffd600;animation-delay:.3s}
+.cs-dot:nth-child(3){background:#00ff87;animation-delay:.6s}
+.cs-dot:nth-child(4){background:#00c8ff;animation-delay:.9s}
+.cs-dot:nth-child(5){background:#b24bff;animation-delay:1.2s}
+@keyframes csd{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.4);opacity:1}}
+.cs-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;
+  border:1px solid rgba(255,255,255,.12);border-radius:30px;
+  color:rgba(255,255,255,.6);font-size:12px;font-weight:600;letter-spacing:.08em;
+  text-decoration:none;transition:all .2s}
+.cs-btn:hover{border-color:rgba(255,145,0,.4);color:#ff9500}
 
-/* CONFIG SECTION */
-.cfg-sec{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:22px;margin-top:22px}
-.cfg-sec-hdr{font-size:10px;letter-spacing:.16em;color:var(--mu);text-transform:uppercase;
-  margin-bottom:18px;padding-bottom:11px;border-bottom:1px solid var(--b)}
-.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
-.cf label{display:block;font-size:10px;letter-spacing:.1em;color:var(--mu);
-  margin-bottom:6px;text-transform:uppercase}
-.cf input{width:100%;padding:10px 11px;background:var(--c);border:1px solid var(--b);
-  border-radius:4px;color:var(--t);font-family:inherit;font-size:12px;outline:none;transition:border .2s}
-.cf input:focus{border-color:var(--gold)}
-.btn-cfg{padding:10px 24px;background:linear-gradient(135deg,#ffc107,#ff8c00);border:none;
-  border-radius:4px;color:#000;font-family:"Bebas Neue",sans-serif;font-size:17px;
-  letter-spacing:.08em;cursor:pointer;transition:opacity .2s}
-.btn-cfg:hover{opacity:.88}
+/* LOADING */
+.lgrid{grid-column:1/-1;display:flex;flex-direction:column;
+  align-items:center;gap:14px;padding:80px;color:#555;font-size:11px;letter-spacing:.1em}
+.spin{width:28px;height:28px;border-radius:50%;border:2px solid #1e1e24;
+  border-top-color:#ff8c00;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-/* BACKUP SECTION */
-.bk-sec{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:22px;margin-top:16px}
-.bk-hdr{font-size:10px;letter-spacing:.16em;color:var(--mu);text-transform:uppercase;
-  margin-bottom:16px;padding-bottom:11px;border-bottom:1px solid var(--b)}
-.bkbtn{padding:10px 18px;border-radius:4px;font-size:11px;cursor:pointer;
-  transition:all .2s;font-family:inherit;font-weight:600;letter-spacing:.06em}
-.bk-exp{background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.22);color:var(--cyan)}
-.bk-exp:hover{background:rgba(0,200,255,.18)}
-.bk-imp{background:rgba(255,193,7,.07);border:1px solid var(--b);color:var(--gold)}
-.bk-imp:hover{background:rgba(255,193,7,.16)}
+/* FLOAT PILLS */
+.pills{position:fixed;bottom:24px;right:20px;display:flex;flex-direction:column;gap:10px;z-index:800}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:30px;
+  font-weight:700;font-size:12px;letter-spacing:.06em;text-decoration:none;
+  transition:transform .2s;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+.pill:hover{transform:scale(1.07) translateX(-3px)}
+.p-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.p-wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff}
 
-/* UPLOAD PROGRESS */
-.upload-bar{width:100%;height:4px;background:var(--b);border-radius:2px;margin-top:10px;overflow:hidden;display:none}
-.upload-bar-fill{height:100%;background:linear-gradient(90deg,#ffc107,#ff8c00);border-radius:2px;transition:width .3s}
+/* FOOTER */
+footer{border-top:1px solid #1a1a20;padding:32px 28px;text-align:center}
+.flogo{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.14em;margin-bottom:8px;
+  background:linear-gradient(135deg,#ff8c00,#ffd600);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
 
-/* TOAST */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
-  background:var(--s);border:1px solid var(--b);color:var(--gold);padding:12px 24px;
-  border-radius:4px;font-size:11px;letter-spacing:.1em;transition:transform .3s;
-  z-index:9999;white-space:nowrap;font-family:"DM Mono",monospace}
-#toast.show{transform:translateX(-50%) translateY(0)}
-
-@media(max-width:768px){
-  .stats{grid-template-columns:1fr 1fr}
-  .form-grid{grid-template-columns:1fr}
-  .cfg-grid{grid-template-columns:1fr}
-  .toolbar{flex-direction:column;align-items:stretch}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero{padding:88px 28px 60px;min-height:auto}
+  .hbear{position:relative;right:auto;top:auto;transform:none;
+    width:240px;height:240px;margin:40px auto 0;
+    animation:fl2 5s ease-in-out infinite}
+  @keyframes fl2{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .nctr{display:none}
+  .htitle{font-size:clamp(80px,22vw,130px)}
+  .hstripe{width:100%}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  nav{padding:0 16px}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ CONFIGURACIÓN FIREBASE (primera vez o si hay error) ══ -->
-<div id="screen-cfg">
-  <div class="cfg-box">
-    <div class="cfg-logo">🐻 BEAR TRAP — CONFIGURAR FIREBASE</div>
-    <div class="cfg-sub">
-      Solo necesitas hacer esto <strong>una vez</strong>. Ve a
-      <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a>
-      → tu proyecto → ⚙️ Configuración → Configuración del proyecto → tu app web → copia los datos.
+<div id="cur"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nlogo">
+    <svg viewBox="0 0 50 50" fill="none">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ff6b35"/>
+          <stop offset="35%" stop-color="#ffd600"/>
+          <stop offset="65%" stop-color="#00ff87"/>
+          <stop offset="100%" stop-color="#00c8ff"/>
+        </linearGradient>
+      </defs>
+      <circle cx="15" cy="12" r="7" fill="url(#lg)"/>
+      <circle cx="35" cy="12" r="7" fill="url(#lg)"/>
+      <rect x="7" y="14" width="36" height="30" rx="12" fill="url(#lg)"/>
+      <circle cx="19" cy="26" r="3.5" fill="#111"/>
+      <circle cx="31" cy="26" r="3.5" fill="#111"/>
+      <circle cx="25" cy="32" r="2.2" fill="#111"/>
+      <polygon points="10,44 14,38 18,44" fill="#ff3b55"/>
+      <polygon points="18,44 22,38 26,44" fill="#ffd600"/>
+      <polygon points="26,44 30,38 34,44" fill="#00ff87"/>
+      <polygon points="34,44 38,38 42,44" fill="#00c8ff"/>
+    </svg>
+    <div class="nlogo-text">
+      <span class="nlb">BEAR</span>
+      <span class="nlt">TRAP</span>
     </div>
-    <div class="field">
-      <label>API Key</label>
-      <input id="f-apikey" placeholder="AIzaSy..." spellcheck="false" autocomplete="off">
-      <small>Empieza con "AIzaSy..." — es la línea apiKey del firebaseConfig</small>
+  </a>
+  <div class="nctr">
+    <a href="#ropa-americana" class="nl on" id="nl-ra">ROPA AMERICANA</a>
+    <a href="#street-syndicate" class="nl" id="nl-ss">STREET SYNDICATE</a>
+    <a href="#personalizaciones" class="nl" id="nl-pe">PERSONALIZACIONES</a>
+  </div>
+  <div class="nright">
+    <a id="n-ig" href="#" class="nsoc" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="2" width="20" height="20" rx="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>INSTAGRAM</span>
+    </a>
+    <span class="nsep">|</span>
+    <a id="n-wa" href="#" class="nsoc" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+      </svg>
+      <span>WHATSAPP</span>
+    </a>
+    <div class="ndot" onclick="location.href='/gestion/'" title="Admin"></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hleft">
+    <div class="hbadge">PIEZAS ÚNICAS · 2026</div>
+    <div class="htitle">BEAR<br>TRAP</div>
+    <div class="hslogan">Ropa que <strong>atrapa.</strong></div>
+    <div class="hstripe">
+      <span class="hs1"></span><span class="hs2"></span><span class="hs3"></span>
+      <span class="hs4"></span><span class="hs5"></span><span class="hs6"></span>
     </div>
-    <div class="field">
-      <label>Project ID</label>
-      <input id="f-pid" placeholder="bear-trap-bazar" spellcheck="false" autocomplete="off">
-      <small>Ejemplo: bear-trap-bazar — es el campo projectId</small>
+    <div class="hbtns">
+      <a href="#ropa-americana" class="bcat">→ VER CATÁLOGO</a>
+      <a id="h-wa" href="#" class="bwah" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+        </svg>
+        WHATSAPP
+      </a>
     </div>
-    <div id="cfg-err"></div>
-    <button class="btn-connect" onclick="conectarFirebase()">CONECTAR →</button>
+  </div>
+
+  <!-- BEAR kawaii 3D -->
+  <div class="hbear">
+    <div class="bglow"></div>
+    <div class="sp sp1">★</div>
+    <div class="sp sp2">★</div>
+    <div class="sp sp3">✦</div>
+    <div class="sp sp4">✦</div>
+    <div class="sp sp5"></div>
+    <div class="sp sp6"></div>
+    <div class="sp sp7"></div>
+    <div class="sp sp8"></div>
+    <svg viewBox="0 0 320 320" fill="none" style="position:relative;z-index:2;width:100%;height:100%">
+      <defs>
+        <radialGradient id="rh" cx="38%" cy="30%" r="65%">
+          <stop offset="0%" stop-color="#8a5430"/>
+          <stop offset="35%" stop-color="#6b3e1e"/>
+          <stop offset="80%" stop-color="#4a2a0e"/>
+          <stop offset="100%" stop-color="#3a1f08"/>
+        </radialGradient>
+        <radialGradient id="rm" cx="50%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#d49878"/>
+          <stop offset="60%" stop-color="#b87555"/>
+          <stop offset="100%" stop-color="#a06040"/>
+        </radialGradient>
+      </defs>
+      <circle cx="90" cy="88" r="44" fill="#3a1f08"/>
+      <circle cx="230" cy="88" r="44" fill="#3a1f08"/>
+      <circle cx="90" cy="88" r="28" fill="#5a3318"/>
+      <circle cx="230" cy="88" r="28" fill="#5a3318"/>
+      <circle cx="160" cy="172" r="118" fill="url(#rh)"/>
+      <ellipse cx="138" cy="122" rx="50" ry="30" fill="rgba(255,255,255,.06)" transform="rotate(-18 138 122)"/>
+      <ellipse cx="160" cy="206" rx="52" ry="38" fill="url(#rm)"/>
+      <ellipse cx="118" cy="162" rx="25" ry="28" fill="white"/>
+      <ellipse cx="202" cy="162" rx="25" ry="28" fill="white"/>
+      <circle cx="121" cy="166" r="18" fill="#0d0d0d"/>
+      <circle cx="205" cy="166" r="18" fill="#0d0d0d"/>
+      <circle cx="114" cy="157" r="8" fill="white" opacity=".92"/>
+      <circle cx="198" cy="157" r="8" fill="white" opacity=".92"/>
+      <circle cx="128" cy="171" r="3.5" fill="white" opacity=".45"/>
+      <circle cx="212" cy="171" r="3.5" fill="white" opacity=".45"/>
+      <ellipse cx="160" cy="196" rx="15" ry="11" fill="#130a04"/>
+      <ellipse cx="156" cy="193" rx="4.5" ry="2.8" fill="rgba(255,255,255,.2)"/>
+      <path d="M142 212 Q160 227 178 212" stroke="#8b5a35" stroke-width="3" fill="none" stroke-linecap="round" opacity=".75"/>
+      <ellipse cx="100" cy="192" rx="20" ry="12" fill="#ff8888" opacity=".18"/>
+      <ellipse cx="220" cy="192" rx="20" ry="12" fill="#ff8888" opacity=".18"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ROPA AMERICANA -->
+<div id="ropa-americana">
+  <div class="sw">
+    <div class="shdr">
+      <div class="sname">ROPA AMERICANA</div>
+      <div class="sbar"></div>
+      <div class="scnt" id="cnt-ra">cargando...</div>
+    </div>
+    <div class="filters" id="filt-ra">
+      <button class="fb on" onclick="setFilt(this,'')">Todas</button>
+      <button class="fb" onclick="setFilt(this,'Chamarras')">Chamarras</button>
+      <button class="fb" onclick="setFilt(this,'Suéteres')">Suéteres</button>
+      <button class="fb" onclick="setFilt(this,'Pantalones')">Pantalones</button>
+      <button class="fb" onclick="setFilt(this,'Faldas')">Faldas</button>
+      <button class="fb" onclick="setFilt(this,'Vestidos')">Vestidos</button>
+      <button class="fb" onclick="setFilt(this,'Shorts')">Shorts</button>
+      <button class="fb" onclick="setFilt(this,'Blusas')">Blusas</button>
+    </div>
+    <div class="grid" id="g-ra">
+      <div class="lgrid"><div class="spin"></div><span>Cargando catálogo...</span></div>
+    </div>
   </div>
 </div>
 
-<!-- ══ LOGIN FIREBASE AUTH ══ -->
-<div id="screen-auth">
-  <div class="auth-box">
-    <div class="auth-logo">🐻 BEAR TRAP</div>
-    <div class="auth-sub">PANEL DE GESTIÓN</div>
-    <div class="auth-field">
-      <label>Email de administrador</label>
-      <input type="email" id="a-email" autocomplete="email" placeholder="tu@email.com">
-      <label>Contraseña</label>
-      <input type="password" id="a-pass" autocomplete="current-password" placeholder="••••••••">
+<!-- STREET SYNDICATE -->
+<div id="street-syndicate">
+  <div class="sw">
+    <div class="shdr">
+      <div class="sname">STREET SYNDICATE</div>
+      <div class="sbar"></div>
     </div>
-    <div id="auth-err"></div>
-    <button class="auth-btn" onclick="doLogin()">ENTRAR</button>
-    <button class="btn-reconfig" onclick="reconfigurar()">🔄 Cambiar configuración Firebase</button>
-  </div>
-</div>
-
-<!-- ══ ADMIN ══ -->
-<div id="screen-admin">
-  <div class="stripe"></div>
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:8px">
-      <span class="t-logo">🐻 BEAR TRAP</span>
-      <span class="t-badge">ADMIN</span>
-    </div>
-    <span class="t-email" id="t-email"></span>
-    <div class="t-right">
-      <a href="/" class="bsm bv" target="_blank">→ VER SITIO</a>
-      <button class="bsm bout" onclick="doLogout()">SALIR</button>
-    </div>
-  </div>
-
-  <div class="ac">
-    <!-- STATS -->
-    <div class="stats">
-      <div class="stat"><div class="stat-v" id="s-tot">0</div><div class="stat-l">Total prendas</div></div>
-      <div class="stat"><div class="stat-v" id="s-vis">0</div><div class="stat-l">Visibles</div></div>
-      <div class="stat"><div class="stat-v" id="s-sold" style="color:var(--pink)">0</div><div class="stat-l">Vendidas</div></div>
-      <div class="stat"><div class="stat-v" id="s-avg">$0</div><div class="stat-l">Precio promedio</div></div>
-    </div>
-
-    <!-- STATUS -->
-    <div id="SB" class="ld">
-      <div class="sdot dld" id="sdot"></div>
-      <span id="stxt">Conectando...</span>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div class="toolbar">
-      <input class="tsearch" type="text" id="search" placeholder="🔍 Buscar prenda..." oninput="renderTable()">
-      <select class="tsel" id="f-cat" onchange="renderTable()">
-        <option value="">Todas las categorías</option>
-        <option>Ropa Americana</option>
-        <option>Street Syndicate</option>
-        <option>Personalizaciones</option>
-      </select>
-      <select class="tsel" id="f-vis" onchange="renderTable()">
-        <option value="">Todas</option>
-        <option value="true">Visibles</option>
-        <option value="false">Ocultas</option>
-      </select>
-      <button class="bxls" onclick="exportExcel()">📊 EXPORTAR EXCEL</button>
-      <button class="badd" onclick="openModal()">+ AGREGAR</button>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>FOTO</th><th>#</th><th>PRENDA</th><th>CATEGORÍA</th>
-          <th>PRECIO</th><th>TALLAS</th><th>VISIBLE</th><th>VENDIDA</th><th>ACCIONES</th>
-        </tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-    <div id="tbl-empty">Sin resultados para esta búsqueda</div>
-
-    <!-- CONFIG -->
-    <div class="cfg-sec">
-      <div class="cfg-sec-hdr">⚙ CONFIGURACIÓN DEL SITIO</div>
-      <div class="cfg-grid">
-        <div class="cf"><label>Instagram</label><input id="c-ig" placeholder="@beartrapbazar"></div>
-        <div class="cf"><label>WhatsApp (con código de país)</label><input id="c-wa" placeholder="5215512345678"></div>
-        <div class="cf"><label>Eslogan del sitio</label><input id="c-sl" placeholder="Ropa que atrapa."></div>
-        <div class="cf"><label>WhatsApp para Personalizaciones</label><input id="c-wa2" placeholder="5215512345678"></div>
-      </div>
-      <button class="btn-cfg" onclick="saveConfig()">GUARDAR CONFIGURACIÓN</button>
-    </div>
-
-    <!-- BACKUP -->
-    <div class="bk-sec">
-      <div class="bk-hdr">💾 RESPALDO DE INVENTARIO</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="bkbtn bk-exp" onclick="exportJSON()">↓ Exportar JSON completo</button>
-        <button class="bkbtn bk-imp" onclick="document.getElementById('f-imp').click()">↑ Importar JSON</button>
-        <input type="file" id="f-imp" accept=".json" style="display:none" onchange="importJSON(this)">
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ MODAL AGREGAR/EDITAR ══ -->
-<div class="mbg" id="modal">
-  <div class="modal">
-    <div class="mhd">
-      <div class="mtitle" id="mtitle">AGREGAR PRENDA</div>
-      <button class="mclose" onclick="closeModal()">✕</button>
-    </div>
-    <div class="mbody">
-      <div class="form-grid">
-        <div class="ff"><label>Nombre de la prenda</label><input id="f-n" placeholder="Chamarra bomber vintage"></div>
-        <div class="ff"><label>Categoría</label>
-          <select id="f-cat2">
-            <option>Ropa Americana</option>
-            <option>Street Syndicate</option>
-            <option>Personalizaciones</option>
-          </select>
+    <div class="cs-wrap">
+      <div class="cs-inner">
+        <div class="cs-tag">En construcción</div>
+        <div class="cs-title">COMING SOON</div>
+        <div class="cs-sub">Nuestra línea de streetwear está en desarrollo.<br>Piezas únicas, ediciones limitadas, estética urbana sin filtro.<br>Síguenos para enterarte primero.</div>
+        <div class="cs-dots">
+          <div class="cs-dot"></div><div class="cs-dot"></div><div class="cs-dot"></div>
+          <div class="cs-dot"></div><div class="cs-dot"></div>
         </div>
-        <div class="ff"><label>Precio (MXN)</label><input type="number" id="f-p" placeholder="150" min="0"></div>
-        <div class="ff"><label>Color</label><input id="f-col" placeholder="Negro, Rosa..."></div>
+        <a id="cs-ig" href="#" class="cs-btn" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+          </svg>
+          SEGUIR EN INSTAGRAM
+        </a>
       </div>
-      <div class="ff" style="margin-bottom:14px">
-        <label>Tallas disponibles</label>
-        <div class="tallas-row">
-          <input type="checkbox" id="t-xs" class="tc" value="XS"><label for="t-xs" class="tl">XS</label>
-          <input type="checkbox" id="t-s"  class="tc" value="S"><label for="t-s"  class="tl">S</label>
-          <input type="checkbox" id="t-m"  class="tc" value="M"><label for="t-m"  class="tl">M</label>
-          <input type="checkbox" id="t-l"  class="tc" value="L"><label for="t-l"  class="tl">L</label>
-          <input type="checkbox" id="t-xl" class="tc" value="XL"><label for="t-xl" class="tl">XL</label>
-          <input type="checkbox" id="t-xxl"class="tc" value="XXL"><label for="t-xxl" class="tl">XXL</label>
-          <input type="checkbox" id="t-u"  class="tc" value="Única"><label for="t-u" class="tl">Única</label>
-        </div>
-      </div>
-      <div class="ff form-grid one" style="margin-bottom:6px">
-        <label>Foto de la prenda</label>
-        <input type="file" id="f-foto" accept="image/*" onchange="onFotoChange(this)">
-        <div class="foto-info" id="foto-info"></div>
-      </div>
-      <img id="f-prev" class="foto-preview" src="" alt="Preview">
-      <div class="upload-bar" id="upload-bar"><div class="upload-bar-fill" id="upload-fill"></div></div>
-      <button class="btn-save" id="btn-save" onclick="saveItem()">GUARDAR PRENDA</button>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
+<!-- PERSONALIZACIONES -->
+<div id="personalizaciones">
+  <div class="sw">
+    <div class="shdr">
+      <div class="sname">PERSONALIZACIONES</div>
+      <div class="sbar"></div>
+    </div>
+    <div class="cs-wrap">
+      <div class="cs-inner">
+        <div class="cs-tag">Próximamente</div>
+        <div class="cs-title">COMING SOON</div>
+        <div class="cs-sub">Personalizamos prendas a tu medida.<br>Bordados, estampados, cortes únicos. Tu ropa, tu identidad.<br>Escríbenos para más información.</div>
+        <div class="cs-dots">
+          <div class="cs-dot"></div><div class="cs-dot"></div><div class="cs-dot"></div>
+          <div class="cs-dot"></div><div class="cs-dot"></div>
+        </div>
+        <a id="cs-wa" href="#" class="cs-btn" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+          </svg>
+          CONSULTAR POR WHATSAPP
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="flogo">BEAR TRAP</div>
+  <p id="f-ig">@beartrapbazar</p>
+  <p>ROPA AMERICANA · PIEZAS ÚNICAS · MÉXICO</p>
+</footer>
+
+<div class="pills">
+  <a id="p-ig" href="#" class="pill p-ig" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="2" y="2" width="20" height="20" rx="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+    </svg>INSTAGRAM</a>
+  <a id="p-wa" href="#" class="pill p-wa" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.089.536 4.05 1.477 5.755L.057 23.998l6.395-1.397A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.908a9.9 9.9 0 01-5.044-1.378l-.361-.214-3.743.817.847-3.63-.235-.374A9.865 9.865 0 012.09 12c0-5.47 4.44-9.908 9.91-9.908 5.47 0 9.908 4.438 9.908 9.908S17.47 21.908 12 21.908z"/>
+    </svg>WHATSAPP</a>
+</div>
 
 <script>
-// ══════════════════════════════════════
-// FIREBASE SETUP
-// ══════════════════════════════════════
-const TMAP = {XS:"t-xs",S:"t-s",M:"t-m",L:"t-l",XL:"t-xl",XXL:"t-xxl","Única":"t-u"};
-let db, items=[], photos={}, cfg={ig:"@beartrapbazar",wa:"5215512345678",slogan:"Ropa que atrapa."};
-let editIdx=null, fbReady=false;
+// ══════════════════════════════════════════════════════
+// SIN FIREBASE SDK — usa fetch REST directo a Firebase
+// Esto elimina el error "firebase is not defined" para siempre
+// ══════════════════════════════════════════════════════
+const DB = "https://bear-trap-bazar-default-rtdb.firebaseio.com";
 
-function conectarFirebase(){
-  const apiKey = document.getElementById("f-apikey").value.trim();
-  const pid    = document.getElementById("f-pid").value.trim();
-  if(!apiKey||!pid){ document.getElementById("cfg-err").textContent="Completa ambos campos"; return; }
-  try{
-    if(!firebase.apps.length){
-      firebase.initializeApp({
-        apiKey,
-        authDomain:`${pid}.firebaseapp.com`,
-        databaseURL:`https://${pid}-default-rtdb.firebaseio.com`,
-        projectId:pid
-      });
+let cfg = {ig:"@beartrapbazar", wa:"5215512345678"};
+let allItems = [];
+let allPhotos = {};
+let subfilt = "";
+
+// CURSOR
+const cur = document.getElementById("cur");
+document.addEventListener("mousemove", e => {
+  cur.style.left = e.clientX + "px";
+  cur.style.top  = e.clientY + "px";
+}, {passive:true});
+document.addEventListener("mouseover", e => {
+  const t = e.target;
+  if(t.matches("a,button,.card,.ndot,.fb,.pill,.bcat,.bwah") || t.closest("a,button,.card"))
+    cur.classList.add("big");
+  else cur.classList.remove("big");
+}, {passive:true});
+
+// NAV ACTIVE
+window.addEventListener("scroll", () => {
+  const s=[["ropa-americana","nl-ra"],["street-syndicate","nl-ss"],["personalizaciones","nl-pe"]];
+  let a=0;
+  s.forEach(([id],i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<100)a=i;});
+  s.forEach(([,nid],i)=>document.getElementById(nid).classList.toggle("on",i===a));
+},{passive:true});
+
+// APPLY CONFIG
+function applyConfig(){
+  const wa = "https://wa.me/" + cfg.wa;
+  const ig = "https://instagram.com/" + cfg.ig.replace("@","");
+  ["n-ig","p-ig","cs-ig"].forEach(id=>{const el=document.getElementById(id);if(el)el.href=ig;});
+  ["n-wa","h-wa","p-wa","cs-wa"].forEach(id=>{const el=document.getElementById(id);if(el)el.href=wa;});
+  const fi=document.getElementById("f-ig"); if(fi) fi.textContent=cfg.ig;
+}
+
+// FILTER
+function setFilt(btn, sub){
+  subfilt = sub;
+  document.getElementById("filt-ra").querySelectorAll(".fb").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  renderGrid();
+}
+
+// RENDER GRID
+function renderGrid(){
+  const items = allItems.filter(i => {
+    if(i.visible===false) return false;
+    const cat = (i.categoria||i.cat||"").toLowerCase().trim();
+    // Show if category matches "ropa americana" or is empty (backwards compat)
+    if(cat && cat !== "ropa americana") return false;
+    // Sub-filter by nombre keyword (chamarras, suéteres, etc.)
+    if(subfilt){
+      const nombre = (i.nombre||"").toLowerCase();
+      const icat   = (i.subcategoria||"").toLowerCase();
+      const sfLow  = subfilt.toLowerCase();
+      // Try matching subcategoria field first, then nombre
+      if(icat && icat !== sfLow) return false;
+      if(!icat){
+        // Keyword match in nombre as fallback
+        const keywords = {
+          "chamarras":["chamarra","chaqueta","bomber","varsity","windbreaker","blazer"],
+          "suéteres":["suéter","sueter","hoodie","sudadera","cardigan","cardigan","sweater"],
+          "pantalones":["pantalón","pantalon","jeans","jean","legging","cargo"],
+          "faldas":["falda"],
+          "vestidos":["vestido"],
+          "shorts":["short","bermuda"],
+          "blusas":["blusa","top","camisa","camiseta"]
+        };
+        const kws = keywords[sfLow] || [sfLow];
+        if(!kws.some(k => nombre.includes(k))) return false;
+      }
     }
-    db = firebase.database();
-    // Save config so next time auto-loads
-    localStorage.setItem("bt_api", apiKey);
-    localStorage.setItem("bt_pid", pid);
-    fbReady = true;
-    document.getElementById("screen-cfg").style.display="none";
-    document.getElementById("screen-auth").style.display="flex";
-    document.getElementById("a-email").focus();
-  }catch(e){
-    document.getElementById("cfg-err").textContent = "Error: " + e.message;
-  }
-}
-
-function reconfigurar(){
-  localStorage.removeItem("bt_api");
-  localStorage.removeItem("bt_pid");
-  document.getElementById("screen-auth").style.display="none";
-  document.getElementById("screen-cfg").style.display="flex";
-  document.getElementById("f-apikey").value="";
-  document.getElementById("f-pid").value="";
-  document.getElementById("cfg-err").textContent="";
-}
-
-// Auto-init if saved
-window.addEventListener("load", () => {
-  const key=localStorage.getItem("bt_api"), pid=localStorage.getItem("bt_pid");
-  if(key && pid){
-    document.getElementById("f-apikey").value=key;
-    document.getElementById("f-pid").value=pid;
-    conectarFirebase();
-  }
-  // Enter key support
-  document.addEventListener("keydown", e => {
-    if(e.key==="Enter"){
-      if(document.getElementById("screen-auth").style.display!=="none") doLogin();
-      if(document.getElementById("screen-cfg").style.display!=="none") conectarFirebase();
-    }
-  });
-});
-
-// ══════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════
-const AUTH_ERRORS = {
-  "auth/wrong-password":"Contraseña incorrecta",
-  "auth/user-not-found":"Usuario no encontrado",
-  "auth/invalid-email":"Email inválido",
-  "auth/too-many-requests":"Demasiados intentos. Espera unos minutos.",
-  "auth/invalid-credential":"Email o contraseña incorrectos"
-};
-
-async function doLogin(){
-  const email = document.getElementById("a-email").value.trim();
-  const pass  = document.getElementById("a-pass").value;
-  document.getElementById("auth-err").textContent = "Entrando...";
-  try{
-    await firebase.auth().signInWithEmailAndPassword(email, pass);
-    document.getElementById("screen-auth").style.display="none";
-    document.getElementById("screen-admin").style.display="block";
-    document.getElementById("t-email").textContent = email;
-    loadData();
-  }catch(e){
-    document.getElementById("auth-err").textContent = AUTH_ERRORS[e.code] || e.message;
-  }
-}
-
-function doLogout(){
-  firebase.auth().signOut();
-  document.getElementById("screen-admin").style.display="none";
-  document.getElementById("screen-auth").style.display="flex";
-  document.getElementById("a-pass").value="";
-  document.getElementById("auth-err").textContent="";
-}
-
-// ══════════════════════════════════════
-// LOAD DATA — Realtime listeners
-// ══════════════════════════════════════
-function setStatus(type, txt){
-  const b=document.getElementById("SB"), d=document.getElementById("sdot"), t=document.getElementById("stxt");
-  b.className=type; d.className="sdot d"+type; t.textContent=txt;
-}
-
-function loadData(){
-  setStatus("ld","Cargando inventario de Firebase...");
-  // Listen to items in real time
-  db.ref("items").on("value", snap => {
-    const raw = snap.val();
-    items = raw ? (Array.isArray(raw)?raw:Object.values(raw)).filter(Boolean) : [];
-    setStatus("ok","Firebase conectado ✓  •  "+items.length+" prendas");
-    updateStats(); renderTable();
-  });
-  // Listen to photos
-  db.ref("photos").on("value", snap => {
-    photos = snap.val() || {};
-    renderTable();
-  });
-  // Load config once
-  db.ref("config").once("value", snap => {
-    const c = snap.val();
-    if(c){ cfg={...cfg,...c}; applyCfgForm(); }
-  });
-}
-
-function applyCfgForm(){
-  document.getElementById("c-ig").value  = cfg.ig||"";
-  document.getElementById("c-wa").value  = cfg.wa||"";
-  document.getElementById("c-sl").value  = cfg.slogan||"";
-  document.getElementById("c-wa2").value = cfg.wa2||"";
-}
-function updateStats(){
-  document.getElementById("s-tot").textContent  = items.length;
-  document.getElementById("s-vis").textContent  = items.filter(i=>i.visible!==false).length;
-  document.getElementById("s-sold").textContent = items.filter(i=>i.vendida).length;
-  const avg = items.length ? Math.round(items.reduce((a,i)=>a+(+i.precio||0),0)/items.length) : 0;
-  document.getElementById("s-avg").textContent = "$"+avg;
-}
-
-// ══════════════════════════════════════
-// TABLE
-// ══════════════════════════════════════
-function renderTable(){
-  const q   = document.getElementById("search").value.toLowerCase();
-  const cat = document.getElementById("f-cat").value;
-  const vis = document.getElementById("f-vis").value;
-  const f = items.filter(i => {
-    if(q && !i.nombre.toLowerCase().includes(q)) return false;
-    if(cat && i.categoria !== cat) return false;
-    if(vis!=="" && String(i.visible!==false) !== vis) return false;
     return true;
   });
-  document.getElementById("tbl-empty").style.display = f.length ? "none" : "block";
-  document.getElementById("tbody").innerHTML = f.map(item => {
-    const ri   = items.indexOf(item);
-    const foto = photos[item.id] || "";
-    const img  = foto
-      ? `<img class="timg" src="${foto}" loading="lazy" onerror="this.className='';this.outerHTML='<div class=tph>🐻</div>'">`
-      : `<div class="tph">🐻</div>`;
-    const tallas = (item.tallas||[]).join(", ");
-    return `<tr>
-      <td>${img}</td>
-      <td style="color:var(--mu)">${ri+1}</td>
-      <td><strong>${item.nombre}</strong>${item.vendida?`<span class="vsold">VENDIDA</span>`:""}</td>
-      <td style="color:var(--mu);font-size:11px">${item.categoria||""}</td>
-      <td style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px">$${item.precio}</td>
-      <td style="color:var(--mu);font-size:11px">${tallas}</td>
-      <td><label class="sw"><input type="checkbox" ${item.visible!==false?"checked":""} onchange="toggleV(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
-      <td><label class="sw"><input type="checkbox" ${item.vendida?"checked":""} onchange="toggleS(${ri},this.checked)"><div class="sw-t"></div><div class="sw-th"></div></label></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="abtn" onclick="openModal(${ri})">✏ Editar</button>
-        <button class="abtn adel" onclick="delItem(${ri})">🗑 Borrar</button>
-      </td>
-    </tr>`;
+
+  document.getElementById("cnt-ra").textContent = items.length + " prendas";
+  const wa = "https://wa.me/" + cfg.wa;
+  const grid = document.getElementById("g-ra");
+
+  if(!items.length){
+    grid.innerHTML = `<div class="lgrid"><span>Sin prendas en esta categoría.</span></div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(item => {
+    const foto = allPhotos[item.id] || allPhotos[String(item.id)] || "";
+    const imgEl = foto
+      ? `<img class="cimg" src="${foto}" alt="${item.nombre||""}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cph><div class=cph-ico>🐻</div></div>'">`
+      : `<div class="cph"><div class="cph-ico">🐻</div><div class="cph-cat">${item.categoria||""}</div></div>`;
+    const tallas = (item.tallas||[]).map(t=>`<span class="talla">${t}</span>`).join("");
+    const msg = encodeURIComponent(`Hola! Me interesa: ${item.nombre} — $${item.precio} MXN`);
+    const btn = !item.vendida
+      ? `<button class="bwac" onclick="window.open('${wa}?text=${msg}','_blank')">💬 CONSULTAR</button>`
+      : `<div style="text-align:center;font-size:11px;color:#444;padding:8px">Pieza agotada</div>`;
+    return `<div class="card">
+      <div class="cimgw">${imgEl}${item.vendida?'<div class="badge-sold">VENDIDA</div>':''}${item.nuevo?'<div class="badge-new">NUEVO</div>':''}</div>
+      <div class="cbody">
+        <div class="ccat">${item.categoria||""}</div>
+        <div class="cname">${item.nombre||""}</div>
+        <div class="cbot"><div class="cprice">$${item.precio||0}</div><div class="ctallas">${tallas}</div></div>
+        ${btn}
+      </div>
+    </div>`;
   }).join("");
 }
 
-// ══════════════════════════════════════
-// TOGGLES
-// ══════════════════════════════════════
-async function toggleV(i, v){
-  items[i].visible = v;
-  await db.ref("items").set(items);
-  updateStats();
-  toast("Visibilidad actualizada ✓");
-}
-async function toggleS(i, v){
-  items[i].vendida = v;
-  await db.ref("items").set(items);
-  updateStats();
-  toast(v ? "Marcada como VENDIDA ✓" : "Disponible ✓");
-}
-async function delItem(i){
-  if(!confirm(`¿Borrar "${items[i].nombre}"?`)) return;
-  const id = items[i].id;
-  items.splice(i, 1);
-  await db.ref("items").set(items);
-  await db.ref("photos/"+id).remove();
-  updateStats(); renderTable();
-  toast("Prenda eliminada ✓");
-}
-
-// ══════════════════════════════════════
-// MODAL
-// ══════════════════════════════════════
-function openModal(idx){
-  editIdx = idx !== undefined ? idx : null;
-  document.getElementById("mtitle").textContent = editIdx!==null ? "EDITAR PRENDA" : "AGREGAR PRENDA";
-  // Reset form
-  Object.values(TMAP).forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=false; });
-  document.getElementById("f-n").value   = "";
-  document.getElementById("f-p").value   = "";
-  document.getElementById("f-col").value = "";
-  document.getElementById("f-cat2").value= "Ropa Americana";
-  document.getElementById("f-foto").value= "";
-  document.getElementById("f-prev").style.display="none";
-  document.getElementById("foto-info").textContent="";
-  document.getElementById("upload-bar").style.display="none";
-  document.getElementById("btn-save").disabled = false;
-  if(editIdx !== null){
-    const it = items[editIdx];
-    document.getElementById("f-n").value    = it.nombre||"";
-    document.getElementById("f-cat2").value = it.categoria||"Ropa Americana";
-    document.getElementById("f-p").value    = it.precio||"";
-    document.getElementById("f-col").value  = it.color||"";
-    (it.tallas||[]).forEach(t => { const el=document.getElementById(TMAP[t]); if(el) el.checked=true; });
-    const foto = photos[it.id]||"";
-    if(foto){ document.getElementById("f-prev").src=foto; document.getElementById("f-prev").style.display="block"; }
-  }
-  document.getElementById("modal").classList.add("open");
-}
-function closeModal(){ document.getElementById("modal").classList.remove("open"); editIdx=null; }
-
-// ── IMAGE COMPRESSION — makes uploads fast ──
-function compressImage(file, maxPx=800, quality=0.78){
-  return new Promise(resolve => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      let {width:w, height:h} = img;
-      if(w > maxPx || h > maxPx){
-        if(w>h){ h=Math.round(h*maxPx/w); w=maxPx; }
-        else    { w=Math.round(w*maxPx/h); h=maxPx; }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width=w; canvas.height=h;
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-      URL.revokeObjectURL(url);
-      resolve(canvas.toDataURL("image/jpeg", quality));
-    };
-    img.src=url;
-  });
-}
-
-function onFotoChange(input){
-  const f = input.files[0];
-  if(!f) return;
-  const sizeMB = (f.size/1024/1024).toFixed(1);
-  document.getElementById("foto-info").textContent = `Original: ${sizeMB} MB — comprimiendo...`;
-  compressImage(f).then(data => {
-    const compMB = (data.length*0.75/1024/1024).toFixed(2);
-    document.getElementById("foto-info").textContent = `Comprimida: ~${compMB} MB ✓`;
-    document.getElementById("f-prev").src = data;
-    document.getElementById("f-prev").style.display = "block";
-  });
-}
-
-async function saveItem(){
-  const nombre = document.getElementById("f-n").value.trim();
-  if(!nombre){ alert("Escribe el nombre de la prenda"); return; }
-  document.getElementById("btn-save").disabled = true;
-  document.getElementById("btn-save").textContent = "GUARDANDO...";
-  const tallas = ["XS","S","M","L","XL","XXL","Única"].filter(t => {
-    const el = document.getElementById(TMAP[t]); return el && el.checked;
-  });
-  const itemId = editIdx!==null ? (items[editIdx].id||"item_"+Date.now()) : ("item_"+Date.now());
-  const item = {
-    id: itemId,
-    nombre,
-    categoria: document.getElementById("f-cat2").value,
-    precio: parseInt(document.getElementById("f-p").value)||0,
-    color: document.getElementById("f-col").value.trim(),
-    tallas,
-    visible: editIdx!==null ? (items[editIdx].visible!==false) : true,
-    vendida: editIdx!==null ? (items[editIdx].vendida||false) : false,
-    orden:   editIdx!==null ? (items[editIdx].orden||0) : items.length+1
-  };
-  if(editIdx!==null) items[editIdx]=item; else items.push(item);
-  // Show upload progress
-  document.getElementById("upload-bar").style.display="block";
-  document.getElementById("upload-fill").style.width="30%";
+// LOAD — fetch REST, sin SDK, sin errores de "firebase is not defined"
+async function load(){
+  applyConfig();
   try{
-    await db.ref("items").set(items);
-    document.getElementById("upload-fill").style.width="60%";
-    // Upload photo if new one selected
-    const fi = document.getElementById("f-foto");
-    if(fi.files[0]){
-      const compressed = await compressImage(fi.files[0]);
-      document.getElementById("upload-fill").style.width="80%";
-      await db.ref("photos/"+itemId).set(compressed);
+    // Load config, items and photos in parallel
+    const [cfgRes, itemsRes, photosRes] = await Promise.all([
+      fetch(DB + "/config.json"),
+      fetch(DB + "/items.json"),
+      fetch(DB + "/photos.json")
+    ]);
+
+    if(cfgRes.ok){
+      const c = await cfgRes.json();
+      if(c){ cfg={...cfg,...c}; applyConfig(); }
     }
-    document.getElementById("upload-fill").style.width="100%";
-    setTimeout(()=>{ document.getElementById("upload-bar").style.display="none"; },500);
-    updateStats(); closeModal();
-    toast(editIdx!==null ? "Prenda actualizada ✓" : "Prenda agregada ✓");
-  }catch(e){
-    toast("Error al guardar: "+e.message);
+
+    if(!itemsRes.ok) throw new Error("HTTP " + itemsRes.status + " al leer items");
+    const rawItems = await itemsRes.json();
+    allItems = rawItems
+      ? (Array.isArray(rawItems) ? rawItems : Object.values(rawItems)).filter(Boolean)
+      : [];
+
+    if(photosRes.ok){
+      const p = await photosRes.json();
+      allPhotos = p || {};
+    }
+
+    renderGrid();
+
+  }catch(err){
+    console.error("Error:", err.message);
+    document.getElementById("g-ra").innerHTML =
+      `<div class="lgrid" style="color:#ff2d78">
+        <span>⚠ Error al cargar: ${err.message}</span>
+        <span style="color:#555;font-size:10px;margin-top:8px">Verifica: Firebase Console → Realtime Database → Reglas → .read = true</span>
+      </div>`;
   }
-  document.getElementById("btn-save").disabled=false;
-  document.getElementById("btn-save").textContent="GUARDAR PRENDA";
 }
 
-// ══════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════
-async function saveConfig(){
-  cfg.ig     = document.getElementById("c-ig").value.trim();
-  cfg.wa     = document.getElementById("c-wa").value.trim();
-  cfg.slogan = document.getElementById("c-sl").value.trim();
-  cfg.wa2    = document.getElementById("c-wa2").value.trim();
-  await db.ref("config").set(cfg);
-  toast("Configuración guardada ✓");
-}
-
-// ══════════════════════════════════════
-// EXPORT EXCEL
-// ══════════════════════════════════════
-function exportExcel(){
-  const rows = items.map((it,i) => ({
-    "N°":           i+1,
-    "Nombre":       it.nombre||"",
-    "Categoría":    it.categoria||"",
-    "Precio (MXN)": it.precio||0,
-    "Color":        it.color||"",
-    "Tallas":       (it.tallas||[]).join(", "),
-    "Visible":      it.visible!==false ? "Sí" : "No",
-    "Vendida":      it.vendida ? "Sí" : "No",
-    "Tiene foto":   photos[it.id] ? "Sí" : "No"
-  }));
-  const ws = XLSX.utils.json_to_sheet(rows);
-  // Column widths
-  ws["!cols"] = [{wch:5},{wch:30},{wch:18},{wch:14},{wch:14},{wch:20},{wch:8},{wch:8},{wch:10}];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Inventario");
-  XLSX.writeFile(wb, `beartrap-inventario-${new Date().toISOString().slice(0,10)}.xlsx`);
-  toast("Excel exportado ✓");
-}
-
-// ══════════════════════════════════════
-// BACKUP JSON
-// ══════════════════════════════════════
-function exportJSON(){
-  const blob = new Blob([JSON.stringify({items,photos,config:cfg},null,2)],{type:"application/json"});
-  const a = document.createElement("a"); a.href=URL.createObjectURL(blob);
-  a.download = `beartrap-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  toast("JSON exportado ✓");
-}
-
-async function importJSON(input){
-  const f = input.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = async e => {
-    try{
-      const d = JSON.parse(e.target.result);
-      const rawItems = d.items||[];
-      const newItems = rawItems.map((it,idx) => ({
-        id:        String(it.id||"item_"+(idx+1)),
-        nombre:    it.nombre||"",
-        categoria: it.categoria||it.cat||"Ropa Americana",
-        precio:    Number(it.precio)||0,
-        color:     it.color||"",
-        tallas:    it.tallas||[],
-        visible:   it.visible!==false,
-        vendida:   it.vendida||false,
-        orden:     it.orden||idx+1
-      }));
-      const newPhotos = {};
-      if(d.photos) Object.assign(newPhotos, d.photos);
-      // old format: img field inside item
-      rawItems.forEach((it,idx) => {
-        const id   = String(it.id||"item_"+(idx+1));
-        const foto = it.img||it.foto||"";
-        if(foto && foto.startsWith("data:")) newPhotos[id] = foto;
-      });
-      await db.ref("items").set(newItems);
-      await db.ref("photos").set(newPhotos);
-      if(d.config||d.cfg){
-        cfg={...cfg,...(d.config||d.cfg)};
-        await db.ref("config").set(cfg);
-        applyCfgForm();
-      }
-      toast("Importado ✓ — "+newItems.length+" prendas");
-    }catch(err){ alert("Error al leer el archivo: "+err.message); }
-  };
-  r.readAsText(f);
-}
-
-// ══════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════
-function toast(m){
-  const t = document.getElementById("toast");
-  t.textContent=m; t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),3000);
-}
+load();
 </script>
 </body>
 </html>
