@@ -146,6 +146,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;
   color:rgba(255,255,255,.6);font-size:12px;font-weight:600;letter-spacing:.08em;
   text-decoration:none;transition:all .2s}
 .cs-btn:hover{border-color:rgba(225,48,108,.4);color:#e1306c}
+.search-wrap{margin-bottom:16px}
+.search-bar{width:100%;max-width:440px;padding:11px 16px;
+  background:#111115;border:1px solid #1e1e24;border-radius:8px;
+  color:#f0f0f0;font-family:"DM Sans",sans-serif;font-size:13px;
+  outline:none;transition:border .2s}
+.search-bar:focus{border-color:rgba(255,145,0,.5)}
+.search-bar::placeholder{color:#444}
 .lgrid{grid-column:1/-1;display:flex;flex-direction:column;
   align-items:center;gap:14px;padding:80px;color:#555;font-size:11px;letter-spacing:.1em}
 .spin{width:28px;height:28px;border-radius:50%;border:2px solid #1e1e24;
@@ -316,6 +323,9 @@ footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
       <div class="sname">ROPA AMERICANA</div><div class="sbar"></div>
       <div class="scnt" id="cnt-ra">cargando...</div>
     </div>
+    <div class="search-wrap">
+      <input id="search-bar" class="search-bar" type="text" placeholder="🔍 Buscar por nombre, color, marca..." oninput="renderGrid()">
+    </div>
     <div class="filters" id="filt-ra">
       <button class="fb on" onclick="setFilt(this,'')">Todas</button>
       <button class="fb" onclick="setFilt(this,'Chamarras')">Chamarras</button>
@@ -442,11 +452,31 @@ function setFilt(btn,sub){
 
 // RENDER
 function renderGrid(){
+  const kw={
+    "Chamarras":["chamarra","chaqueta","bomber","varsity","windbreaker","blazer"],
+    "Suéteres":["suéter","sueter","hoodie","sudadera","cardigan","sweater"],
+    "Pantalones":["pantalón","pantalon","jeans","jean","legging","cargo"],
+    "Faldas":["falda"],"Vestidos":["vestido"],
+    "Shorts":["short","bermuda"],
+    "Blusas":["blusa","camisa","camiseta","top"]
+  };
+  const q2=(document.getElementById("search-bar")||{value:""}).value.toLowerCase().trim();
   const items=allItems.filter(i=>{
     if(i.visible===false)return false;
+    // Search query
+    if(q2){
+      const hay=(i.nombre||"")+" "+(i.subcategoria||"")+" "+(i.categoria||"")+" "+(i.color||"")+" "+(i.marca||"");
+      if(!hay.toLowerCase().includes(q2))return false;
+    }
     if(!subfilt)return true;
-    // Match exactly by subcategoria field (set in admin)
-    return (i.subcategoria||"") === subfilt;
+    // 1. Exact subcategoria match (set in admin)
+    if(i.subcategoria && i.subcategoria===subfilt) return true;
+    // 2. Keyword fallback for items without subcategoria
+    if(!i.subcategoria){
+      const n=(i.nombre||"").toLowerCase();
+      return(kw[subfilt]||[subfilt.toLowerCase()]).some(k=>n.includes(k));
+    }
+    return false;
   });
   document.getElementById("cnt-ra").textContent=items.length+" prendas";
   const grid=document.getElementById("g-ra");
