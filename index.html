@@ -326,16 +326,7 @@ footer p{font-size:11px;color:#444;letter-spacing:.1em;margin-top:4px}
     <div class="search-wrap">
       <input id="search-bar" class="search-bar" type="text" placeholder="🔍 Buscar por nombre, color, marca..." oninput="renderGrid()">
     </div>
-    <div class="filters" id="filt-ra">
-      <button class="fb on" onclick="setFilt(this,'')">Todas</button>
-      <button class="fb" onclick="setFilt(this,'Chamarras')">Chamarras</button>
-      <button class="fb" onclick="setFilt(this,'Suéteres')">Suéteres</button>
-      <button class="fb" onclick="setFilt(this,'Pantalones')">Pantalones</button>
-      <button class="fb" onclick="setFilt(this,'Faldas')">Faldas</button>
-      <button class="fb" onclick="setFilt(this,'Vestidos')">Vestidos</button>
-      <button class="fb" onclick="setFilt(this,'Shorts')">Shorts</button>
-      <button class="fb" onclick="setFilt(this,'Blusas')">Blusas</button>
-    </div>
+    <div class="filters" id="filt-ra"></div>
     <div class="grid" id="g-ra">
       <div class="lgrid"><div class="spin"></div><span>Cargando catálogo...</span></div>
     </div>
@@ -445,38 +436,37 @@ function applyConfig(){
 // FILTER
 function setFilt(btn,sub){
   subfilt=sub;
-  document.getElementById("filt-ra").querySelectorAll(".fb").forEach(b=>b.classList.remove("on"));
-  btn.classList.add("on");
-  renderGrid();
+  renderGrid(); // buildFilters inside renderGrid will handle active state
 }
 
 // RENDER
+function buildFilters(){
+  // Build filter buttons dynamically from subcategorias in data
+  const subs = [...new Set(
+    allItems
+      .filter(i => i.visible!==false && i.subcategoria)
+      .map(i => i.subcategoria)
+  )].sort();
+
+  const container = document.getElementById("filt-ra");
+  container.innerHTML =
+    `<button class="fb ${!subfilt?'on':''}" onclick="setFilt(this,'')">Todas</button>` +
+    subs.map(s =>
+      `<button class="fb ${subfilt===s?'on':''}" onclick="setFilt(this,'${s}')">${s}</button>`
+    ).join("");
+}
+
 function renderGrid(){
-  const kw={
-    "Chamarras":["chamarra","chaqueta","bomber","varsity","windbreaker","blazer"],
-    "Suéteres":["suéter","sueter","hoodie","sudadera","cardigan","sweater"],
-    "Pantalones":["pantalón","pantalon","jeans","jean","legging","cargo"],
-    "Faldas":["falda"],"Vestidos":["vestido"],
-    "Shorts":["short","bermuda"],
-    "Blusas":["blusa","camisa","camiseta","top"]
-  };
+  buildFilters();
   const q2=(document.getElementById("search-bar")||{value:""}).value.toLowerCase().trim();
   const items=allItems.filter(i=>{
     if(i.visible===false)return false;
-    // Search query
     if(q2){
       const hay=(i.nombre||"")+" "+(i.subcategoria||"")+" "+(i.categoria||"")+" "+(i.color||"")+" "+(i.marca||"");
       if(!hay.toLowerCase().includes(q2))return false;
     }
     if(!subfilt)return true;
-    // 1. Exact subcategoria match (set in admin)
-    if(i.subcategoria && i.subcategoria===subfilt) return true;
-    // 2. Keyword fallback for items without subcategoria
-    if(!i.subcategoria){
-      const n=(i.nombre||"").toLowerCase();
-      return(kw[subfilt]||[subfilt.toLowerCase()]).some(k=>n.includes(k));
-    }
-    return false;
+    return (i.subcategoria||"")===subfilt;
   });
   document.getElementById("cnt-ra").textContent=items.length+" prendas";
   const grid=document.getElementById("g-ra");
